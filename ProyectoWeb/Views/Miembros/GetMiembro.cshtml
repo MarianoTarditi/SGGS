@@ -1,0 +1,185 @@
+﻿@model VMMiembro
+
+@{
+    ViewData["Title"] = "GetMiembro";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="section profile">
+    <div class="row">
+        <div class="pagetitle">
+            <h1>Miembro</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active">Ver Miembro</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+    </div>
+        <div class="col-xl-12">
+
+            <div class="card">
+                <div class="card-body pt-3">
+                    <!-- Bordered Tabs -->
+
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Información</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content pt-2">
+
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview">
+
+                            <h5 class="card-title"></h5>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label ">Nombre</div>
+                                <div class="col-lg-9 col-md-8">@Model.Nombre</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Apellido</div>
+                                <div class="col-lg-9 col-md-8">@Model.Apellido</div>
+                            </div>
+
+                             <div class="row">
+                                <div class="col-lg-3 col-md-4 label">DNI</div>
+                                <div class="col-lg-9 col-md-8">@Model.Dni</div>
+                            </div> 
+ 
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Fecha de Nacimiento</div>
+                                <div class="col-lg-9 col-md-8">@Model.FechaNacimiento</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Sexo</div>
+                                <div class="col-lg-9 col-md-8">@Model.Sexo.Nombre</div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Estado Civil</div>
+                                <div class="col-lg-9 col-md-8">@Model.EstadoCivil.Nombre</div>
+                            </div> 
+                            
+                        
+ 
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Nacionalidad</div>
+                                <div class="col-lg-9 col-md-8">@Model.Nacionalidad.Pais</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Idioma</div>
+                                <div class="col-lg-9 col-md-8">@Model.Idioma.Nombre</div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Provincia</div>
+                                <div class="col-lg-9 col-md-8">@Model.Localidad.Provincia.Nombre</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Localidad</div>
+                                <div class="col-lg-9 col-md-8">@Model.Localidad.Nombre</div>
+                            </div>
+                           
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Código Postal</div>
+                                <div class="col-lg-9 col-md-8">@Model.CodigoPostal</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Teléfono</div>
+                                <div class="col-lg-9 col-md-8">@Model.Telefono</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Email</div>
+                                <div class="col-lg-9 col-md-8">@Model.Email</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Religión</div>
+                                <div class="col-lg-9 col-md-8">@Model.Religion.Nombre</div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Nivel de Estudios</div>
+                                <div class="col-lg-9 col-md-8">@Model.Estudio.Nivel</div>
+                            </div>
+                           
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Título</div>
+                                <div class="col-lg-9 col-md-8">@Model.Titulo</div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Discapacidad</div>
+                                <div class="col-lg-9 col-md-8">@Model.Discapacidad.Nombre</div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Descripción de la Discapacidad</div>
+                                <div class="col-lg-9 col-md-8">@Model.DescripcionDiscapacidad</div>
+                            </div>                           
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Activo</div>
+                                <div class="col-lg-9 col-md-8">@Model.Activo</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Organismo</div>
+                                <div class="col-lg-9 col-md-8">@Model.Organismo.Nombre</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Categoria</div>
+                                <div class="col-lg-9 col-md-8">@Model.Categoria.Nombre</div>
+                            </div>
+
+                        <div class="row">
+                            <div class="col-lg-3 col-md-4 label">Insignia Madera</div>
+                            <div class="col-lg-9 col-md-8">
+                                @(Model.InisgniaMadera ? "Posee" : "No posee")
+                            </div>
+                        </div>
+
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Función</div>
+                                <div class="col-lg-9 col-md-8">
+                                    @(Model.Funcion != null && Model.Funcion.Nombre != null ? Model.Funcion.Nombre : "-")
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Rama</div>
+                                <div class="col-lg-9 col-md-8">
+                                    @(Model.Rama != null && Model.Rama.Nombre != null ? Model.Rama.Nombre : "-")
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                        @if(Model.Activo == true)
+                        {
+                            <td><a asp-area="Admin" asp-controller="Miembros" asp-action="GetMiembroList" class="btn btn-secondary">Volver</a></td>
+
+                        }
+                        else
+                        {
+                            <td><a asp-area="Admin" asp-controller="Miembros" asp-action="GetExMiembrosList" class="btn btn-secondary">Volver</a></td>
+                        }
+                    </div><!-- End Bordered Tabs -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

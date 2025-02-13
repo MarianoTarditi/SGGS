@@ -1,0 +1,133 @@
+﻿@using Entity.Identity.ViewModels
+@model List<UserVM>
+@{
+    ViewData["Title"] = "GetUserList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    @Html.AntiForgeryToken() <!-- Esto genera el token -->
+
+<div class="pagetitle">
+    <h1>Usuarios</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Usuarios</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<div class="card">
+    <div class="card-body">
+        <!-- Table with hoverable rows -->
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre de Usuario</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.UserName</td>
+                        <td>@item.Email</td>
+                        <td>@item.UserRoles.FirstOrDefault()</td>
+                        <td>
+                            <button type="button" class="btn btn-primary abrir-modal"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#roleModal"
+                                    data-username="@item.UserName"
+                                    data-currentrole="@item.UserRoles.FirstOrDefault()">
+                                Cambiar Rol
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para cambiar el rol -->
+<div class="modal fade" id="roleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cambiar Rol</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Usuario:</strong> <span id="modalUserName"></span></p>
+                <div style="margin-bottom: 20px;">
+                    <label for="modalRoleSelect">Selecciona un nuevo rol:</label>
+                    <select id="modalRoleSelect" class="form-control">
+                        @foreach (var role in ViewBag.Roles)
+                        {
+                            <option value="@role">@role</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="guardarRol">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $(".abrir-modal").click(function () {
+            var userName = $(this).data("username"); // Obtener el nombre de usuario
+            var currentRole = $(this).data("currentrole"); // Obtener el rol actual
+
+            console.log("Abrir Modal - Usuario:", userName, "Rol Actual:", currentRole);
+
+            $("#modalUserName").text(userName); // Mostrar el nombre en el modal
+            $("#guardarRol").attr("data-username", userName); // Guardar el usuario en el botón
+
+            // Seleccionar el rol actual en el combo box
+            $("#modalRoleSelect").val(currentRole);
+        });
+
+        $("#guardarRol").click(function () {
+            var userName = $(this).attr("data-username"); // Obtener el usuario seleccionado
+            var newRole = $("#modalRoleSelect").val(); // Obtener el nuevo rol seleccionado
+
+            console.log("Guardar Cambios - Usuario:", userName, "Nuevo Rol:", newRole);
+
+            if (!userName) {
+                toastr.error("Error: No se pudo obtener el nombre de usuario.");
+                return;
+            }
+
+            // Enviar datos al servidor mediante AJAX
+            $.ajax({
+                url: '/Admin/UpdateUserRole', // Ruta al método en el controlador
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ UserName: userName, NewRole: newRole }),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        setTimeout(function () {
+                            $('#roleModal').modal('hide'); // Cerrar modal
+                            location.reload(); // Recargar la tabla
+                        }, 700);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Ocurrió un error al actualizar el rol.");
+                }
+            });
+        });
+    });
+
+
+</script>

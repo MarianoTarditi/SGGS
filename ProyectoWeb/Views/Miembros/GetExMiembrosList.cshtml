@@ -1,0 +1,141 @@
+﻿@model List<VMMiembro>
+
+@{
+    ViewData["Title"] = "GetExMiembroList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Ex-Miembros</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Miembros</a></li>
+            <li class="breadcrumb-item active">Lista Ex-Miembros</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.29.0/tableExport.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table-locale-all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/extensions/export/bootstrap-table-export.min.js"></script>
+
+<style>
+    .select,
+    #locale {
+        width: 100%;
+    }
+
+    .like {
+        margin-right: 10px;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center; /* Centrar los botones horizontalmente */
+    }
+
+        .action-buttons a {
+            margin: 0 5px; /* Espacio entre los botones */
+            min-width: 80px; /* Ancho mínimo para los botones */
+            text-align: center; /* Alineación centrada del texto en el botón */
+        }
+
+    td {
+        text-align: center; /* Centrar el contenido de la celda */
+    }
+
+        th[data-field="acciones"], td[data-field="acciones"] {
+            width: 150px; /* Ajusta este valor según sea necesario */
+            min-width: 150px; /* Asegura que la columna no sea más pequeña que este valor */
+        }
+
+    .pagetitle {
+        margin-bottom: -52px;
+    }
+</style>
+
+<table id="table"
+       data-id-field="Id"
+       data-search="true"
+       data-show-refresh="true"
+       data-show-toggle="true"
+       data-show-fullscreen="true"
+       data-show-columns="true"
+       data-show-columns-toggle-all="true"
+       data-detail-view="true"
+       data-show-export="true"
+       data-click-to-select="true"
+       data-detail-formatter="detailFormatter"
+       data-minimum-count-columns="2"
+       data-show-pagination-switch="true"
+       data-pagination="true"
+       data-page-list="[10, 25, 50, 100, all]"
+       data-show-footer="true"
+       data-side-pagination="client">
+    <thead>
+        <tr>
+            <th data-field="id" data-visible="false">ID</th> <!-- Columna ID oculta -->
+            <th data-field="nombre" data-sortable="true">Nombre</th>
+            <th data-field="apellido" data-sortable="true">Apellido</th>
+            <th data-field="dni" data-sortable="true">Dni</th>
+            <th data-field="categoria" data-sortable="true">Catégoria</th>
+            <th data-field="telefono" data-sortable="true">Teléfono</th>
+            <th data-field="localidad" data-sortable="true">Localidad</th>
+            <th data-field="acciones" data-formatter="operateFormatter">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Nombre</td>
+                <td>@item.Apellido</td>
+                <td>@item.Dni</td>
+                <td><span class="badge bg-secondary">@item.Categoria.Nombre</span></td>      
+                <td>@item.Telefono</td>
+                <td>@item.Localidad.Nombre</td>
+                
+                <td class="action-buttons">
+                    <a asp-area="Admin" asp-controller="Miembros" asp-action="GetMiembro" asp-route-id="@item.Id" class="btn btn-success btn-sm">Ver</a>
+                    <a asp-area="Admin" asp-controller="Miembros" asp-action="AddMiembro" asp-route-id="@item.Id" class="btn btn-info btn-sm">Modificar</a>
+                    <a asp-area="Admin" asp-controller="Miembros" asp-action="DeleteMiembro" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    var $table = $('#table');
+    var $remove = $('#remove');
+    var selections = [];
+
+    function getIdSelections() {
+        return $.map($table.bootstrapTable('getSelections'), function (row) {
+            return row.id;
+        });
+    }
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<div class="action-buttons">',
+            '<a class="btn btn-success btn-sm" href="/Miembros/GetMiembro?id=' + row.id + '"><i class="bi bi-eye-fill"></i></a> ',
+            '<a class="btn btn-primary btn-sm" href="/Miembros/DeleteMiembro?id=' + row.id + '">Restaurar</a> ',
+            '</div>'
+        ].join('');
+    }
+
+    function initTable() {
+        $table.bootstrapTable({
+            locale: 'es-ES' // Establecer el idioma por defecto directamente
+        });
+    }
+
+    $(function () {
+        initTable();
+    });
+</script>

@@ -1,0 +1,67 @@
+﻿using Entity.Identity.Entities;
+using Entity.Identity.ViewModels;
+using Entity.WebAplication.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NToastNotify;
+using ServiceLayer.Messages.Identity;
+using ServiceLayer.Services.Identity.Abstract;
+using System.Data;
+
+namespace ProyectoWeb.Controllers
+{
+    [Authorize(Roles = "SuperAdmin")]
+    public class AdminController : Controller
+    {
+        private readonly IAuthenticationAdminService _admin;
+        private readonly IToastNotification _toasty;
+        private readonly RoleManager<AppRole> _roleManager;
+
+        public AdminController(IToastNotification toasty, IAuthenticationAdminService admin, RoleManager<AppRole> roleManager)
+        {
+            _toasty = toasty;
+            _admin = admin;
+            _roleManager = roleManager;
+        }
+
+        public async Task<IActionResult> GetUserList()
+        {
+            var userListVM = await _admin.GetUserListAsync();
+
+            ViewBag.Roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            return View(userListVM);
+        }
+
+
+        public async Task<IActionResult> ExtendClaim(string username)
+        {
+            var renewClaim = await _admin.ExtendClaimAsync(username);
+            if (!renewClaim.Succeeded)
+            {
+                _toasty.AddErrorToastMessage(NotificationMessagesIdentity.ExtendClaimFailed, new ToastrOptions { Title = "¡Lo sentimos!" });
+                return RedirectToAction("GetUserList", "Admin", new { Area = "Admin" });
+            }
+            _toasty.AddSuccessToastMessage(NotificationMessagesIdentity.ExtendClaimSuccess, new ToastrOptions { Title = "¡Felicitaciones!" });
+            return RedirectToAction("GetUserList", "Admin", new { Area = "Admin" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUserRole([FromBody] UserRoleUpdateRequestVM request)
+        {
+            if (string.IsNullOrEmpty(request.UserName))
+            {
+                return Json(new { success = false, message = "El nombre de usuario no puede estar vacío.", type = "error" });
+            }
+
+            var updateResult = await _admin.UpdateUserRoleAsync(request.UserName, request.NewRole);
+            if (!updateResult.Succeeded)
+            {
+                return Json(new { success = false, message = "Error al actualizar el rol.", type = "error" });
+            }
+
+            return Json(new { success = true, message = NotificationMessagesIdentity.UserEdit(request.UserName!), type = "success" });
+        }
+    }
+}

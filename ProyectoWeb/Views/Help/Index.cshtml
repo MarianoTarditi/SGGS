@@ -1,0 +1,655 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+<html lang="es"
+      dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="Ow5qIuVPCkvAhpSApBUzNzEENeSbNp7fdhfB7E5p">
+
+    <title>Cruz del Sur | Ayuda      </title>
+
+    <meta name="description" content="" />
+
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <script src="https://js.sentry-cdn.com/b10ef76286824d49898ab8c30e4a126a.min.js"
+            crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/bootstrap/bootstrap.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/daterangepicker.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/fontawesome.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/footable.standalone.min.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/fullcalendar@5.2.0.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/jquery-jvectormap-2.0.5.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/leaflet.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/line-awesome.min.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/MarkerCluster.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/MarkerCluster.Default.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/select2.min.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/slick.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/star-rating-svg.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/trumbowyg.min.css">
+    <link rel="stylesheet" href="https://www.cruz-del-sur.org.ar/vendor_assets/css/wickedpicker.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    @*     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+ *@
+    <link href="~/Admin/assets/css/hola.css" rel="stylesheet">
+    <link href="~/Admin/assets/css/_buttons.scss" rel="stylesheet">
+    <link href="~/Admin/assets/css/style2.css" rel="stylesheet">
+    <link href="~/Admin/assets/css/_helpers.scss" rel="stylesheet">
+    <link href="~/Admin/assets/css/_badge.scss" rel="stylesheet">
+    <link href="~/Admin/assets/css/_utilities.scss" rel="stylesheet">
+
+
+
+    @*     <link href="~/Admin/assets/css/cloudfare.css" rel="stylesheet">
+ *@    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+
+
+    <style>
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+            font-weight: 500;
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .icon {
+            font-size: 1.25rem;
+            transition: transform 0.2s;
+        }
+
+        .collapse.show .icon {
+            transform: rotate(45deg); /* Cambia el ícono de más a menos cuando se despliega */
+        }
+
+
+        [wire\:loading], [wire\:loading\.delay], [wire\:loading\.inline-block], [wire\:loading\.inline], [wire\:loading\.block], [wire\:loading\.flex], [wire\:loading\.table], [wire\:loading\.grid], [wire\:loading\.inline-flex] {
+            display: none;
+        }
+
+        [wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short], [wire\:loading\.delay\.long], [wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest] {
+            display: none;
+        }
+
+        [wire\:offline] {
+            display: none;
+        }
+
+        [wire\:dirty]:not(textarea):not(input):not(select) {
+            display: none;
+        }
+
+        input:-webkit-autofill, select:-webkit-autofill, textarea:-webkit-autofill {
+            animation-duration: 50000s;
+            animation-name: livewireautofill;
+        }
+    </style>
+
+    <link rel="shortcut icon" href="https://www.cruz-del-sur.org.ar/favicon.ico">
+</head>
+<body class="layout-light side-menu  overlayScroll ">
+    <header class="header-top">
+    </header>
+    <main class="main-content">
+        <div class="contents">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div wire:id="5Dhmsv1GzOMjRBBY6gMq" wire:initial-data="{&quot;fingerprint&quot;:{&quot;id&quot;:&quot;5Dhmsv1GzOMjRBBY6gMq&quot;,&quot;name&quot;:&quot;components.sweet-alert&quot;,&quot;locale&quot;:&quot;es&quot;,&quot;path&quot;:&quot;backend\/faq&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;v&quot;:&quot;acj&quot;},&quot;effects&quot;:{&quot;listeners&quot;:[]},&quot;serverMemo&quot;:{&quot;children&quot;:[],&quot;errors&quot;:[],&quot;htmlHash&quot;:&quot;49b3cb58&quot;,&quot;data&quot;:[],&quot;dataMeta&quot;:[],&quot;checksum&quot;:&quot;cd4e6713f859f625df9dd9d26c2185011662ea1d1ac4fac0b03aa70bbbd3df81&quot;}}">
+                        </div>
+
+                        <!-- Livewire Component wire-end:5Dhmsv1GzOMjRBBY6gMq -->      <div wire:id="PP4AZrxzMLGx9ZYY7LjN" wire:initial-data="{&quot;fingerprint&quot;:{&quot;id&quot;:&quot;PP4AZrxzMLGx9ZYY7LjN&quot;,&quot;name&quot;:&quot;components.toast&quot;,&quot;locale&quot;:&quot;es&quot;,&quot;path&quot;:&quot;backend\/faq&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;v&quot;:&quot;acj&quot;},&quot;effects&quot;:{&quot;listeners&quot;:[]},&quot;serverMemo&quot;:{&quot;children&quot;:[],&quot;errors&quot;:[],&quot;htmlHash&quot;:&quot;49b3cb58&quot;,&quot;data&quot;:[],&quot;dataMeta&quot;:[],&quot;checksum&quot;:&quot;7b7bb01c7c28e184c98cf666c8e8240cbd2a5768c066f5a0a91012394ee50282&quot;}}">
+                        </div>
+
+                        <!-- Livewire Component wire-end:PP4AZrxzMLGx9ZYY7LjN -->
+                    </div>
+                </div>                   <div class="social-dash-wrap">
+                    <div class="pagetitle">
+                        <h1>Ayuda</h1>
+                        <nav>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">Ayuda</li>
+                            </ol>
+                        </nav>
+                    </div><!-- End Page Title -->
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-5">
+                            <!-- Card 1 -->
+                            <div class="card shadow-lg">
+                                <div class="card-body p-0">
+                                    <div class="faqs-wrapper">
+                                        <div class="faqs-wrapper-tab p-15 pt-25 pb-30">
+                                            <div class="nav flex-column text-left mb-2" id="v-pills-tab" role="tablist"
+                                                 aria-orientation="vertical">
+                                                <a class="nav-link"
+                                                   href="https://www.cruz-del-sur.org.ar/backend/faq/1">
+                                                    <span class="dot bg-primary"></span>Miembros
+                                                </a>
+                                                <a class="nav-link"
+                                                   href="https://www.cruz-del-sur.org.ar/backend/faq/2">
+                                                    <span class="dot bg-primary"></span>Cuenta Corriente
+                                                </a>
+                                                <a class="nav-link"
+                                                   href="https://www.cruz-del-sur.org.ar/backend/faq/3">
+                                                    <span class="dot bg-primary"></span>Encuentros
+                                                </a>
+                                                <a class="nav-link"
+                                                   href="https://www.cruz-del-sur.org.ar/backend/faq/4">
+                                                    <span class="dot bg-primary"></span>Padrón Asambleario
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="card shadow-lg mt-25 mb-md-50 mb-25">
+                                <div class="card-body py-40 px-50">
+                                    <div class="faq-support text-center">
+                                        <img src="https://www.cruz-del-sur.org.ar/img/svg/faq-support.svg" alt="support"
+                                             class="svg img-fluid">
+                                        <h5 class="fw-500 mt-30 mb-20 color-dark">¿Necesitas más ayuda?</h5>
+                                        <div class="content-center">
+                                            <a href="/cdn-cgi/l/email-protection#debdacaba4babbb2adabac9eadbdb1abaaadf0b1acb9f0bfac" target="_blank" class="btn btn-primary btn-default btn-squared text-capitalize px-30">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>  Soporte
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- ends: col -->
+                        <div class="col-xl-9 col-sm-7">
+                            <div class="mb-30">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="application-faqs">
+                                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq1">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse1" aria-expanded="true"
+                                                               aria-controls="collapse1">
+                                                                ¿Cómo doy de baja a un miembro?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse1" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq1">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                Para dar de baja a cualquier persona, le tenés que eliminar TODAS sus funciones en el organismo. Hacés click en cada miembro el ícono de EDITAR y al pié en sus FUNCIONES, debés hacer click en el botón rojo DAR DE BAJA en todas sus funciones activas.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq2">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse2" aria-expanded="true"
+                                                               aria-controls="collapse2">
+                                                                ¿Cómo sé si quedó dado de baja?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse2" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq2">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                Podés verificar si efectivamente quedó dado de baja, ingresando a MIEMBROS – LISTADO DETALLADO y buscar por apellido o DNI si ya no figura.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq3">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse3" aria-expanded="true"
+                                                               aria-controls="collapse3">
+                                                                ¿Cómo puedo pasar de rama a varios beneficiarios al mismo tiempo?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse3" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq3">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                Vas en el PANEL DE CONTROL a la solapa FUNCION, seleccionás por ejemplo a &quot;Scout&quot; y te va a salir la lista de todos los Scouts de tu Grupo, tildás el casillero que está a la izquierda del documento a todos los que pasan a Caminantes y en el cuadro ACCIONES que aparece arriba a la derecha desplegás las opciones y seleccionás PASE A LA RAMA SIGUIENTE (Va a salir cartel consultando y pidiendo confirmarción de los pases) y luego el Sistema realiza la operación de asignarle la función de Caminante y finalizarle la de Scout a todos juntos.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq4">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse4" aria-expanded="true"
+                                                               aria-controls="collapse4">
+                                                                ¿Y lo puedo hacer igual pero desde la solapa de RAMA?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse4" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq4">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                No, desde la solapa de rama selecciona a todos los miembros de la unidad, incluyendo a los adultos, por lo que en la casilla de acción múltiple no aparecerá la opción de PASE A LA RAMA SIGUIENTE.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq5">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse5" aria-expanded="true"
+                                                               aria-controls="collapse5">
+                                                                ¿Cómo le asigno función al nuevo Jefe de Grupo si me saca del sistema?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse5" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq5">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                No podés. La función de JG implica también la asignación de usuario y contraseña y se realiza en la Oficina Scout Nacional en cuanto el Director de Distrito envía la ratificación del nuevo Jefe de Grupo conforme al Manual General de Normas.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq6">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse6" aria-expanded="true"
+                                                               aria-controls="collapse6">
+                                                                Vino una persona que antes estaba en otro Grupo ¿Cómo le pido el pase en el Sistema?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse6" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq6">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                Vas a AGREGAR MIEMBRO cargás sus datos y después de completar el DNI te va a saltar un cuadro para solicitar el pase en el Sistema. Debés completar el cargo y función y pedir el pase. El otro Grupo tiene 15 días para informar sus antecedentes y/o deudas. También debe completar el trámite el Distrito y la Zona. Si pasan 15 días se destraba automáticamente y te va a figurar en la lista de miembros
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq7">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse7" aria-expanded="true"
+                                                               aria-controls="collapse7">
+                                                                ¿Y si ya lo habían dado de baja?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse7" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq7">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                Si ya lo habían dado de baja, igualmente deben completar el pase el Grupo, Distrito y Zona.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq8">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse8" aria-expanded="true"
+                                                               aria-controls="collapse8">
+                                                                ¿Cómo le cambio la función a una persona?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse8" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq8">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                Para cambiarlo de función debés ir a la persona, hacer click en MODIFICAR DATOS (ícono con forma de lápiz a la derecha de la línea de la persona) y en al pié en la parte de FUNCIONES, PRIMERO debés asignarle la nueva función y DESPUÉS repetir el procedimiento para finalizar la función vigente, dado que si le finalizás primero la función y es la única, quedará dado de baja.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq9">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse9" aria-expanded="true"
+                                                               aria-controls="collapse9">
+                                                                ¿Y si me equivoqué y lo dí de baja? ¿Cómo hago?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse9" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq9">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                Si no tenía función en otro organismo, lo buscás en EX MIEMBROS, hacés click en MODIFICAR DATOS y al pié en FUNCIONES le asignás una, para que vuelva a estar de alta.
+                                                                Si tenía función en otro organismo, deberás ir a AGREGAR MIEMBRO y solicitar su pase para volver a registrarlo en tu Grupo.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq10">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse10" aria-expanded="true"
+                                                               aria-controls="collapse10">
+                                                                ¿Si una persona de mi Grupo también trabaja en Distrito o Zona lo tengo que dar de baja?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse10" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq10">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                No. Todas las personas deben tener declaradas todas sus funciones en todos los niveles donde desempeñen sus funciones. La cuota se cobra una sola vez, por el Organismo superior en el que desempeñe funciones.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="faq11">
+                                                        <h4 class="panel-title">
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse11" aria-expanded="true"
+                                                               aria-controls="collapse11">
+                                                                ¿Le van a cobrar dos veces?
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse11" class="panel-collapse collapse in"
+                                                         role="tabpanel" aria-labelledby="faq11">
+                                                        <div class="panel-body">
+                                                            <p class="mb-sm-35 mb-20">
+                                                                No, el Sistema la cobra en la cuenta corriente del nivel superior en el que esté registrado y si lo detecta en otro nivel, ya no lo vuelve a cobrar.
+                                                            </p>
+                                                            <span class="fs-14 fw-500 color-dark">Este artículo fue útil?</span>
+                                                            <div class="button-group d-flex mt-2">
+                                                                <button class="btn btn-default btn-squared btn-outline-success px-15 ">
+                                                                    <span data-feather="smile"></span>
+                                                                    Si
+                                                                </button>
+                                                                <button class="btn btn-default btn-squared btn-outline-danger px-15 ">
+                                                                    <span data-feather="frown"></span>
+                                                                    No
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Edit Profile End -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </main>
+@*     <div id="overlayer">
+        <span class="loader-overlay">
+            <div class="atbd-spin-dots spin-lg">
+                <span class="spin-dot badge-dot dot-primary"></span>
+                <span class="spin-dot badge-dot dot-primary"></span>
+                <span class="spin-dot badge-dot dot-primary"></span>
+                <span class="spin-dot badge-dot dot-primary"></span>
+            </div>
+        </span>
+    </div> *@
+    <!--include('backend.layouts.partials._customizer')-->
+    <div class="overlay-dark-sidebar"></div>
+    <div class="customizer-overlay"></div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery/jquery-3.5.1.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery/jquery-ui.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/bootstrap/popper.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/bootstrap/bootstrap.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/accordion.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/autoComplete.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/Chart.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/charts.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/moment/moment.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/daterangepicker.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/drawer.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/dynamicBadge.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/dynamicCheckbox.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/feather.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/footable.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/fullcalendar@5.2.0.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/google-chart.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery-jvectormap-2.0.5.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery.countdown.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery.filterizr.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery.mCustomScrollbar.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery.peity.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/jquery.star-rating-svg.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/leaflet.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/leaflet.markercluster.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/loader.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/message.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/moment.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/muuri.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/notification.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/popover.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/select2.full.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/slick.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/trumbowyg.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/trumbowyg.upload64.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/vendor_assets/js/wickedpicker.min.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/js/drag-drop.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/js/full-calendar.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/js/googlemap-init.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/js/jvectormap-init.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/js/footable.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/js/leaflet-init.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="//cdn.ckeditor.com/ckeditor5/32.0.0/classic/ckeditor.js"></script>
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script src="https://www.cruz-del-sur.org.ar/js/main.js"></script>
+    <script src="https://www.cruz-del-sur.org.ar/js/app.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4LE6ST694"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-J4LE6ST694');
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.2/cdn.min.js" integrity="sha512-B/OEIDaWXc61XNJlO0TQILX/mFbhx77bwQKzok6I8suB6WP9yvN8zgaiyLmekPr5eRNmjfpR40zos29ktaSHEg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="/livewire/livewire.js?id=de3fca26689cb5a39af4" data-turbo-eval="false" data-turbolinks-eval="false"></script>
+    <script data-turbo-eval="false" data-turbolinks-eval="false">window.livewire = new Livewire();window.Livewire = window.livewire;window.livewire_app_url = '';window.livewire_token = 'Ow5qIuVPCkvAhpSApBUzNzEENeSbNp7fdhfB7E5p';window.deferLoadingAlpine = function (callback) {window.addEventListener('livewire:load', function () {callback();});};let started = false;window.addEventListener('alpine:initializing', function () {if (! started) {window.livewire.start();started = true;}});document.addEventListener("DOMContentLoaded", function () {if (! started) {window.livewire.start();started = true;}});</script>
+
+    <script>
+        //livewire ready
+        document.addEventListener('livewire:load', function () {
+            window.livewire.on('sweet-alert', function(data) {
+                Swal.fire({
+                    title: data.title,
+                    text: data.description,
+                    icon: data.icon,
+                    showCancelButton: true,
+                    confirmButtonColor: data.confirmButtonColor,
+                    cancelButtonColor: '#666',
+                    confirmButtonText: data.confirmButtonText,
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        console.log("confirmed");
+                        Livewire.emit(data.event, data.id)
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script>
+        //livewire ready
+        document.addEventListener('livewire:load', function () {
+            window.livewire.on('toast', function(data) {
+                Toastify({
+                    text: data.title,
+                    duration: 5000,
+                    gravity: "bottom", // `top` or `bottom`
+                    position: "right", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    className: "toast toast-border-primary show",
+                    onClick: function(){} // Callback after click
+                }).showToast();
+            });
+        });
+
+    </script>
+
+
+    <script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"88c9ff2950","applicationID":"955912529","transactionName":"YVIGYBZWChVTUhIIDFgYJVcQXgsIHVMHAghTWQAaAlYVSFtfAgQb","queueTime":0,"applicationTime":136,"atts":"TRUFFl5MGRs=","errorBeacon":"bam.nr-data.net","agent":""}</script>
+</body>
+</html>

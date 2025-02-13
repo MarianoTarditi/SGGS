@@ -1,0 +1,99 @@
+﻿@model VMOrganismo
+
+@{
+    ViewData["Title"] = Model.Id > 0 ? "Editar Organismo" : "Agregar Organismo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@ViewData["Title"]</h5>
+
+        <!-- Vertical Form -->
+        <form asp-area="Admin" asp-controller="Organismo" asp-action="AddOrganismo" method="post" class="row g-3">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="col-6">
+                <label asp-for="Nombre" class="form-label">Nombre</label>
+                <input asp-for="Nombre" type="text" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label asp-for="Descripcion" class="form-label">Descripción</label>
+                <textarea asp-for="Descripcion" class="form-control" style="height: 100px"></textarea>
+            </div>
+
+            <div class="col-6">
+                <label asp-for="FechaCreacion" class="form-label">Fecha de Creación</label>
+                <input asp-for="FechaCreacion" type="date" class="form-control">
+            </div>
+
+            <div class="col-6">
+                <label for="inputProvincia" class="form-label">Provincia</label>
+                <select asp-for="ProvinciaId" id="inputProvincia" class="form-select" asp-items="ViewBag.Provincias" onchange="loadLocalidades()">
+                    <option value="">Seleccione una provincia...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label for="inputLocalidad" class="form-label">Localidad</label>
+                <select asp-for="LocalidadId" id="inputLocalidad" class="form-select">
+                    <option value="">Seleccione una localidad...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label asp-for="Direccion" class="form-label">Dirección</label>
+                <input asp-for="Direccion" type="text" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label asp-for="CodigoPostal" class="form-label">Código Postal</label>
+                <input asp-for="CodigoPostal" type="text" class="form-control" />
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <button type="button" class="btn btn-danger" onclick="window.history.back();">Cancelar</button>
+                <button type="reset" class="btn btn-secondary">Limpiar</button>
+            </div>
+        </form><!-- Vertical Form -->
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        function loadLocalidades() {
+            var provinciaId = document.getElementById('inputProvincia').value;
+            var localidadesDropdown = document.getElementById('inputLocalidad');
+            localidadesDropdown.innerHTML = '<option value="">Cargando...</option>';
+
+            fetch(`/Admin/Organismo/GetLocalidades?provinciaId=${provinciaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    localidadesDropdown.innerHTML = '<option value="">Seleccione una localidad...</option>';
+                    data.forEach(localidad => {
+                        var option = document.createElement('option');
+                        option.value = localidad.id;
+                        option.text = localidad.nombre;
+                        localidadesDropdown.add(option);
+                    });
+
+                    // Si es una edición, selecciona la localidad actual
+                    var currentLocalidadId = '@Model.LocalidadId';
+                    if (currentLocalidadId) {
+                        localidadesDropdown.value = currentLocalidadId;
+                    }
+                });
+        }
+
+        // Inicializar localidades si se está editando
+        document.addEventListener('DOMContentLoaded', function () {
+            if ('@Model.ProvinciaId') {
+                loadLocalidades();
+            }
+        });
+    </script>
+}

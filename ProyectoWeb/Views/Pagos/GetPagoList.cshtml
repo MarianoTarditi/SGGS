@@ -1,0 +1,248 @@
+﻿@model List<VMPago>
+
+@{
+    ViewData["Title"] = "GetPagoList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Pagos</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Lista Pagos</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.29.0/tableExport.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table-locale-all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/extensions/export/bootstrap-table-export.min.js"></script>
+
+
+
+<style>
+
+    .select,
+    #locale {
+        width: 100%;
+    }
+
+    .like {
+        margin-right: 10px;
+    }
+
+
+    .action-buttons {
+        display: flex;
+        justify-content: center; /* Centrar los botones horizontalmente */
+    }
+
+        .action-buttons a {
+            margin: 0 5px; /* Espacio entre los botones */
+            min-width: 80px; /* Ancho mínimo para los botones */
+            text-align: center; /* Alineación centrada del texto en el botón */
+        }
+
+    td {
+        text-align: center; /* Centrar el contenido de la celda */
+    }
+
+        th[data-field="acciones"], td[data-field="acciones"] {
+            width: 150px; /* Ajusta este valor según sea necesario */
+            min-width: 150px; /* Asegura que la columna no sea más pequeña que este valor */
+        }
+
+    .pagetitle {
+        margin-bottom: -52px;
+    }
+</style>
+
+<div class="table-container">
+    <table id="table"
+           data-id-field="Id"
+           data-search="true"
+           data-show-refresh="true"
+           data-show-toggle="true"
+           data-show-fullscreen="true"
+           data-show-columns="true"
+           data-show-columns-toggle-all="true"
+           data-detail-view="true"
+           data-show-export="true"
+           data-click-to-select="true"
+           data-detail-formatter="detailFormatter"
+           data-minimum-count-columns="2"
+           data-show-pagination-switch="true"
+           data-pagination="true"
+           data-page-list="[5, 10, 20, 50, all]"
+           data-show-footer="true"
+           data-side-pagination="client">
+        <thead>
+            <tr>
+   
+                <th data-field="id" data-visible="false">ID</th> <!-- Columna ID oculta -->
+                <th data-field="codigo" data-sortable="true">Código</th>
+                <th data-field="estado" data-sortable="true">Estado</th>
+                <th data-field="fechaDePago" data-sortable="true">Fecha de Pago</th>
+                <th data-field="tipoModalidad" data-sortable="true">Modalidad</th>
+                <th data-field="monto" data-sortable="true">Monto</th>
+                <th data-field="detallePago" data-sortable="true">Categoria</th>
+                <th data-field="miembro" data-sortable="false">Miembro</th>
+                <th data-field="observacion" data-sortable="false">Observación</th>
+                <th data-field="acciones" data-formatter="operateFormatter">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+ 
+                    <td>@item.Id</td>
+                    <td><strong>#@item.Codigo</strong></td>
+                    @if (item.Autorizacion.EstadoAutorizacion.Estado == "Autorizado")
+                    {
+                        <td><span class="badge bg-success">@item.Autorizacion.EstadoAutorizacion.Estado</span></td>
+                    }
+                    else @if (item.Autorizacion.EstadoAutorizacion.Estado == "Pendiente")
+                    {
+                        <td><span class="badge bg-warning">@item.Autorizacion.EstadoAutorizacion.Estado</span></td>
+                    }
+                    else
+                    {
+                        <td><span class="badge bg-danger">@item.Autorizacion.EstadoAutorizacion.Estado</span></td>
+                    }
+                    <td>@item.FechaDePago</td>
+                    <td>@item.TipoModalidad</td>
+                    <td><span class="badge border-primary border-2 text-dark" style="font-size: 14px">$@item.Monto</span></td>
+                    <td>
+                        @foreach (var detalle in item.ListaDetalles)
+                        {
+                            <span class="badge bg-secondary">@detalle.CategoriaPago?.CategoriaNombre</span>
+
+                        }
+                    </td>
+                    <td><span class="badge border-primary border-2 text-dark" style="font-size: 15px">@item.Miembro.Nombre</span></td>
+                    <td>@item.Observacion</td>
+                    <td class="action-buttons">
+                        <a asp-area="Admin" asp-controller="Pagos" asp-action="GetPago" asp-route-id="@item.Id" class="btn btn-success btn-sm"><i class="bi bi-eye-fill"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<td><a asp-area="Admin" asp-controller="Pagos" asp-action="AddPago" class="btn btn-success">Agregar</a></td>
+<td><button id="btnExportPdf" class="btn btn-danger">Exportar PDF</button></td>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    var $table = $('#table');
+    var $remove = $('#remove');
+    var selections = [];
+
+    function getIdSelections() {
+        return $.map($table.bootstrapTable('getSelections'), function (row) {
+            return row.id;
+        });
+    }
+
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<div class="action-buttons">',
+            '<a class="btn btn-success btn-sm" href="/Pagos/GetPago?id=' + row.id + '"><i class="bi bi-eye-fill"></i></a> ',
+            '</div>'
+        ].join('');
+    }
+
+    function initTable() {
+        $table.bootstrapTable({
+            locale: 'es-ES' // Establecer el idioma por defecto directamente
+        });
+    }
+
+    $(function () {
+        initTable();
+    });
+
+         document.getElementById("btnExportPdf").addEventListener("click", function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF("p", "mm", "a4");
+
+        // Fecha y hora actual
+        const fechaActual = new Date().toLocaleDateString();
+        const horaActual = new Date().toLocaleTimeString();
+
+        // Agregar título
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text("Lista de Pagos", 105, 12, { align: "center" });
+
+        // Agregar fecha de exportación
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "italic");
+        doc.text(`Fecha de exportación: ${fechaActual} - ${horaActual}`, 14, 18);
+
+        // Línea decorativa
+        doc.setDrawColor(0, 0, 0);
+        doc.line(14, 22, 196, 22);
+
+        // Obtener datos de la tabla
+        const table = document.getElementById("table");
+        const headers = [];
+        const data = [];
+
+        // Obtener el número total de columnas
+        const colCount = table.querySelectorAll("thead th").length;
+
+        // Extraer encabezados excluyendo la primera (ID) y la última (Acciones)
+        table.querySelectorAll("thead th").forEach((th, index) => {
+            if (index !== 0 && index !== colCount - 1) {
+                headers.push(th.innerText);
+            }
+        });
+
+        // Extraer datos de las filas excluyendo la primera (ID) y la última (Acciones)
+        table.querySelectorAll("tbody tr").forEach(tr => {
+            const rowData = [];
+            tr.querySelectorAll("td").forEach((td, index) => {
+                if (index !== 0 && index !== colCount - 1) {
+                    rowData.push(td.innerText);
+                }
+            });
+            data.push(rowData);
+        });
+
+        // Configuración de la tabla en el PDF
+        doc.autoTable({
+            head: [headers],
+            body: data,
+            startY: 25,
+            theme: 'grid',
+            styles: { fontSize: 9, cellPadding: 2, valign: 'middle' },
+            headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [240, 240, 240] },
+            margin: { top: 25, left: 10, right: 10 }
+        });
+
+        // Pie de página con número de página
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(9);
+            doc.text(`Página ${i} de ${pageCount}`, 105, 287, { align: "center" });
+        }
+
+        // Descargar el PDF
+        doc.save(`ListaPagos_${fechaActual}.pdf`);
+    });
+
+
+
+</script>

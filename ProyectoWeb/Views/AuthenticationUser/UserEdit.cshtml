@@ -1,0 +1,141 @@
+﻿@model UserEditVM
+
+@{
+    ViewData["Title"] = "UserEdit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Admin/assets/css/style.css" rel="stylesheet">
+
+<style>
+    #toggleNewPassword, #toggleConfirmPassword {
+        cursor: pointer;
+    }
+
+
+</style>
+
+<div class="pagetitle">
+    <h1>Usuarios</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Modificar Usuario</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+@if (!string.IsNullOrEmpty(ViewBag.Result))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div asp-validation-summary="All"></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form class="row g-3" asp-controller="AuthenticationUser" asp-action="UserEdit" method="post" enctype="multipart/form-data">
+    <input asp-for="ConcurrencyStamp" type="hidden" />
+
+    <div class="col-12">
+        <label asp-for="Username" class="form-label">Nombre de Usuario</label>
+        <input asp-for="Username" type="text" class="form-control">
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" type="text" class="form-control">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="PhoneNumber" class="form-label">Número de Teléfono</label>
+        <input asp-for="PhoneNumber" type="text" class="form-control">
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="Password" class="form-label">Contraseña</label>
+        <div class="position-relative">
+            <input asp-for="Password" type="password" class="form-control pe-5" id="password">
+            <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3" id="togglePassword" style="cursor: pointer;"></i>
+        </div>
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="NewPassword" class="form-label">Nueva Contraseña</label>
+        <div class="position-relative">
+            <input asp-for="NewPassword" type="password" class="form-control pe-5" id="newPassword">
+            <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3" id="toggleNewPassword" style="cursor: pointer;"></i>
+        </div>
+        <span asp-validation-for="NewPassword" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="ConfirmNewPassword" class="form-label">Confirmar Contraseña</label>
+        <div class="position-relative">
+            <input asp-for="ConfirmNewPassword" type="password" class="form-control pe-5" id="confirmPassword">
+            <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3" id="toggleConfirmPassword" style="cursor: pointer;"></i>
+        </div>
+        <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="form-floating">
+            <input asp-for="Photo" accept="image/*" type="file" class="form-control" placeholder="Photo">
+            <span asp-validation-for="Photo" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary w-8" type="submit">Guardar Cambios</button>
+    </div>
+</form>
+
+
+<script>
+       document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        const eyeIcon = document.querySelector('#eyeIcon');
+
+        togglePassword.addEventListener('click', function() {
+            // Cambiar el tipo de atributo
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+
+            // Alternar el icono de ojo
+            eyeIcon.classList.toggle('bi-eye');
+            eyeIcon.classList.toggle('bi-eye-slash');
+        });
+    });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const toggleNewPassword = document.querySelector('#toggleNewPassword');
+        const newPassword = document.querySelector('#newPassword');
+        const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+        const confirmPassword = document.querySelector('#confirmPassword');
+
+        toggleNewPassword.addEventListener('click', function() {
+            // Cambiar el tipo de atributo para Nueva Contraseña
+            const type = newPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            newPassword.setAttribute('type', type);
+
+            // Alternar el icono de ojo
+            toggleNewPassword.classList.toggle('bi-eye');
+            toggleNewPassword.classList.toggle('bi-eye-slash');
+        });
+
+        toggleConfirmPassword.addEventListener('click', function() {
+            // Cambiar el tipo de atributo para Confirmar Contraseña
+            const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPassword.setAttribute('type', type);
+
+            // Alternar el icono de ojo
+            toggleConfirmPassword.classList.toggle('bi-eye');
+            toggleConfirmPassword.classList.toggle('bi-eye-slash');
+        });
+    });
+
+</script>

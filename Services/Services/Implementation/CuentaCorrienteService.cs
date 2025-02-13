@@ -1,0 +1,273 @@
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using DAL.Repositories.Interfaces;
+using DAL.UnitOfWork.Interfaces;
+using Entity.WebAplication.Entities;
+using Entity.WebAplication.ViewModels;
+using Microsoft.EntityFrameworkCore;
+using NToastNotify;
+using ServiceLayer.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ServiceLayer.Services.Implementation
+{
+    public class CuentaCorrienteService : ICuentaCorrienteService
+    {
+        private readonly IGenericRepository<Resumen> _resumenRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly IToastNotification _toasty;
+
+        public CuentaCorrienteService(IUnitOfWork unitOfWork, IMapper mapper, IToastNotification toasty, IGenericRepository<Resumen> resumenRepository)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _toasty = toasty;
+            _resumenRepository = resumenRepository;
+        }
+
+        public async Task<Dictionary<string, int>> GetCategoriaMiembroAsync()
+        {
+            var categoriasCount = new Dictionary<string, int>
+            {
+                { "Protagonista", 0 },
+                { "Educador", 0 },
+                { "Acompañante", 0 }
+            };
+
+            // Obtener todos los miembros desde la base de datos, incluyendo la categoría asociada a cada miembro
+            var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Include(x => x.Categoria).ToListAsync();
+
+            // Contar cuántos miembros pertenecen a cada categoría
+            foreach (var miembro in miembros)
+            {
+                if (miembro.Categoria != null && categoriasCount.ContainsKey(miembro.Categoria.Nombre))
+                {
+                    categoriasCount[miembro.Categoria.Nombre]++;
+                }
+            }
+
+            return categoriasCount;
+        }
+
+
+        public async Task<Dictionary<string, int>> GetFuncionMiembroAsync()
+        {
+            var funcionCount = new Dictionary<string, int>
+            {
+                { "Jefe de Grupo", 0 },
+                { "Jefe de Rama", 0 },
+                { "Ayudante", 0 }
+            };
+
+            // Obtener todos los miembros desde la base de datos, incluyendo la categoría asociada a cada miembro
+            var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Include(x => x.Funcion).ToListAsync();
+
+            // Contar cuántos miembros pertenecen a cada categoría
+            foreach (var miembro in miembros)
+            {
+                if (miembro.Funcion != null && funcionCount.ContainsKey(miembro.Funcion.Nombre))
+                {
+                    funcionCount[miembro.Funcion.Nombre]++;
+                }
+            }
+            return funcionCount;
+        }
+
+        public async Task<Dictionary<string, int>> GetRamaMiembroAsync()
+        {
+            var ramaCount = new Dictionary<string, int>
+            {
+                { "Rover", 0 },
+                { "Caminante", 0 },
+                { "Scout", 0 },
+                { "Manada", 0 }
+            };
+
+            // Obtener todos los miembros desde la base de datos, incluyendo la categoría asociada a cada miembro
+            var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Include(x => x.Rama).ToListAsync();
+
+            // Contar cuántos miembros pertenecen a cada categoría
+            foreach (var miembro in miembros)
+            {
+                if (miembro.Rama != null && ramaCount.ContainsKey(miembro.Rama.Nombre))
+                {
+                    ramaCount[miembro.Rama.Nombre]++;
+                }
+            }
+            return ramaCount;
+        }
+
+        public async Task<Dictionary<string, int>> GetReligionMiembroAsync()
+        {
+            var religionCount = new Dictionary<string, int>
+            {
+                { "Cristiano", 0 },
+                { "Cristiano Evangélico", 0 },
+                { "Budista", 0 },
+                { "Católica Ortodoxo", 0 },
+                { "Islámica", 0 },
+                { "Judía", 0 }
+
+            };
+
+            var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Include(x => x.Religion).ToListAsync();
+
+            foreach (var miembro in miembros)
+            {
+                if (miembro.Religion != null && religionCount.ContainsKey(miembro.Religion.Nombre))
+                {
+                    religionCount[miembro.Religion.Nombre]++;
+                }
+            }
+            return religionCount;
+        }
+
+        public async Task GestionarSaldosMiembros(decimal montoAfiliacion, decimal montoSeguro)
+        {
+            var resumen = await _unitOfWork.GetGenericRepository<Resumen>().GetAllList().SingleOrDefaultAsync();
+
+            if (resumen == null)
+            {
+                throw new InvalidOperationException("No se encontró un resumen de saldo.");
+            }
+
+            if (montoAfiliacion == 0)
+            {
+                resumen.DebitoSeguroAcompañante += montoSeguro;
+                resumen.SaldoSeguroAcompañante -= montoSeguro;
+            }
+            else
+            {
+                resumen.DebitoAfiliacion += montoAfiliacion;
+                resumen.SaldoAfiliacion -= montoAfiliacion;
+            }
+
+            // ✅ Actualizar los valores generales de débito y saldo
+            resumen.Debito = resumen.DebitoAfiliacion + resumen.DebitoSeguroAcompañante;
+            resumen.SaldoTotal = resumen.SaldoAfiliacion + resumen.SaldoSeguroAcompañante;
+
+            _unitOfWork.GetGenericRepository<Resumen>().Update(resumen);
+            await _unitOfWork.CommitAsync();
+        }
+
+        public async Task GestionarSaldosPagos(decimal montoAfiliacion, decimal montoSeguro)
+        {
+            var resumen = await _unitOfWork.GetGenericRepository<Resumen>().GetAllList().SingleOrDefaultAsync();
+
+            if (resumen == null)
+            {
+                throw new InvalidOperationException("No se encontró un resumen de saldo.");
+            }
+
+            if (montoAfiliacion == 0)
+            {
+                resumen.CreditoSeguroAcompañante += montoSeguro;
+                resumen.SaldoSeguroAcompañante += montoSeguro;
+            }
+            else
+            {
+                resumen.CreditoAfiliacion += montoAfiliacion;
+                resumen.SaldoAfiliacion += montoAfiliacion;
+            }
+
+            // ✅ Actualizar los valores generales de crédito y saldo
+            resumen.Credito = resumen.CreditoAfiliacion + resumen.CreditoSeguroAcompañante;
+            resumen.SaldoTotal = resumen.SaldoAfiliacion + resumen.SaldoSeguroAcompañante;
+
+            _unitOfWork.GetGenericRepository<Resumen>().Update(resumen);
+            await _unitOfWork.CommitAsync();
+        }
+
+        // ✅ Método para obtener el saldo total de cada categoría y el general
+        public async Task<(decimal saldoAfiliacion, decimal saldoSeguroAcompañante, decimal saldoTotal, decimal debito, decimal credito, decimal debitoAfiliacion, decimal debitoSeguro, decimal creditoAfiliacion, decimal creditoSeguro)> ObtenerSaldoTotal()
+        {
+            var resumen = await _unitOfWork.GetGenericRepository<Resumen>().GetAllList().AsNoTracking().SingleOrDefaultAsync();
+
+            if (resumen == null)
+            {
+                throw new InvalidOperationException("No se encontró un resumen de saldo.");
+            }
+
+            return (resumen.SaldoAfiliacion, resumen.SaldoSeguroAcompañante, resumen.SaldoTotal, resumen.Debito, resumen.Credito, resumen.DebitoAfiliacion, resumen.DebitoSeguroAcompañante, resumen.CreditoAfiliacion, resumen.CreditoSeguroAcompañante);
+        }
+
+
+        public async Task RenovarDeudasVencidasAsync()
+        {
+            const int CategoriaSeguroAcompanante = 6;
+            const string EstadoAutorizado = "Autorizado"; // Estado requerido para renovar deuda
+
+            // 🔹 Obtener deudas vencidas cuyos pagos estén autorizados
+            var deudasVencidas = await _unitOfWork.GetGenericRepository<Deuda>().Where(d => DateTime.Now >= d.FechaVencimiento
+                 && d.Miembro.Pagos.Any(p => p.Autorizacion.EstadoAutorizacion.Estado == "Autorizado")) // Solo si está autorizado
+                .Include(d => d.Miembro)
+                .ThenInclude(m => m.Pagos) // Incluir pagos del miembro
+                .ThenInclude(p => p.Autorizacion) // Incluir autorización del pago
+                .ToListAsync();
+
+            var organismo = await _unitOfWork.GetGenericRepository<Organismo>()
+                .GetAllList()
+                .FirstOrDefaultAsync();
+
+            if (organismo == null || !deudasVencidas.Any())
+                return;
+
+            foreach (var deuda in deudasVencidas)
+            {
+                deuda.Tiene = true;
+                deuda.FechaVencimiento = DateTime.Now.AddMinutes(5);
+
+                if (deuda.Miembro.CategoriaId == CategoriaSeguroAcompanante)
+                {
+                    deuda.MontoSeguroAcompañante = organismo.ValorSeguro;
+                    await GestionarSaldosMiembros(0, organismo.ValorSeguro);
+                }
+                else
+                {
+                    deuda.MontoAfiliacion = organismo.ValorAfiliacion;
+                    await GestionarSaldosMiembros(organismo.ValorAfiliacion, 0);
+                }
+            }
+
+            await _unitOfWork.CommitAsync();
+        }
+
+        public bool ActualizarPrecio(string tipo, decimal nuevoPrecio)
+        {
+            try
+            {
+                var organismo = _unitOfWork.GetGenericRepository<Organismo>().GetAllList().SingleOrDefault();
+                if (organismo == null)
+                {
+                    return false;
+                }
+
+                if (tipo == "afiliacion")
+                {
+                    organismo.ValorAfiliacion = nuevoPrecio;
+                }
+                else if (tipo == "seguro")
+                {
+                    organismo.ValorSeguro = nuevoPrecio;
+                }
+                else
+                {
+                    return false;
+                }
+
+                _unitOfWork.GetGenericRepository<Organismo>().Update(organismo);
+                _unitOfWork.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+}

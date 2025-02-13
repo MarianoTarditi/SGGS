@@ -1,0 +1,585 @@
+﻿@model VMOrganismo
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .row mx-0 {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    .col-lg-6 {
+        flex: 1;
+        min-width: 0;
+    }
+
+   /*  .card-body {
+        max-height: 400px; 
+    } */
+
+    .pagetitle {
+        margin-bottom: 10px;
+        margin-left: 10px;
+    }
+    
+</style>
+
+<div class="pagetitle">
+    <h1>Cuenta Corriente</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Cuenta Corriente</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+<!-- Botón para exportar a PDF -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<div style="margin-bottom: 15px; margin-left: 10px;">
+    <button id="btnDescargarPDF" class="btn btn-primary">Exportar PDF</button>
+</div>
+
+
+<div class="container-fluid px-0">
+    <div class="row mx-0">
+        <!-- 'mx-0' elimina el margen horizontal -->
+        <!-- Other Cards -->
+        <div class="col-lg-6 d-flex flex-column">
+            <!-- Card With Badges -->
+            <div class="card flex-fill mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Saldos</h5>
+                    <ul class="list-group">
+                        @if(ViewBag.SaldoAfiliacion >= 0)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Afiliación:
+                                <span class="badge border-success border-1 text-success" style="font-size: 15px">$ @ViewBag.SaldoAfiliacion</span>
+                            </li>
+                        }
+                        else
+
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Afiliación:
+                                <span class="badge border-danger border-1 text-danger" style="font-size: 15px">$ @ViewBag.SaldoAfiliacion</span>
+                            </li>
+                        }
+                        @if (ViewBag.SaldoSeguroAcompañante >= 0)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Seguro de Acompañantes:
+                                <span class="badge border-success border-1 text-success" style="font-size: 15px">$ @ViewBag.SaldoSeguroAcompañante</span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Seguro de Acompañantes:
+                                <span class="badge border-danger border-1 text-danger" style="font-size: 15px">$ @ViewBag.SaldoSeguroAcompañante</span>
+                            </li>
+                        }                
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Pills Tabs -->
+            <div class="card flex-fill">
+                <div class="card-body">
+                    <h5 class="card-title">Membresía</h5>
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Categoría</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Rama</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Función</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-religion-tab" data-bs-toggle="pill" data-bs-target="#pills-religion" type="button" role="tab" aria-controls="pills-religion" aria-selected="false">Religión</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                            @{
+                                var categoriasCount = ViewBag.CategoriasCount as Dictionary<string, int>;
+                            }
+
+                            <ul class="list-group">
+                                <!-- Protagonista -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Protagonista
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((categoriasCount != null && categoriasCount.ContainsKey("Protagonista")) ? categoriasCount["Protagonista"] : 0)
+                                    </span>
+                                </li>
+
+                                <!-- Acompañante -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Acompañante
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((categoriasCount != null && categoriasCount.ContainsKey("Acompañante")) ? categoriasCount["Acompañante"] : 0)
+                                    </span>
+                                </li>
+
+                                <!-- Educador -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Educador
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((categoriasCount != null && categoriasCount.ContainsKey("Educador")) ? categoriasCount["Educador"] : 0)
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                            @{
+                                var ramasCount = ViewBag.RamasCount as Dictionary<string, int>;
+                            }
+                            <ul class="list-group">
+                                <!-- Rover -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Rover
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((ramasCount != null && ramasCount.ContainsKey("Rover")) ? ramasCount["Rover"] : 0)
+                                    </span>
+                                </li>
+
+                                <!-- Caminante -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Caminante
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((ramasCount != null && ramasCount.ContainsKey("Caminante")) ? ramasCount["Caminante"] : 0)
+                                    </span>
+                                </li>
+
+                                <!-- Manada -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Manada
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((ramasCount != null && ramasCount.ContainsKey("Manada")) ? ramasCount["Manada"] : 0)
+                                    </span>
+                                </li>
+
+                                <!-- Scout -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Scout
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((ramasCount != null && ramasCount.ContainsKey("Scout")) ? ramasCount["Scout"] : 0)
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                            @{
+                                var funcionesCount = ViewBag.FuncionesCount as Dictionary<string, int>;
+                            }
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Jefe de Grupo
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((funcionesCount != null && funcionesCount.ContainsKey("Jefe de Grupo")) ? funcionesCount["Jefe de Grupo"] : 0)
+                                    </span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Jefe de Rama
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((funcionesCount != null && funcionesCount.ContainsKey("Jefe de Rama")) ? funcionesCount["Jefe de Rama"] : 0)
+                                    </span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Ayudante
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((funcionesCount != null && funcionesCount.ContainsKey("Ayudante")) ? funcionesCount["Ayudante"] : 0)
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-religion" role="tabpanel" aria-labelledby="pills-religion-tab">
+                            @{
+                                var religionesCount = ViewBag.ReligionesCount as Dictionary<string, int>;
+                            }
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Cristiano
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((religionesCount != null && religionesCount.ContainsKey("Cristiano")) ? religionesCount["Cristiano"] : 0)
+                                    </span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Cristiano Evangélico
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((religionesCount != null && religionesCount.ContainsKey("Cristiano Evangélico")) ? religionesCount["Cristiano Evangélico"] : 0)
+                                    </span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Budista
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((religionesCount != null && religionesCount.ContainsKey("Budista")) ? religionesCount["Budista"] : 0)
+                                    </span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Católica Ortodoxo
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((religionesCount != null && religionesCount.ContainsKey("Católica Ortodoxo")) ? religionesCount["Católica Ortodoxo"] : 0)
+                                    </span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Islámica
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((religionesCount != null && religionesCount.ContainsKey("Islámica")) ? religionesCount["Islámica"] : 0)
+                                    </span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Judía
+                                    <span class="badge bg-primary rounded-pill">
+                                        @((religionesCount != null && religionesCount.ContainsKey("Judía")) ? religionesCount["Judía"] : 0)
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card with header and footer -->
+        <div class="col-lg-6 d-flex flex-column">
+            <div class="card flex-fill">
+                <div class="card-header">Información úti</div>
+                <div class="card-body">
+                    <h5 class="card-title">Cuenta Corriente</h5>
+
+                        <p>
+                            La seccion de <strong>Resumen Total</strong> muestra el Crédito-Débito y Saldo Total de todas las categorías existentes en el sistema.
+                        </p>
+
+                        <p>
+                        La sección de <strong>Resumen de Movimientos</strong> muestra los valores de Crédito, Débito y Saldo detallados de las categorias existentes en el sistema.
+                        </p>
+                       
+
+                        <p>
+                        La seccion de <strong>Resumen</strong> muestra el Crédito-Débito y Saldo Total de todas las categorías existentes en el sistema.<br />
+                        <strong>Crédito</strong> Suma de todos los pagos recibidos.<br />
+                        <strong>Débito</strong> Suma de todas las deudas a pagar.<br />
+                        <strong>Saldo</strong> Resto entre crédito y débito.
+                        </p>
+
+                        <p>
+                        La disminución del débito será aplicada unicamente durante la <strong>Alta</strong> de un <strong>Miembro</strong>.<br />
+                        El aumento del Crédito será aplicada durante el <strong>Registro</strong> de un <strong>Pago</strong>. <strong>UNICAMENTE</strong> cuando el pago sea aprobado, es decir, con estado <strong>"Autorizado"</strong>
+                        </p>
+
+                        <p>
+                        En la sección de <strong>Precios de Membresía</strong> podrá modificar tanto el precio de la Membresía con categoría <strong>Afiliacion</strong> y <strong>Seguro de Acompañantes</strong>
+                        Este cambio se aplicará <strong>UNICAMNETE</strong> para los <strong>nuevos</strong> miembros que se den de alta en el sistema.
+                        </p>    
+                    
+                </div>
+            </div>
+        </div>
+   
+
+
+        <div id="exportarPDF">
+            <!-- Resumen Total -->
+            <div class="row" style="padding-left: 10px; padding-right: 15px">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <h5 class="card-title">Resumen Total</h5>
+                        <table class="table table-bordered text-center align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Crédito Total</th>
+                                    <th>Débito Total</th>
+                                    <th>Saldo Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="@((ViewBag.Credito >= 0) ? "text-success" : "text-danger")">
+                                        $ @ViewBag.Credito
+                                    </td>
+                                    <td class="@((ViewBag.Debito >= 0) ? "text-danger" : "text-success")">
+                                        $ @ViewBag.Debito
+                                    </td>
+                                    <td class="@((ViewBag.SaldoTotal >= 0) ? "text-success" : "text-danger")">
+                                        $ @ViewBag.SaldoTotal
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen de Movimientos -->
+            <div class="row" style="padding-left: 10px; padding-right: 15px">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <h5 class="card-title">Resumen de Movimientos</h5>
+                        <table class="table table-bordered text-center align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Categoría</th>
+                                    <th>Crédito</th>
+                                    <th>Débito</th>
+                                    <th>Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>2</th>
+                                    <td>Afiliación</td>
+                                    <td class="@((ViewBag.CreditoAfiliacion >= 0) ? "text-success" : "text-danger")">
+                                        $ @ViewBag.CreditoAfiliacion
+                                    </td>
+                                    <td class="@((ViewBag.DebitoAfiliacion >= 0) ? "text-danger" : "text-success")">
+                                        $ @ViewBag.DebitoAfiliacion
+                                    </td>
+                                    <td class="@((ViewBag.SaldoAfiliacion >= 0) ? "text-success" : "text-danger")">
+                                        $ @ViewBag.SaldoAfiliacion
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>Seguro de Acompañantes</td>
+                                    <td class="@((ViewBag.CreditoSeguro >= 0) ? "text-success" : "text-danger")">
+                                        $ @ViewBag.CreditoSeguro
+                                    </td>
+                                    <td class="@((ViewBag.DebitoSeguro >= 0) ? "text-danger" : "text-success")">
+                                        $ @ViewBag.DebitoSeguro
+                                    </td>
+                                    <td class="@((ViewBag.SaldoSeguroAcompañante >= 0) ? "text-success" : "text-danger")">
+                                        $ @ViewBag.SaldoSeguroAcompañante
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de precios de membresía -->
+            <div class="card flex-fill mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Precios de Membresía</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Precio de Afiliación:
+                            <div class="d-flex align-items-center">
+                                <span class="badge border-success border-1 text-primary" style="font-size: 15px">
+                                    $ @ViewBag.PrecioAfiliacion
+                                </span>
+                                <button type="button" class="btn btn-primary btn-sm btn-modificar-precio ms-2"
+                                        data-bs-toggle="modal" data-bs-target="#basicModal"
+                                        data-tipo="afiliacion" data-precio="@ViewBag.PrecioAfiliacion">
+                                    Modificar
+                                </button>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Precio de Seguro de Acompañantes:
+                            <div class="d-flex align-items-center">
+                                <span class="badge border-success border-1 text-primary" style="font-size: 15px">
+                                    $ @ViewBag.PrecioSeguro
+                                </span>
+                                <button type="button" class="btn btn-primary btn-sm btn-modificar-precio ms-2"
+                                        data-bs-toggle="modal" data-bs-target="#basicModal"
+                                        data-tipo="seguro" data-precio="@ViewBag.PrecioSeguro">
+                                    Modificar
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- MODAL -->
+        <div class="modal fade" id="basicModal" tabindex="-1" aria-labelledby="modificarPrecioModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modificarPrecioModalLabel">Modificar Precio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Formulario de modificación de precio -->
+                        <form>
+                            <div class="mb-3">
+                                <label for="nuevoPrecio" class="form-label">Nuevo Precio</label>
+                                <input type="text" class="form-control" id="nuevoPrecio">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="guardarCambios">Guardar cambios</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+    </div>
+</div>
+
+<!-- SCRIPT ACTUALIZADO -->
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+        let precioActual = 0;
+        let tipoPrecio = "";
+
+        // Asegurarse de obtener correctamente el modal de Bootstrap
+        var myModalElement = document.getElementById("basicModal");
+        var myModal = new bootstrap.Modal(myModalElement);
+
+        // Capturar el clic en los botones de modificar precio
+        document.querySelectorAll(".btn-modificar-precio").forEach(button => {
+            button.addEventListener("click", function () {
+                tipoPrecio = this.getAttribute("data-tipo"); // "afiliacion" o "seguro"
+                precioActual = this.getAttribute("data-precio"); // Precio actual
+
+                // Insertar el precio actual en el input del modal
+                document.getElementById("nuevoPrecio").value = precioActual;
+
+                // Guardar el tipo de precio en un atributo del botón guardar
+                document.getElementById("guardarCambios").setAttribute("data-tipo", tipoPrecio);
+            });
+        });
+
+        // Guardar cambios con AJAX
+        document.getElementById("guardarCambios").addEventListener("click", function () {
+            let nuevoPrecio = document.getElementById("nuevoPrecio").value;
+            let tipoPrecio = this.getAttribute("data-tipo"); // Saber qué precio estamos modificando
+
+            // Validar que el usuario ingresó un número válido
+            if (isNaN(nuevoPrecio) || nuevoPrecio.trim() === "") {
+                alert("Por favor, ingresa un número válido.");
+                return;
+            }
+
+            // Enviar el nuevo precio al servidor
+            fetch("/CuentaCorriente/ActualizarPrecio", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ tipo: tipoPrecio, precio: parseFloat(nuevoPrecio) })
+            })
+            .then(response => {
+                console.log("Respuesta del servidor:", response);
+
+                if (response.status === 204) {
+                    // Si el servidor devuelve 204 (sin contenido), asumimos éxito
+                    return { success: true };
+                }
+                return response.json(); // Convertir respuesta a JSON
+            })
+            .then(data => {
+                console.log("Datos recibidos:", data);
+
+                if (data.success) {
+                    // Cerrar el modal antes de refrescar la página
+                    myModal.hide();
+
+                    // Dar un pequeño retraso para permitir que el modal se cierre correctamente
+                    setTimeout(function () {
+                        location.reload();
+                    }, 500);
+                } else {
+                    alert("Hubo un error al actualizar el precio.");
+                }
+            })
+            .catch(error => {
+                console.error("Error en fetch:", error);
+                alert("Ocurrió un error al intentar actualizar el precio.");
+            });
+        });
+    });
+
+    // document.getElementById('exportPdfBtn').addEventListener('click', function () {
+    //     const { jsPDF } = window.jspdf;
+    //     let doc = new jsPDF();
+
+    //     // Seleccionamos el contenedor que queremos exportar
+    //     let content = document.querySelector('.row');
+
+    //     html2canvas(content, { scale: 2 }).then(canvas => {
+    //         let imgData = canvas.toDataURL('image/png');
+    //         let imgWidth = 190; // Ancho en mm (aproximado a A4)
+    //         let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    //         doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+    //         doc.save('Saldos_Membresia.pdf');
+    //     });
+    // });
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('btnDescargarPDF').addEventListener('click', function () {
+        const element = document.getElementById('exportarPDF'); // Contenedor de la exportación
+
+        if (!element) {
+            console.error("No se encontró el elemento a exportar.");
+            return;
+        }
+
+        console.log("Elemento encontrado, iniciando exportación...");
+
+        html2canvas(element, {
+            scale: 3 // Mejora la calidad
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+
+            // Ajuste de tamaño más grande
+            const imgWidth = 200;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const marginTop = 15;
+
+            pdf.addImage(imgData, 'PNG', 5, marginTop, imgWidth, imgHeight);
+
+            // Agregar pie de página con fecha de exportación
+            const fechaActual = new Date();
+            const fechaExportacion = `Fecha de exportación: ${fechaActual.toLocaleDateString()} - ${fechaActual.toLocaleTimeString()}`;
+            
+            pdf.setFontSize(10);
+            pdf.text(fechaExportacion, 10, pdf.internal.pageSize.height - 10); // Posición inferior
+
+            pdf.save("ResumenTotal.pdf");
+
+            console.log("PDF generado y descargado.");
+        }).catch(error => {
+            console.error("Error generando el PDF:", error);
+        });
+    });
+});
+
+
+
+</script>
+

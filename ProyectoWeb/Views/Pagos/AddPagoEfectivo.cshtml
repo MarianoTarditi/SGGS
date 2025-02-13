@@ -1,0 +1,115 @@
+﻿@model VMPago
+
+@{
+    ViewData["Title"] = Model.Id > 0 ? "Editar Pago" : "Agregar Pago";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+        <div id="formEfectivo" class="modalidadForm" style="display: none;">
+            <h4 style="margin-top: 20px; margin-bottom: 20px;">Pago por Efectivo</h4> <!-- Ajustar los márgenes -->
+
+            <form id="formEfectivoData" method="post" asp-action="AddPago">
+                <input asp-for="TipoModalidad" type="hidden" id="modalidadEfectivo" name="TipoModalidad" value="Efectivo" />
+
+                <!-- Miembros con Deudas -->
+                <div class="col-12 mb-3">
+                    <label for="inputLocalidad" class="form-label">Miembros con Deudas</label>
+                  
+                </div>
+                <!-- Div para mostrar los detalles del miembro -->
+                <div id="detallesMiembro" style="display:none;">
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Nombre:</label>
+                        <span id="miembroNombre"></span>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Apellido:</label>
+                        <span id="miembroApellido"></span>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label">DNI:</label>
+                        <span id="miembroDni"></span>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 20px; margin-bottom: 20px;"></h4>
+                <!-- Fila con los campos de Nombre Completo, Fecha de Pago, Categoría, Monto -->
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <label asp-for="Modalidad.NombreCompleto" class="form-label">Nombre Completo</label>
+                        <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="efectivo_NombreCompleto" />
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label asp-for="Modalidad.FechaDePago" class="form-label">Fecha de Pago</label>
+                        <input asp-for="Modalidad.FechaDePago" type="date" class="form-control" id="efectivo_FechaDePago" />
+                    </div>
+
+                    <!-- Categoría y Monto en la misma fila -->
+                    <div class="col-6 mb-3">
+                        <label for="inputLocalidad" class="form-label">Categoría</label>
+                        <select id="DetallePago_Categoria_Efectivo" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias">
+                            <option value="">Seleccione una opción...</option>
+                        </select>
+                    </div>
+
+                    <div class="col-6 mb-3">
+                        <label asp-for="DetallePago.Monto" class="form-label">Monto</label>
+                        <input id="DetallePago_Monto_Efectivo" class="form-control" />
+                    </div>
+                </div>
+
+                <!-- Botón Agregar Detalle -->
+                <div class="col-12 d-flex justify-content-end mb-3">
+                    <button type="button" class="btn btn-primary" id="btnAgregarDetalle_Efectivo">Agregar</button>
+                </div>
+
+                <!-- Tabla de Detalles -->
+                <table class="table table-striped mt-3" id="tablaDetalles_Efectivo">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ListaDetalles.Where(d => d.Pago.TipoModalidad == "efectivo"))
+                        {
+                            <tr>
+                                <td>@item.CategoriaPago.CategoriaNombre</td>
+                                <td>@item.Monto</td>
+                                <td>
+                                    <a asp-area="Admin" asp-controller="Pagos" asp-action="DeleteDetalle" asp-route-id="@item.Id" data-id="@item.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Input Hidden para detalles -->
+                <input type="hidden" name="detalles" id="detallesJson_Efectivo" />
+
+                <!-- Observación -->
+                <div class="col-12 mb-3">
+                    <label asp-for="Modalidad.Observacion" class="form-label">Observación</label>
+                    <textarea asp-for="Modalidad.Observacion" class="form-control" style="height: 120px" id="efectivo_Observacion"></textarea>
+                </div>
+
+                <!-- Botón Guardar Pago -->
+                <div class="col-12 d-flex justify-content-end mb-3">
+                    <button type="submit" class="btn btn-success">Guardar Pago</button>
+                </div>
+            </form>
+        </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

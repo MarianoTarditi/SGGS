@@ -1,0 +1,764 @@
+﻿@model VMPago
+
+@{
+ViewData["Title"] = Model.Id > 0 ? "Editar Pago" : "Agregar Pago";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* <link href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/YouTube.AspNetCore.Tutorial.Basic.styles.css" asp-append-version="true" />
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<!-- Vendor CSS Files -->
+<link href="~/Admin/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="~/Admin/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+<link href="~/Admin/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+<link href="~/Admin/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+<link href="~/Admin/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+<link href="~/Admin/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+<link href="~/Admin/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+<script src="~/Admin/assets/vendor/apexcharts/apexcharts.min.js"></script>
+<script src="~/Admin/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/Admin/assets/vendor/chart.js/chart.umd.js"></script>
+<script src="~/Admin/assets/vendor/echarts/echarts.min.js"></script>
+<script src="~/Admin/assets/vendor/quill/quill.js"></script>
+<script src="~/Admin/assets/vendor/simple-datatables/simple-datatables.js"></script>
+<script src="~/Admin/assets/vendor/tinymce/tinymce.min.js"></script>
+<script src="~/Admin/assets/vendor/php-email-form/validate.js"></script>
+
+<!-- Template Main JS File -->
+<script src="~/Admin/assets/js/main.js"></script> *@
+
+@if (User.IsInRole("SuperAdmin"))
+{
+    <div class="alert alert-success fade show fw-bolder text-center" role="alert">
+        ¡Bienvenido Usuario cómo Administrador!
+    </div>
+}
+else
+{
+    <div class="alert alert-info fade show fw-bolder text-center" role="alert">
+        WELCOME TO OUR COMPANY DASHBOARD !!
+    </div>
+}
+
+<div class="card col-12">
+    <div class="card-body">
+        <h5 class="card-title">@ViewData["Title"]</h5>
+        <!-- Formulario para seleccionar modalidad -->
+            <div class="col-6">
+                <label for="modalidadSelect" class="form-label">Modalidad</label>
+                <select id="modalidadSelect" asp-for="TipoModalidad" class="form-select" onchange="mostrarFormularioPorModalidad()">
+                    <option value="">Seleccione una modalidad...</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Deposito">Depósito</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+            </div>
+            <input asp-for="TipoModalidad" type="hidden" id="TipoModalidad" name="TipoModalidad" value="@Model.TipoModalidad" />
+
+
+        <div id="formEfectivo" class="modalidadForm" style="display: none;">
+            <h4 style="margin-top: 20px; margin-bottom: 20px;">Pago por Efectivo</h4> <!-- Ajustar los márgenes -->
+
+            <form id="formEfectivoData" method="post" asp-action="AddPago">
+                <input asp-for="TipoModalidad" type="hidden" id="modalidadEfectivo" name="TipoModalidad" value="Efectivo" />
+
+
+                <div class="col-6 mb">
+                    <label for="inputLocalidad" class="form-label">Miembros con Deudas</label>
+                    <select asp-for="MiembroId" class="form-select" asp-items="ViewBag.MiembrosDeudas" id="miembrosDropdownEfectivo">
+                        <option value="">Seleccione un miembro...</option>
+                    </select>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <i class="fa fa-user"></i> Detalles del Miembro
+                        </div>
+                        <div class="card-body">
+                            <p><i class="fa fa-id-card"></i> <strong>Nombre:</strong> <span id="nombreLabel"></span></p>
+                            <p><i class="fa fa-user-tag"></i> <strong>Apellido:</strong> <span id="apellidoLabel"></span></p>
+                            <p><i class="fa fa-id-badge"></i> <strong>DNI:</strong> <span id="dniLabel"></span></p>
+                            <p><i class="fa fa-credit-card"></i> <strong>¿Tiene Deuda?:</strong> <span id="tieneLabel"></span></p>
+                            <p><i class="fa fa-calendar-alt"></i> <strong>Vencimiento Deuda:</strong> <span id="vencimientoLabel"></span></p>
+                            <p><i class="fa fa-dollar-sign"></i> <strong>Monto Afiliación:</strong> <span id="afiliacionLabel"></span></p>
+                            <p><i class="fa fa-shield-alt"></i> <strong>Monto Seguro:</strong> <span id="seguroLabel"></span></p>
+                        </div>
+                    </div>
+                </div>
+                
+               @*  <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>DNI</th>
+                             <th>Tiene</th>
+                            <th>Vencimiento Deuda</th>
+                            <th>Monto Afiliación</th>
+                            <th>Monto Seguro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="nombreLabel"></td>
+                            <td id="apellidoLabel"></td>
+                            <td id="dniLabel"></td>
+                             <td id="tieneLabel"></td>
+                             <td id="vencimientoLabel"></td>
+                            <td id="afiliacionLabel"></td>
+                            <td id="seguroLabel"></td>
+                        </tr>
+                    </tbody>
+                </table>
+               *@
+   
+      
+                <h4 style="margin-top: 20px; margin-bottom: 20px;"></h4>
+                <!-- Fila con los campos de Nombre Completo, Fecha de Pago, Categoría, Monto -->
+                    <div class="col-6 mb-3">
+                        <label asp-for="Modalidad.NombreCompleto" class="form-label">Nombre Completo</label>
+                    <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="nombreCompletoTextbox" />
+                    </div>
+
+                <div class="row">
+                    <div class="col-3">
+                        <label for="inputLocalidad" class="form-label">Categoría</label>
+                        <select id="DetallePago_Categoria_Efectivo" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias">
+                            <option value="">Seleccione una opción...</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label asp-for="DetallePago.Monto" class="form-label">Monto</label>
+                        <input id="DetallePago_Monto_Efectivo" type="text" class="form-control" />
+                    </div>
+                    <div class="col-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary" id="btnAgregarDetalle_Efectivo">Agregar</button>
+                    </div>
+                </div>
+
+                <!-- Tabla de Detalles -->
+                <table class="table table-striped mt-3" id="tablaDetalles_Efectivo">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ListaDetalles@* .Where(d => d.Pago.TipoModalidad == "efectivo") *@)
+                        {
+                            <tr>
+                                <td>@item.CategoriaPago.CategoriaNombre</td>
+                                <td>@item.Monto</td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarDetalle(this)">Eliminar</button>
+                           
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Input Hidden para detalles -->
+                <input type="hidden" name="detalles" id="detallesJson_Efectivo" />
+
+                <!-- Observación -->
+                <div class="col-6 mb-3">
+                    <label asp-for="Modalidad.Observacion" class="form-label">Observación</label>
+                    <textarea asp-for="Modalidad.Observacion" class="form-control" style="height: 120px" id="efectivo_Observacion"></textarea>
+                </div>
+                    <button type="submit" class="btn btn-success">Registrar Pago</button>
+            </form>
+        </div>
+
+        <div id="formDeposito" class="modalidadForm" style="display: none;">
+            <h4 style="margin-top: 20px; margin-bottom: 20px;">Pago por Depósito</h4> <!-- Ajustar los márgenes -->
+
+            <form id="formDepositoData" method="post" asp-action="AddPago">
+                <input asp-for="TipoModalidad" type="hidden" id="modalidadDeposito" name="TipoModalidad" value="Deposito" />
+
+                <div class="col-6 mb-3">
+                    <label for="inputLocalidad" class="form-label">Miembros con Deudas</label>
+                    <select asp-for="MiembroId" class="form-select" asp-items="ViewBag.MiembrosDeudas" id="miembrosDropdownDeposito">
+                        <option value="">Seleccione un miembro...</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <i class="fa fa-user"></i> Detalles del Miembro
+                        </div>
+                        <div class="card-body">
+                            <p><i class="fa fa-id-card"></i> <strong>Nombre:</strong> <span id="nombreLabelDeposito"></span></p>
+                            <p><i class="fa fa-user-tag"></i> <strong>Apellido:</strong> <span id="apellidoLabelDeposito"></span></p>
+                            <p><i class="fa fa-id-badge"></i> <strong>DNI:</strong> <span id="dniLabelDeposito"></span></p>
+                            <p><i class="fa fa-credit-card"></i> <strong>¿Tiene Deuda?:</strong> <span id="tieneLabelDeposito"></span></p>
+                            <p><i class="fa fa-calendar-alt"></i> <strong>Vencimiento Deuda:</strong> <span id="vencimientoLabelDeposito"></span></p>
+                            <p><i class="fa fa-dollar-sign"></i> <strong>Monto Afiliación:</strong> <span id="afiliacionLabelDeposito"></span></p>
+                            <p><i class="fa fa-shield-alt"></i> <strong>Monto Seguro:</strong> <span id="seguroLabelDeposito"></span></p>
+                        </div>
+                    </div>
+                </div>
+        
+                <h4 style="margin-top: 20px; margin-bottom: 20px;"></h4>
+
+                <div class="col-6 mb-3">
+                    <label asp-for="Modalidad.NombreCompleto" class="form-label">Nombre Completo</label>
+                    <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="deposito_NombreCompleto" />
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label asp-for="Deposito.NumeroSucursal" class="form-label">Número de Sucursal</label>
+                    <input asp-for="Deposito.NumeroSucursal" type="text" class="form-control" id="deposito_NumeroSucursal" />
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label asp-for="Deposito.NumeroOperacion" class="form-label">Número de Operación / Log</label>
+                    <input asp-for="Deposito.NumeroOperacion" type="text" class="form-control" id="deposito_NumeroOperacion" />
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label asp-for="Deposito.NumeroCuenta" class="form-label">N° de Cuenta</label>
+                    <input asp-for="Deposito.NumeroCuenta" type="text" class="form-control" id="deposito_NumeroCuenta" />
+                </div>
+
+ 
+
+                <div class="row">
+                    <div class="col-3">
+                        <label for="inputLocalidad" class="form-label">Categoría</label>
+                        <select id="DetallePago_Categoria_Deposito" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias">
+                            <option value="">Seleccione una opción...</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label asp-for="DetallePago.Monto" class="form-label">Monto</label>
+                        <input id="DetallePago_Monto_Deposito" type="text" class="form-control" />
+                    </div>
+                    <div class="col-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary" id="btnAgregarDetalle_Deposito">Agregar</button>
+                    </div>
+                </div>
+
+                <table class="table table-striped mt-3" id="tablaDetalles_Deposito">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ListaDetalles)
+                        {
+                            <tr>
+                                <td>@item.CategoriaPago.CategoriaNombre</td>
+                                <td>@item.Monto</td>
+                                <td>
+                                    <a asp-area="Admin" asp-controller="Pagos" asp-action="DeleteDetalle" asp-route-id="@item.Id" data-id="@item.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Campo oculto que contendrá los detalles en JSON -->
+                <input type="hidden" name="detalles" id="detallesJson_Deposito" />
+
+                <div class="w-100"></div>
+                <div class="col-6 mb-3">
+                    <label asp-for="Modalidad.Observacion" class="form-label">Observación</label>
+                    <textarea asp-for="Modalidad.Observacion" class="form-control" style="height: 120px" id="deposito_Observacion"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success">Registrar Pago</button>
+            </form>
+        </div>
+
+        <!-- Formulario para Transferencia -->
+        <div id="formTransferencia" class="modalidadForm" style="display: none;">
+            <h4 style="margin-top: 20px; margin-bottom: 20px;">Pago por Transferencia</h4> <!-- Ajustar los márgenes -->
+            <form id="formTransferenciaData" method="post" asp-action="AddPago">
+                <input asp-for="TipoModalidad" type="hidden" id="modalidadTransferencia" name="TipoModalidad" value="Transferencia" />
+
+                <div class="col-6 mb-3">
+                    <label for="inputLocalidad" class="form-label">Miembros con Deudas</label>
+                    <select asp-for="MiembroId" class="form-select" asp-items="ViewBag.MiembrosDeudas" id="miembrosDropdownTransferencia">
+                        <option value="">Seleccione un miembro...</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <i class="fa fa-user"></i> Detalles del Miembro
+                        </div>
+                        <div class="card-body">
+                            <p><i class="fa fa-id-card"></i> <strong>Nombre:</strong> <span id="nombreLabelTransferencia"></span></p>
+                            <p><i class="fa fa-user-tag"></i> <strong>Apellido:</strong> <span id="apellidoLabelTransferencia"></span></p>
+                            <p><i class="fa fa-id-badge"></i> <strong>DNI:</strong> <span id="dniLabelTransferencia"></span></p>
+                            <p><i class="fa fa-credit-card"></i> <strong>¿Tiene Deuda?:</strong> <span id="tieneLabelTransferencia"></span></p>
+                            <p><i class="fa fa-calendar-alt"></i> <strong>Vencimiento Deuda:</strong> <span id="vencimientoLabelTransferencia"></span></p>
+                            <p><i class="fa fa-dollar-sign"></i> <strong>Monto Afiliación:</strong> <span id="afiliacionLabelTransferencia"></span></p>
+                            <p><i class="fa fa-shield-alt"></i> <strong>Monto Seguro:</strong> <span id="seguroLabelTransferencia"></span></p>
+                        </div>
+                    </div>
+                </div>
+ 
+                <h4 style="margin-top: 20px; margin-bottom: 20px;"></h4>
+   
+                <div class="col-6 mb-3">
+                    <label asp-for="Modalidad.NombreCompleto" class="form-label">Nombre Completo</label>
+                    <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="transferencia_NombreCompleto" />
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label asp-for="Transferencia.Dni" class="form-label">DNI del Depositante</label>
+                    <input asp-for="Transferencia.Dni" type="text" class="form-control" id="transferencia_CodigoTransaccion" />
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label asp-for="Transferencia.NroCuentaOrigenFondo" class="form-label">
+                        Número de Cuenta de Origen de Fondos
+                    </label>
+                    <input asp-for="Transferencia.NroCuentaOrigenFondo" type="text" class="form-control" id="transferencia_CodigoTransaccion" />
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label asp-for="Transferencia.BancoOrigen" class="form-label">
+                        Nombre del Banco de Origen de Fondos
+                    </label>
+                    <input asp-for="Transferencia.BancoOrigen" type="text" class="form-control" id="transferencia_BancoEmisor" />
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label asp-for="Transferencia.NumeroOperacion" class="form-label">
+                        Número de Operacion / Log
+
+                    </label>
+                    <input asp-for="Transferencia.NumeroOperacion" type="text" class="form-control" id="transferencia_BancoEmisor" />
+                </div>
+
+                <div class="row">
+                    <div class="col-3">
+                        <label for="inputLocalidad" class="form-label">Categoría</label>
+                        <select id="DetallePago_Categoria_Transferencia" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias">
+                            <option value="">Seleccione una opción...</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label asp-for="DetallePago.Monto" class="form-label">Monto</label>
+                        <input id="DetallePago_Monto_Transferencia" type="text" class="form-control" />
+                    </div>
+                    <div class="col-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary" id="btnAgregarDetalle_Transferencia">Agregar</button>
+                    </div>
+                </div>
+
+                <table class="table table-striped mt-3" id="tablaDetalles_Transferencia">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ListaDetalles)
+                        {
+                            <tr>
+                                <td>@item.CategoriaPago</td>
+                                <td>@item.Monto</td>
+                                <td>
+                                    <a asp-area="Admin" asp-controller="Pagos" asp-action="DeleteDetalle" asp-route-id="@item.Id" data-id="@item.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <input type="hidden" name="detalles" id="detallesJson_Transferencia" />
+
+                <div class="w-100"></div>
+                <div class="col-6 mb-3">
+                    <label asp-for="Modalidad.Observacion" class="form-label">Observación</label>
+                    <textarea asp-for="Modalidad.Observacion" class="form-control" style="height: 120px" id="transferencia_Observacion"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success">Registrar Pago</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+@section Scripts
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+
+            // Mostrar el formulario correspondiente según la modalidad seleccionada
+            function mostrarFormularioPorModalidad() {
+                console.log("Ejecutando mostrarFormularioPorModalidad");
+                document.querySelectorAll('.modalidadForm').forEach(form => {
+                    form.style.display = 'none';
+                });
+
+                var modalidadSeleccionada = document.getElementById("modalidadSelect").value;
+                console.log("Modalidad seleccionada:", modalidadSeleccionada);
+
+                if (modalidadSeleccionada === "Efectivo") 
+                {
+                    document.getElementById("formEfectivo").style.display = "block";
+                } 
+                else if (modalidadSeleccionada === "Deposito") 
+                {
+                    console.log("Mostrando formulario de depósito");
+                    document.getElementById("formDeposito").style.display = "block";
+                } 
+                else if (modalidadSeleccionada === "Transferencia") 
+                {
+                    document.getElementById("formTransferencia").style.display = "block";
+                }
+            }
+
+
+                  $(document).ready(function () {
+            $('#miembrosDropdownEfectivo').on('change', function () {
+                var miembroId = $(this).val(); // Captura el ID del miembro seleccionado
+
+                if (miembroId) 
+                {
+                    console.log("Solicitando detalles del miembro con ID:", miembroId); // Log para depuración
+
+                    // Realiza la solicitud AJAX
+                    $.ajax({
+                        url: '@Url.Action("ObtenerDetallesMiembro", "Pagos")',
+                        type: 'GET',
+                        data: { miembroId: miembroId },
+                        success: function (response) {
+                            console.log("Respuesta del servidor:", response); // Respuesta exitosa
+
+                            // Actualiza las etiquetas con los datos obtenidos
+                            $('#nombreLabel').text(response.nombre || 'No disponible');
+                            $('#apellidoLabel').text(response.apellido || 'No disponible');
+                            $('#dniLabel').text(response.dni || 'No disponible');
+                            $('#tieneLabel').text(response.tiene ? 'Sí' : 'No');
+
+                            var fechaVencimiento = response.fechaVencimiento
+                                ? new Date(response.fechaVencimiento).toLocaleDateString('es-ES')
+                                : 'Sin fecha';
+                            $('#vencimientoLabel').text(fechaVencimiento);
+
+                            $('#afiliacionLabel').text(
+                                response.montoAfiliacion
+                                    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'ARS' }).format(response.montoAfiliacion)
+                                    : 'No posee deuda'
+                            );
+
+                            $('#seguroLabel').text(
+                                response.montoSeguroAcompañante
+                                    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'ARS' }).format(response.montoSeguroAcompañante)
+                                    : 'No posee deuda'
+                            );
+
+                            // Combina el nombre y apellido en el campo de texto de nombre completo
+                            var nombreCompleto = (response.nombre || '') + ' ' + (response.apellido || '');
+                            $('#nombreCompletoTextbox').val(nombreCompleto.trim());
+
+
+                            
+
+
+                            if (response.montoAfiliacion > 0) 
+                            {
+                                $('#DetallePago_Monto_Efectivo').val(response.montoAfiliacion? response.montoAfiliacion.toFixed(0) : '0');
+
+                                $('#DetallePago_Categoria_Efectivo').val('Afiliacion').trigger('change');
+                                console.log("Categoria establecida a Afiliacion");
+                            } else 
+                            {
+                                $('#DetallePago_Monto_Efectivo').val(response.montoSeguroAcompañante? response.montoSeguroAcompañante.toFixed(0) : '0');
+                                $('#DetallePago_Categoria_Efectivo').val('Seguro de Acompañante').trigger('change');
+                                console.log("Categoria establecida a Seguro de Acompañante");
+                            }
+
+
+
+
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error("Error en la solicitud:", textStatus, errorThrown);
+                            alert("No se pudo obtener los datos del miembro. Verifique su conexión o configuración.");
+                        }
+                    });
+                } else {
+                    console.log("No se seleccionó un miembro válido.");
+                    limpiarEtiquetasMiembro(); // Limpia las etiquetas si no hay selección
+                }
+            });
+
+            // Función para limpiar las etiquetas si no hay selección
+            function limpiarEtiquetasMiembro() {
+                $('#nombreLabel').text('No disponible');
+                $('#apellidoLabel').text('No disponible');
+                $('#dniLabel').text('No disponible');
+                $('#tieneLabel').text('No disponible');
+                $('#vencimientoLabel').text('Sin fecha');
+                $('#afiliacionLabel').text('No posee deuda');
+                $('#seguroLabel').text('No posee deuda');
+                $('#nombreCompletoTextbox').val(''); // Limpia el campo de texto de nombre completo
+            }
+        });
+
+            $(document).ready(function () 
+            {
+                $('#miembrosDropdownDeposito').on('change', function () 
+                {
+                    var miembroId = $(this).val(); // Captura el ID del miembro seleccionado
+
+                    if (miembroId) 
+                    {
+                        console.log("Solicitando detalles del miembro con ID:", miembroId, "para Depósito"); // Log para depuración
+
+                        // Realiza la solicitud AJAX
+                        $.ajax({
+                            url: '@Url.Action("ObtenerDetallesMiembro", "Pagos")', // Cambia el método si es necesario
+                            type: 'GET',
+                            data: { miembroId: miembroId },
+                            success: function (response) {
+                                console.log("Respuesta del servidor (Depósito):", response); // Respuesta exitosa
+
+                                // Actualiza las etiquetas específicas para Depósito
+                                $('#nombreLabelDeposito').text(response.nombre || 'No disponible');
+                                $('#apellidoLabelDeposito').text(response.apellido || 'No disponible');
+                                $('#dniLabelDeposito').text(response.dni || 'No disponible');
+                                $('#tieneLabelDeposito').text(response.tiene ? 'Sí' : 'No');
+
+                                var fechaVencimiento = response.fechaVencimiento
+                                    ? new Date(response.fechaVencimiento).toLocaleDateString('es-ES')
+                                    : 'Sin fecha';
+                                $('#vencimientoLabelDeposito').text(fechaVencimiento);
+
+                                $('#afiliacionLabelDeposito').text(
+                                    response.montoAfiliacion
+                                        ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'ARS' }).format(response.montoAfiliacion)
+                                        : 'No posee deuda'
+                                );
+
+                                $('#seguroLabelDeposito').text(
+                                    response.montoSeguroAcompañante
+                                        ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'ARS' }).format(response.montoSeguroAcompañante)
+                                        : 'No posee deuda'
+                                );
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.error("Error en la solicitud (Depósito):", textStatus, errorThrown);
+                                alert("No se pudo obtener los datos del miembro para Depósito. Verifique su conexión o configuración.");
+                            }
+                        });
+                    } else {
+                        console.log("No se seleccionó un miembro válido para Depósito.");
+                        limpiarEtiquetasMiembroDeposito(); // Limpia las etiquetas si no hay selección
+                    }
+                });
+
+                // Limpia las etiquetas específicas para Depósito
+                function limpiarEtiquetasMiembroDeposito() {
+                    $('#nombreLabelDeposito, #apellidoLabelDeposito, #dniLabelDeposito, #tieneLabelDeposito, #vencimientoLabelDeposito, #afiliacionLabelDeposito, #seguroLabelDeposito').text('No disponible');
+                }
+            });
+
+            $(document).ready(function () {
+                $('#miembrosDropdownTransferencia').on('change', function () {
+                    var miembroId = $(this).val(); // Captura el ID del miembro seleccionado
+
+                    if (miembroId) {
+                        console.log("Solicitando detalles del miembro con ID:", miembroId, "para Transferencia"); // Log para depuración
+
+                        // Realiza la solicitud AJAX
+                        $.ajax({
+                            url: '@Url.Action("ObtenerDetallesMiembro", "Pagos")', // Cambia el método si es necesario
+                            type: 'GET',
+                            data: { miembroId: miembroId },
+                            success: function (response) {
+                                console.log("Respuesta del servidor (Transferencia):", response); // Respuesta exitosa
+
+                                // Actualiza las etiquetas específicas para Transferencia
+                                $('#nombreLabelTransferencia').text(response.nombre || 'No disponible');
+                                $('#apellidoLabelTransferencia').text(response.apellido || 'No disponible');
+                                $('#dniLabelTransferencia').text(response.dni || 'No disponible');
+                                $('#tieneLabelTransferencia').text(response.tiene ? 'Sí' : 'No');
+
+                                var fechaVencimiento = response.fechaVencimiento
+                                    ? new Date(response.fechaVencimiento).toLocaleDateString('es-ES')
+                                    : 'Sin fecha';
+                                $('#vencimientoLabelTransferencia').text(fechaVencimiento);
+
+                                $('#afiliacionLabelTransferencia').text(
+                                    response.montoAfiliacion
+                                        ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'ARS' }).format(response.montoAfiliacion)
+                                        : 'No posee deuda'
+                                );
+
+                                $('#seguroLabelTransferencia').text(
+                                    response.montoSeguroAcompañante
+                                        ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'ARS' }).format(response.montoSeguroAcompañante)
+                                        : 'No posee deuda'
+                                );
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.error("Error en la solicitud (Transferencia):", textStatus, errorThrown);
+                                alert("No se pudo obtener los datos del miembro para Transferencia. Verifique su conexión o configuración.");
+                            }
+                        });
+                    } else {
+                        console.log("No se seleccionó un miembro válido para Transferencia.");
+                        limpiarEtiquetasMiembroTransferencia(); // Limpia las etiquetas si no hay selección
+                    }
+                });
+
+                // Limpia las etiquetas específicas para Transferencia
+                function limpiarEtiquetasMiembroTransferencia() {
+                    $('#nombreLabelTransferencia, #apellidoLabelTransferencia, #dniLabelTransferencia, #tieneLabelTransferencia, #vencimientoLabelTransferencia, #afiliacionLabelTransferencia, #seguroLabelTransferencia').text('No disponible');
+                }
+            });
+
+  
+            // Función para agregar detalles a la tabla según la modalidad
+            function agregarDetalle(modalidad) {
+                // Obtener valores de los campos según modalidad
+                var categoriaElement = document.getElementById(`DetallePago_Categoria_${modalidad}`);
+                var categoriaId = categoriaElement.value; // ID de la categoría
+                var categoriaNombre = categoriaElement.selectedOptions[0].text; // Nombre de la categoría
+                var montoElement = document.getElementById(`DetallePago_Monto_${modalidad}`);
+                var monto = parseFloat(montoElement.value);
+
+                // Validación de los campos
+                if (!categoriaId || categoriaId == "0" || isNaN(monto) || monto <= 0) {
+                    alert("Por favor, ingrese una categoría válida y un monto mayor a 0.");
+                    return;
+                }
+
+                // Agregar fila a la tabla
+                var tablaDetalles = document.getElementById(`tablaDetalles_${modalidad}`).getElementsByTagName('tbody')[0];
+                var nuevaFila = tablaDetalles.insertRow();
+                nuevaFila.insertCell(0).innerText = categoriaNombre; // Mostrar el nombre de la categoría
+                nuevaFila.cells[0].setAttribute("data-categoria-id", categoriaId); // Agregar atributo data con el ID
+                nuevaFila.insertCell(1).innerText = monto.toFixed(2);
+                nuevaFila.insertCell(2).innerHTML = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarDetalle(this)">Eliminar</button>';
+
+                // Actualizar el campo oculto
+                actualizarDetallesJson();
+
+                // Limpiar campos
+                categoriaElement.selectedIndex = 0;
+                montoElement.value = "";
+            }
+
+
+            function eliminarDetalle(boton) {
+                var fila = boton.parentNode.parentNode;
+                fila.parentNode.removeChild(fila);
+                actualizarDetallesJson(); // Si estás actualizando algún campo oculto o similar
+            }
+
+
+
+            // Función para actualizar el campo oculto con los detalles en formato JSON
+            function actualizarDetallesJson() {
+                var detalles = [];
+                var modalidades = ["Efectivo", "Deposito", "Transferencia"];
+
+                modalidades.forEach(modalidad => {
+                    var filas = document.getElementById(`tablaDetalles_${modalidad}`).getElementsByTagName('tbody')[0].rows;
+                    for (var i = 0; i < filas.length; i++) {
+                        var categoriaId = filas[i].cells[0].getAttribute("data-categoria-id");
+                        var monto = parseFloat(filas[i].cells[1].innerText);
+
+                        detalles.push({
+                            CategoriaPagoId: parseInt(categoriaId, 10),
+                            Monto: monto
+                        });
+                    }
+                });
+
+                // Actualizar el valor de los campos ocultos
+                document.getElementById('detallesJson_Efectivo').value = JSON.stringify(detalles);
+                document.getElementById('detallesJson_Deposito').value = JSON.stringify(detalles);
+                document.getElementById('detallesJson_Transferencia').value = JSON.stringify(detalles);
+            }
+
+            // Registrar eventos para agregar detalles
+            document.getElementById('btnAgregarDetalle_Efectivo').addEventListener('click', function (event) {
+                event.preventDefault();
+                agregarDetalle("Efectivo");
+            });
+
+            document.getElementById('btnAgregarDetalle_Deposito').addEventListener('click', function (event) {
+                event.preventDefault();
+                agregarDetalle("Deposito");
+            });
+
+            document.getElementById('btnAgregarDetalle_Transferencia').addEventListener('click', function (event) {
+                event.preventDefault();
+                agregarDetalle("Transferencia");
+            });
+
+            // Inicializar el formulario con la modalidad seleccionada
+            mostrarFormularioPorModalidad();
+
+            // Cambiar formulario al seleccionar modalidad
+            document.getElementById('modalidadSelect').addEventListener('change', mostrarFormularioPorModalidad);
+
+            // Función para eliminar un detalle
+          
+
+
+                document.getElementById("buscarMiembro").addEventListener("click", function () {
+            const dni = document.getElementById("dni").value;
+
+            if (!dni) {
+                alert("Debe ingresar un DNI válido.");
+                return;
+            }
+
+            fetch(`/Pagos/BuscarMiembroPorDNI?dni=${dni}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const miembro = data.data;
+                        document.getElementById("resultadoBusqueda").innerHTML = `
+                            <p>Nombre: ${miembro.nombre}</p>
+                            <p>Apellido: ${miembro.apellido}</p>
+                            <p>Deuda: ${miembro.deuda.montoTotal}</p>
+                        `;
+                    } else {
+                        document.getElementById("resultadoBusqueda").innerHTML = `<p>${data.message}</p>`;
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        });
+
+
+        });
+
+
+    </script>
+}
+
+
+
+

@@ -1,0 +1,245 @@
+﻿@model VMMiembro
+
+@{
+    ViewData["Title"] = Model.Id > 0 ? "Editar Miembro" : "Agregar Miembro";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var organismoId = ViewBag.OrganismoId as int?;
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@ViewData["Title"]</h5>
+        <input type="hidden" name="OrganismoId" value="@organismoId" />
+
+        <!-- Vertical Form -->
+        <form id="formMiembro" asp-area="Admin" asp-controller="Miembros" asp-action="AddMiembro" method="post" class="row g-3">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="col-6">
+                <label asp-for="Nombre" class="form-label">Nombre</label>
+                <input asp-for="Nombre" type="text" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label asp-for="Apellido" class="form-label">Apellido</label>
+                <input asp-for="Apellido" type="text" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" type="text" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label asp-for="Dni" class="form-label">DNI</label>
+                <input asp-for="Dni" type="text" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label asp-for="Telefono" class="form-label">Teléfono</label>
+                <input asp-for="Telefono" type="text" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label asp-for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                <input asp-for="FechaNacimiento" type="date" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label for="inputReligion" class="form-label">Religión</label>
+                <select asp-for="ReligionId" class="form-select" asp-items="ViewBag.Religiones">
+                    <option value="">Seleccione una opción...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label for="inputSexo" class="form-label">Sexo</label>
+                <select asp-for="SexoId" class="form-select" asp-items="ViewBag.Sexos">
+                    <option value="">Seleccione una opción...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label for="inputNacionalidad" class="form-label">Nacionalidad</label>
+                <select asp-for="NacionalidadId" class="form-select" asp-items="ViewBag.Nacionalidades">
+                    <option value="">Seleccione una opción...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label for="inputProvincia" class="form-label">Provincia</label>
+                <select asp-for="ProvinciaId" id="inputProvincia" class="form-select" asp-items="ViewBag.Provincias" onchange="loadLocalidades()">
+                    <option value="">Seleccione una opción...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label for="inputLocalidad" class="form-label">Localidad</label>
+                <select asp-for="LocalidadId" id="inputLocalidad" class="form-select">
+                    <option value="">Seleccione una opción...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label for="inputEstadoCivil" class="form-label">Estado Civil</label>
+                <select asp-for="EstadoCivilId" class="form-select" asp-items="ViewBag.EstadosCiviles">
+                    <option value="">Seleccione una opción...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label asp-for="CodigoPostal" class="form-label">Código Postal</label>
+                <input asp-for="CodigoPostal" type="text" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label for="inputIdioma" class="form-label">Idioma</label>
+                <select asp-for="IdiomaId" class="form-select" asp-items="ViewBag.Idiomas">
+                    <option value="">Seleccione una opción...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label for="inputEstudio" class="form-label">Estudios</label>
+                <select asp-for="EstudioId" class="form-select" asp-items="ViewBag.Estudios">
+                    <option value="">Seleccione una opción...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label asp-for="Titulo" class="form-label">Título</label>
+                <input asp-for="Titulo" type="text" class="form-control" />
+            </div>
+
+            <div class="col-6">
+                <label for="inputDiscapacidad" class="form-label">Discapacidad</label>
+                <select asp-for="MiembroDiscapacidadId" class="form-select" asp-items="ViewBag.Discapacidades">
+                    <option value="">Seleccione una opción...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label asp-for="DescripcionDiscapacidad" class="form-label">Descripción de la Discapacidad</label>
+                <textarea asp-for="DescripcionDiscapacidad" class="form-control" style="height: 60px"></textarea>
+            </div>
+
+            <div class="col-6">
+                <label asp-for="OrganismoId" class="form-label">Organismo</label>
+                <select asp-for="OrganismoId" class="form-select" asp-items="ViewBag.Organismos">
+                    <option value="">Seleccione un organismo...</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <label asp-for="CategoriaId" class="form-label">Categoría</label>
+                <select asp-for="CategoriaId" class="form-select" asp-items="ViewBag.Categorias" id="CategoriaId">
+                    <option value="">Seleccione una categoría...</option>
+                </select>
+            </div>
+
+            <div class="col-6" id="funcionEducadorDiv" style="display: none;">
+                <label asp-for="@Model.FuncionId" class="form-label">Función del Educador</label>
+                <select asp-for="@Model.FuncionId" class="form-select" asp-items="ViewBag.Funciones">
+                    <option value="">Seleccione una función...</option>
+                </select>
+            </div>
+
+            <div class="col-6" id="insigniaMaderaDiv" style="display: none;">
+                <label for="insigniaMadera">Insignia Madera</label>
+                <input type="checkbox" id="insigniaMadera" name="InsigniaMadera" @(Model?.InisgniaMadera == true ? "checked" : "") />
+            </div>
+
+            <div class="col-6" id="ramaDiv" style="display: none;">
+                <label asp-for="RamaId" class="form-label">Rama</label>
+                <select asp-for="RamaId" class="form-select" asp-items="ViewBag.Ramas">
+                    <option value="">Seleccione una rama...</option>
+                </select>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <button type="button" class="btn btn-danger" onclick="window.history.back();">Cancelar</button>
+                <button type="reset" class="btn btn-secondary">Limpiar</button>
+            </div>
+        </form><!-- Vertical Form -->
+    </div>
+</div>
+
+
+  
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+
+@section Scripts {
+    <script>
+
+          document.addEventListener("DOMContentLoaded", function () {
+            console.log("Script cargado correctamente");
+
+            // Obtener elementos del formulario
+            var categoriaSelect = document.getElementById("CategoriaId");
+            var funcionEducadorDiv = document.getElementById("funcionEducadorDiv");
+            var insigniaMaderaDiv = document.getElementById("insigniaMaderaDiv");
+            var ramaDiv = document.getElementById("ramaDiv");
+
+            if (!categoriaSelect) {
+                console.error("No se encontró el elemento CategoriaId");
+                return;
+            }
+
+            function actualizarVisibilidad() {
+                var categoriaSeleccionada = parseInt(categoriaSelect.value) || 0;
+                console.log("Categoría seleccionada:", categoriaSeleccionada);
+
+                // Ocultar todos los campos inicialmente
+                funcionEducadorDiv.style.display = "none";
+                insigniaMaderaDiv.style.display = "none";
+                ramaDiv.style.display = "none";
+
+                // Mostrar los campos según la categoría seleccionada
+                if (categoriaSeleccionada === 7) { // Educador
+                    funcionEducadorDiv.style.display = "block";
+                    insigniaMaderaDiv.style.display = "block";
+                } else if (categoriaSeleccionada === 5) { // Protagonista
+                    ramaDiv.style.display = "block";
+                }
+                // Si la categoría es Acompañante (ID = 3), no se muestra nada adicional
+            }
+
+            // Ejecutar la función cuando cambie la selección
+            categoriaSelect.addEventListener("change", actualizarVisibilidad);
+
+            // Ejecutar la función al cargar la página por si hay una selección previa
+            actualizarVisibilidad();
+        });
+
+        function loadLocalidades() {
+            var provinciaId = document.getElementById('inputProvincia').value;
+            var localidadesDropdown = document.getElementById('inputLocalidad');
+            localidadesDropdown.innerHTML = '<option value="">Cargando...</option>';
+
+            fetch(`/Organismo/GetLocalidades?provinciaId=${provinciaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    localidadesDropdown.innerHTML = '<option value="">Seleccione una localidad...</option>';
+                    data.forEach(localidad => {
+                        var option = document.createElement('option');
+                        option.value = localidad.id;
+                        option.text = localidad.nombre;
+                        localidadesDropdown.add(option);
+                    });
+
+                    // Si es una edición, selecciona la localidad actual
+                    var currentLocalidadId = '@Model.LocalidadId';
+                    if (currentLocalidadId) {
+                        localidadesDropdown.value = currentLocalidadId;
+                    }
+                });
+        }
+
+    </script>
+}

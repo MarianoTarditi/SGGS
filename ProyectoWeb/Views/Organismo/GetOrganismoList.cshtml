@@ -1,0 +1,146 @@
+﻿@model List<VMOrganismo>
+
+@{
+    ViewData["Title"] = "GetOrganismoList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Organismo</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Lista Organismos</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.29.0/tableExport.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table-locale-all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/extensions/export/bootstrap-table-export.min.js"></script>
+
+<style>
+    .select,
+    #locale {
+        width: 100%;
+    }
+
+    .like {
+        margin-right: 10px;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center; /* Centrar los botones horizontalmente */
+    }
+
+        .action-buttons a {
+            margin: 0 5px; /* Espacio entre los botones */
+            min-width: 80px; /* Ancho mínimo para los botones */
+            text-align: center; /* Alineación centrada del texto en el botón */
+        }
+
+    td {
+        text-align: center; /* Centrar el contenido de la celda */
+    }
+
+        th[data-field="acciones"], td[data-field="acciones"] {
+            width: 150px; /* Ajusta este valor según sea necesario */
+            min-width: 150px; /* Asegura que la columna no sea más pequeña que este valor */
+        }
+</style>
+
+<table id="table"
+       data-id-field="Id"
+       data-search="true"
+       data-show-refresh="true"
+       data-show-toggle="true"
+       data-show-fullscreen="true"
+       data-show-columns="true"
+       data-show-columns-toggle-all="true"
+       data-detail-view="true"
+       data-show-export="true"
+       data-click-to-select="true"
+       data-detail-formatter="detailFormatter"
+       data-minimum-count-columns="2"
+       data-show-pagination-switch="true"
+       data-pagination="true"
+       data-id-field="id"
+       data-page-list="[10, 25, 50, 100, all]"
+       data-show-footer="true"
+       data-side-pagination="client">
+    <thead>
+        <tr>
+            <th data-field="id" data-visible="false">ID</th> <!-- Columna ID oculta -->
+            <th data-field="codigo" data-sortable="true">Codigo</th>
+            <th data-field="fechaCreacion" data-sortable="true">Fecha de Creación</th>
+            <th data-field="nombre" data-sortable="true">Nombre</th>
+            <th data-field="descripcion" data-sortable="true">Descripción</th>
+            <th data-field="provincia" data-sortable="true">Provincia</th>
+            <th data-field="localidad" data-sortable="true">Localidad</th>
+            <th data-field="direccion" data-sortable="true">Dirección</th>
+            <th data-field="codigoPostal" data-sortable="true">Codigo Postal</th>
+            <th data-field="acciones" data-formatter="operateFormatter">Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Codigo</td>
+                <td>@item.FechaCreacion</td>
+                <td>@item.Nombre</td>
+                <td>@item.Descripcion</td>
+                <td>@item.Localidad.Provincia.Nombre</td>
+                <td>@item.Localidad.Nombre</td>
+                <td>@item.Direccion</td>
+                <td>@item.CodigoPostal</td>
+                <td class="action-buttons">
+                    <a asp-area="Admin" asp-controller="Organismo" asp-action="GetOrganismo" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Ver</a>
+                    <a asp-area="Admin" asp-controller="Organismo" asp-action="UpdateOrganismo" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Modificar</a>
+                    <a asp-area="Admin" asp-controller="Organismo" asp-action="DeleteOrganismo" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<td><a asp-area="Admin" asp-controller="Organismo" asp-action="AddOrganismo" class="btn btn-success btn-sm">Agregar</a></td>
+
+<script>
+    var $table = $('#table');
+    var $remove = $('#remove');
+    var selections = [];
+
+    function getIdSelections() {
+        return $.map($table.bootstrapTable('getSelections'), function (row) {
+            return row.id;
+        });
+    }
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<div class="action-buttons">',
+            '<a class="btn btn-secondary btn-sm" href="/Organismo/GetOrganismo?id=' + row.id + '">Ver</a> ',
+            '<a class="btn btn-primary btn-sm" href="/Organismo/UpdateOrganismo?id=' + row.id + '">Modificar</a> ',
+            '<a class="btn btn-danger btn-sm" href="/Organismo/DeleteOrganismo?id=' + row.id + '">Eliminar</a>',
+            '</div>'
+        ].join('');
+    }
+
+    function initTable() {
+        $table.bootstrapTable({
+            locale: 'es-ES' // Establecer el idioma por defecto directamente
+        });
+    }
+
+    $(function () {
+        initTable();
+    });
+</script>

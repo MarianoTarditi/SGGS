@@ -1,0 +1,332 @@
+﻿@model VMOrganismo
+
+
+@{
+    ViewData["Title"] = "GetOrganismo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Admin/assets/vendor/simple-datatables/style.css" asp-append-version="true" rel="stylesheet">
+<script src="~/Admin/assets/vendor/simple-datatables/simple-datatables.js" asp-append-version="true"></script>
+
+
+<div class="pagetitle">
+    <h1>Organismo</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Mi Organismo</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+    <div class="row g-5">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body pt-3">               
+                        <ul class="nav nav-tabs nav-tabs-bordered">
+
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Información</button>
+                            </li>
+
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Editar</button>
+                            </li>
+
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Miembros</button>
+                            </li>                 
+
+                        </ul>
+                        <div class="tab-content pt-2">
+
+                            <div class="tab-pane fade show active profile-overview" id="profile-overview">
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label ">Código</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Codigo</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Nombre</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Nombre</div>
+                                </div>
+
+                                 <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Fecha de Creacón</div>
+                                    <div class="col-lg-9 col-md-8">@Model.FechaCreacion</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Provincia</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Localidad.Provincia.Nombre</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Localidad</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Localidad.Nombre</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Código Postal</div>
+                                    <div class="col-lg-9 col-md-8">@Model.CodigoPostal</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Dirección</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Direccion</div>
+                                </div>
+
+                                  <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Celular</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Celular</div>
+                                </div>
+
+                                  <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Teléfono</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Telefono</div>
+                                </div>
+
+                                  <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Email</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Email</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Longitud</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Longitud</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Latitud</div>
+                                    <div class="col-lg-9 col-md-8">@Model.Latitud</div>
+                                </div>                  
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Valor Seguro de Acompañante</div>
+                                    <div class="col-lg-9 col-md-8">@Model.ValorSeguro</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Valor Afiliación</div>
+                                    <div class="col-lg-9 col-md-8">@Model.ValorAfiliacion</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 label">Descripción</div>
+                                    <div class="col-lg-9 col-md-8" style="height: 50px">
+                                        @Model.Descripcion
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+
+
+                                        <div class="table-container">
+
+                                            <table id="table"
+                                                   data-id-field="Id"
+                                                   data-search="true"
+                                                   data-show-refresh="true"
+                                                   data-show-toggle="true"
+                                                   data-show-fullscreen="true"
+                                                   data-show-columns="true"
+                                                   data-show-columns-toggle-all="true"
+                                                   data-detail-view="true"
+                                                   data-show-export="true"
+                                                   data-click-to-select="true"
+                                                   data-detail-formatter="detailFormatter"
+                                                   data-minimum-count-columns="2"
+                                                   data-show-pagination-switch="true"
+                                                   data-pagination="true"
+                                                   data-page-list="[5, 10, 20, 50, all]"
+                                                   data-show-footer="true"
+                                                   data-side-pagination="client">
+                                            </table>
+                                        </div>
+
+                                            <div class="col-lg-15">
+
+
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">MIEMBROS</h5>
+                                                    <span>Esta es la lista completa de <span style="font-weight: bold; color: #007bff;">Miembros</span> que pertenecen al Organismo: <span style="font-weight: bold; color: #007bff;">@Model.Nombre</span></span>
+
+
+                                                        <!-- Table with stripped rows -->
+                                                        <table class="table datatable">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nombre</th>
+                                                                    <th>Apellido</th>
+                                                                    <th>Dni</th>
+                                                                    <th data-type="date" data-format="YYYY/DD/MM">Fecha de Nacimiento</th>
+                                                                    <th>Email</th>
+                                                                    <th>Teléfono</th>
+                                                                    <th>Localidad</th>
+                                                                    <th>Sexo</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            @foreach (var item in Model.Miembros)
+                                                            {
+                                                                <tr>
+                                                                    <td>@item.Nombre</td>
+                                                                    <td>@item.Apellido</td>
+                                                                    <td>@item.Dni</td>
+                                                                    <td>@item.FechaNacimiento</td>
+                                                                    <td>@item.Email</td>
+                                                                    <td>@item.Telefono</td>
+                                                                    <td>@item.Localidad.Nombre</td>
+                                                                    <td>@item.Sexo.Nombre</td>
+                                                                </tr>
+                                                            }            
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                            </div>
+
+                                <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+                                
+                            </div>    
+
+                            <div class="tab-pane fade pt-3" id="profile-change-password">
+                            <form asp-controller="Organismo" asp-action="UpdateOrganismo" method="post" class="row g-3">
+                                <input type="hidden" asp-for="Id" />
+
+                                <div class="col-7">
+                                    <label asp-for="Nombre" class="form-label">Nombre</label>
+                                    <input asp-for="Nombre" type="text" class="form-control" />
+                                </div>
+
+                                <div class="col-7">
+                                    <label asp-for="Descripcion" class="form-label">Descripción</label>
+                                    <textarea asp-for="Descripcion" class="form-control" style="height: 100px"></textarea>
+                                </div>
+
+                                <div class="col-7">
+                                    <label asp-for="FechaCreacion" class="form-label">Fecha de Creación</label>
+                                    <input asp-for="FechaCreacion" type="date" class="form-control">
+                                </div>
+
+                                <div class="col-7">
+                                    <label for="inputProvincia" class="form-label">Provincia</label>
+                                    <select asp-for="ProvinciaId" id="inputProvincia" class="form-select" asp-items="ViewBag.Provincias" onchange="loadLocalidades()">
+                                        <option value="">Seleccione una provincia...</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-7">
+                                    <label for="inputLocalidad" class="form-label">Localidad</label>
+                                    <select asp-for="LocalidadId" id="inputLocalidad" class="form-select" asp-items="ViewBag.Localidades">
+                                        <option value="">Seleccione una localidad...</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-7">
+                                    <label asp-for="Direccion" class="form-label">Dirección</label>
+                                    <input asp-for="Direccion" type="text" class="form-control" />
+                                </div>
+
+                                <div class="col-7">
+                                    <label asp-for="CodigoPostal" class="form-label">Código Postal</label>
+                                    <input asp-for="CodigoPostal" type="text" class="form-control" />
+                                </div>
+
+                                 <div class="col-7">
+                                    <label asp-for="Latitud" class="form-label">Latitud</label>
+                                    <input asp-for="Latitud" type="text" class="form-control" />
+                                </div>
+
+                                 <div class="col-7">
+                                    <label asp-for="Longitud" class="form-label">Longitud</label>
+                                    <input asp-for="Longitud" type="text" class="form-control" />
+                                </div>
+
+                                <div class="col-7">
+                                    <label asp-for="Email" class="form-label">Email</label>
+                                    <input asp-for="Email" type="text" class="form-control" />
+                                </div>
+
+                                 <div class="col-7">
+                                    <label asp-for="Telefono" class="form-label">Teléfono</label>
+                                    <input asp-for="Telefono" type="text" class="form-control" />
+                                </div>
+
+                                <div class="col-7">
+                                    <label asp-for="Celular" class="form-label">Celular</label>
+                                    <input asp-for="Celular" type="text" class="form-control" />
+                                </div>
+
+                                <nav>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="#">Deudas</a></li>
+                                    </ol>
+                                </nav>
+
+                                <div class="col-7">
+                                    <label asp-for="ValorAfiliacion" class="form-label">Valor Afiliación</label>
+                                    <input asp-for="ValorAfiliacion" type="text" class="form-control" />
+                                </div>
+
+                                <div class="col-7">
+                                    <label asp-for="ValorSeguro" class="form-label">Valor Seguro de Acompañante</label>
+                                    <input asp-for="ValorSeguro" type="text" class="form-control" />
+                                </div>
+
+                                <div>
+                                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                                    <button type="button" class="btn btn-danger" onclick="window.history.back();">Cancelar</button>
+                                    <button type="reset" class="btn btn-secondary">Limpiar</button>
+                                </div>
+                            </form><!-- Vertical Form -->
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    <script>
+        function loadLocalidades() {
+            var provinciaId = document.getElementById('inputProvincia').value;
+            var localidadesDropdown = document.getElementById('inputLocalidad');
+            localidadesDropdown.innerHTML = '<option value="">Cargando...</option>';
+
+            fetch(`/Organismo/GetLocalidades?provinciaId=${provinciaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    localidadesDropdown.innerHTML = '<option value="">Seleccione una localidad...</option>';
+                    data.forEach(localidad => {
+                        var option = document.createElement('option');
+                        option.value = localidad.id;
+                        option.text = localidad.nombre;
+                        localidadesDropdown.add(option);
+                    });
+
+                    // Selecciona la localidad actual si está en modo edición
+                    var currentLocalidadId = '@Model.LocalidadId';
+                    if (currentLocalidadId) {
+                        localidadesDropdown.value = currentLocalidadId;
+                    }
+                });
+        }
+
+
+            document.addEventListener('DOMContentLoaded', function () {
+            if ('@Model.ProvinciaId') {
+                document.getElementById('inputProvincia').value = '@Model.ProvinciaId';
+                loadLocalidades();
+            }
+        });
+
+    </script>
+}
+
