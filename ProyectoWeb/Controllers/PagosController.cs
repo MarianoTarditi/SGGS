@@ -117,7 +117,9 @@ namespace ProyectoWeb.Controllers
                 miembro.Deuda.Tiene,
                 miembro.Deuda.FechaVencimiento,
                 miembro.Deuda.MontoAfiliacion,
-                miembro.Deuda.MontoSeguroAcompañante
+                miembro.Deuda.MontoSeguroAcompañante,
+                categoriaMiembro = miembro.Categoria
+
             });
         }
 
@@ -157,7 +159,12 @@ namespace ProyectoWeb.Controllers
             ViewBag.Categorias = new SelectList(categorias, "Id", "CategoriaNombre");
 
             var miembros = await _miembroService.GetMiembrosDeudas();
-            ViewBag.MiembrosDeudas = new SelectList(miembros, "Id", "Nombre");
+            ViewBag.MiembrosDeudas = new SelectList(miembros.Select(m => new
+            {
+                Id = m.Id,
+                NombreCompleto = $"{m.Nombre} {m.Apellido}"
+            }), "Id", "NombreCompleto");
+
 
 
             if (id.HasValue)

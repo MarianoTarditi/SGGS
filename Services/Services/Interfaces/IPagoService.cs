@@ -21,6 +21,7 @@ namespace ServiceLayer.Services.Interfaces
 
         public Task<IEnumerable<VMPagoModalidad>> GetModalidadesAsync();
         public Task<IEnumerable<VMCategoriaPago>> GetCategoriasAsync();
+
         public Task<IEnumerable<VMEstadoAutorizacion>> GetEstadosAutorizacionAsync();
         public Task<bool> CambiarEstadoAsync(int idPago, int nuevoEstadoId);
 

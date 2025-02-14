@@ -34,19 +34,6 @@ ViewData["Title"] = Model.Id > 0 ? "Editar Pago" : "Agregar Pago";
 <!-- Template Main JS File -->
 <script src="~/Admin/assets/js/main.js"></script> *@
 
-@if (User.IsInRole("SuperAdmin"))
-{
-    <div class="alert alert-success fade show fw-bolder text-center" role="alert">
-        ¡Bienvenido Usuario cómo Administrador!
-    </div>
-}
-else
-{
-    <div class="alert alert-info fade show fw-bolder text-center" role="alert">
-        WELCOME TO OUR COMPANY DASHBOARD !!
-    </div>
-}
-
 <div class="card col-12">
     <div class="card-body">
         <h5 class="card-title">@ViewData["Title"]</h5>
@@ -84,10 +71,7 @@ else
                             <i class="fa fa-user"></i> Detalles del Miembro
                         </div>
                         <div class="card-body">
-                            <p><i class="fa fa-id-card"></i> <strong>Nombre:</strong> <span id="nombreLabel"></span></p>
-                            <p><i class="fa fa-user-tag"></i> <strong>Apellido:</strong> <span id="apellidoLabel"></span></p>
                             <p><i class="fa fa-id-badge"></i> <strong>DNI:</strong> <span id="dniLabel"></span></p>
-                            <p><i class="fa fa-credit-card"></i> <strong>¿Tiene Deuda?:</strong> <span id="tieneLabel"></span></p>
                             <p><i class="fa fa-calendar-alt"></i> <strong>Vencimiento Deuda:</strong> <span id="vencimientoLabel"></span></p>
                             <p><i class="fa fa-dollar-sign"></i> <strong>Monto Afiliación:</strong> <span id="afiliacionLabel"></span></p>
                             <p><i class="fa fa-shield-alt"></i> <strong>Monto Seguro:</strong> <span id="seguroLabel"></span></p>
@@ -124,16 +108,17 @@ else
       
                 <h4 style="margin-top: 20px; margin-bottom: 20px;"></h4>
                 <!-- Fila con los campos de Nombre Completo, Fecha de Pago, Categoría, Monto -->
-                    <div class="col-6 mb-3">
-                        <label asp-for="Modalidad.NombreCompleto" class="form-label">Nombre Completo</label>
-                    <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="nombreCompletoTextbox" />
-                    </div>
+                <div class="col-6 mb-3">
+                    <label asp-for="Modalidad.NombreCompleto" class="form-label">Nombre Completo</label>
+                    <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="nombreCompletoTextbox" readonly />
+                </div>
+
 
                 <div class="row">
+
                     <div class="col-3">
                         <label for="inputLocalidad" class="form-label">Categoría</label>
-                        <select id="DetallePago_Categoria_Efectivo" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias">
-                            <option value="">Seleccione una opción...</option>
+                        <select id="DetallePago_Categoria_Efectivo" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias" disabled>
                         </select>
                     </div>
                     <div class="col-3">
@@ -198,10 +183,7 @@ else
                             <i class="fa fa-user"></i> Detalles del Miembro
                         </div>
                         <div class="card-body">
-                            <p><i class="fa fa-id-card"></i> <strong>Nombre:</strong> <span id="nombreLabelDeposito"></span></p>
-                            <p><i class="fa fa-user-tag"></i> <strong>Apellido:</strong> <span id="apellidoLabelDeposito"></span></p>
                             <p><i class="fa fa-id-badge"></i> <strong>DNI:</strong> <span id="dniLabelDeposito"></span></p>
-                            <p><i class="fa fa-credit-card"></i> <strong>¿Tiene Deuda?:</strong> <span id="tieneLabelDeposito"></span></p>
                             <p><i class="fa fa-calendar-alt"></i> <strong>Vencimiento Deuda:</strong> <span id="vencimientoLabelDeposito"></span></p>
                             <p><i class="fa fa-dollar-sign"></i> <strong>Monto Afiliación:</strong> <span id="afiliacionLabelDeposito"></span></p>
                             <p><i class="fa fa-shield-alt"></i> <strong>Monto Seguro:</strong> <span id="seguroLabelDeposito"></span></p>
@@ -213,7 +195,7 @@ else
 
                 <div class="col-6 mb-3">
                     <label asp-for="Modalidad.NombreCompleto" class="form-label">Nombre Completo</label>
-                    <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="deposito_NombreCompleto" />
+                    <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="deposito_NombreCompleto" readonly/>
                 </div>
 
                 <div class="col-6 mb-3">
@@ -236,8 +218,7 @@ else
                 <div class="row">
                     <div class="col-3">
                         <label for="inputLocalidad" class="form-label">Categoría</label>
-                        <select id="DetallePago_Categoria_Deposito" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias">
-                            <option value="">Seleccione una opción...</option>
+                        <select id="DetallePago_Categoria_Deposito" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias" disabled>
                         </select>
                     </div>
                     <div class="col-3">
@@ -303,10 +284,7 @@ else
                             <i class="fa fa-user"></i> Detalles del Miembro
                         </div>
                         <div class="card-body">
-                            <p><i class="fa fa-id-card"></i> <strong>Nombre:</strong> <span id="nombreLabelTransferencia"></span></p>
-                            <p><i class="fa fa-user-tag"></i> <strong>Apellido:</strong> <span id="apellidoLabelTransferencia"></span></p>
                             <p><i class="fa fa-id-badge"></i> <strong>DNI:</strong> <span id="dniLabelTransferencia"></span></p>
-                            <p><i class="fa fa-credit-card"></i> <strong>¿Tiene Deuda?:</strong> <span id="tieneLabelTransferencia"></span></p>
                             <p><i class="fa fa-calendar-alt"></i> <strong>Vencimiento Deuda:</strong> <span id="vencimientoLabelTransferencia"></span></p>
                             <p><i class="fa fa-dollar-sign"></i> <strong>Monto Afiliación:</strong> <span id="afiliacionLabelTransferencia"></span></p>
                             <p><i class="fa fa-shield-alt"></i> <strong>Monto Seguro:</strong> <span id="seguroLabelTransferencia"></span></p>
@@ -318,7 +296,7 @@ else
    
                 <div class="col-6 mb-3">
                     <label asp-for="Modalidad.NombreCompleto" class="form-label">Nombre Completo</label>
-                    <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="transferencia_NombreCompleto" />
+                    <input asp-for="Modalidad.NombreCompleto" type="text" class="form-control" id="transferencia_NombreCompleto" readonly/>
                 </div>
 
                 <div class="col-6 mb-3">
@@ -351,8 +329,7 @@ else
                 <div class="row">
                     <div class="col-3">
                         <label for="inputLocalidad" class="form-label">Categoría</label>
-                        <select id="DetallePago_Categoria_Transferencia" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias">
-                            <option value="">Seleccione una opción...</option>
+                        <select id="DetallePago_Categoria_Transferencia" asp-for="DetallePago.CategoriaPagoId" class="form-select" asp-items="ViewBag.Categorias" disabled>
                         </select>
                     </div>
                     <div class="col-3">
@@ -479,25 +456,36 @@ else
                             $('#nombreCompletoTextbox').val(nombreCompleto.trim());
 
 
-                            
-
-
-                            if (response.montoAfiliacion > 0) 
+                            if (response.montoAfiliacion > 0)
                             {
-                                $('#DetallePago_Monto_Efectivo').val(response.montoAfiliacion? response.montoAfiliacion.toFixed(0) : '0');
+                                 $('#DetallePago_Monto_Efectivo').val(response.montoAfiliacion ? response.montoAfiliacion.toFixed(0) : '0');
 
-                                $('#DetallePago_Categoria_Efectivo').val('Afiliacion').trigger('change');
-                                console.log("Categoria establecida a Afiliacion");
-                            } else 
-                            {
-                                $('#DetallePago_Monto_Efectivo').val(response.montoSeguroAcompañante? response.montoSeguroAcompañante.toFixed(0) : '0');
-                                $('#DetallePago_Categoria_Efectivo').val('Seguro de Acompañante').trigger('change');
-                                console.log("Categoria establecida a Seguro de Acompañante");
+                                        // Buscar el valor correspondiente a 'Afiliacion' en el select
+                                  let categoriaAfiliacion = $("#DetallePago_Categoria_Efectivo option:contains('Afiliación')").val();
+
+                                  if(categoriaAfiliacion) 
+                                  {
+                                      $('#DetallePago_Categoria_Efectivo').val(categoriaAfiliacion).trigger('change');
+                                      console.log("Categoría establecida a Afiliacion");
+                                  } else 
+                                  {
+                                      console.warn("No se encontró la categoría Afiliacion en el select");
+                                  }
                             }
+                            else
+                            {
+                                 $('#DetallePago_Monto_Efectivo').val(response.montoSeguroAcompañante ? response.montoSeguroAcompañante.toFixed(0) : '0');
 
+                                 let categoriaSeguro = $("#DetallePago_Categoria_Efectivo option:contains('Seguro de Acompañante')").val();
 
-
-
+                                 if (categoriaSeguro) {
+                                       $('#DetallePago_Categoria_Efectivo').val(categoriaSeguro).trigger('change');
+                                       console.log("Categoría establecida a Seguro de Acompañante");
+                                 } else 
+                                 {
+                                     console.warn("No se encontró la categoría Seguro de Acompañante en el select");
+                                 }
+                            }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             console.error("Error en la solicitud:", textStatus, errorThrown);
@@ -563,6 +551,44 @@ else
                                         ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'ARS' }).format(response.montoSeguroAcompañante)
                                         : 'No posee deuda'
                                 );
+
+                                // Combina el nombre y apellido en el campo de texto de nombre completo
+                            var nombreCompleto = (response.nombre || '') + ' ' + (response.apellido || '');
+                            $('#deposito_NombreCompleto').val(nombreCompleto.trim());
+
+
+                            if (response.montoAfiliacion > 0)
+                            {
+                                 $('#DetallePago_Monto_Deposito').val(response.montoAfiliacion ? response.montoAfiliacion.toFixed(0) : '0');
+
+                                        // Buscar el valor correspondiente a 'Afiliacion' en el select
+                                  let categoriaAfiliacion = $("#DetallePago_Categoria_Deposito option:contains('Afiliación')").val();
+
+                                  if(categoriaAfiliacion)
+                                  {
+                                      $('#DetallePago_Categoria_Deposito').val(categoriaAfiliacion).trigger('change');
+                                      console.log("Categoría establecida a Afiliacion");
+                                  } else
+                                  {
+                                      console.warn("No se encontró la categoría Afiliacion en el select");
+                                  }
+                            }
+                            else
+                            {
+                                 $('#DetallePago_Monto_Deposito').val(response.montoSeguroAcompañante ? response.montoSeguroAcompañante.toFixed(0) : '0');
+
+                                 let categoriaSeguro = $("#DetallePago_Categoria_Deposito option:contains('Seguro de Acompañante')").val();
+
+                                 if (categoriaSeguro) {
+                                       $('#DetallePago_Categoria_Deposito').val(categoriaSeguro).trigger('change');
+                                       console.log("Categoría establecida a Seguro de Acompañante");
+                                 } else
+                                 {
+                                     console.warn("No se encontró la categoría Seguro de Acompañante en el select");
+                                 }
+                            }
+
+
                             },
                             error: function (jqXHR, textStatus, errorThrown) {
                                 console.error("Error en la solicitud (Depósito):", textStatus, errorThrown);
@@ -618,6 +644,42 @@ else
                                         ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'ARS' }).format(response.montoSeguroAcompañante)
                                         : 'No posee deuda'
                                 );
+
+                                var nombreCompleto = (response.nombre || '') + ' ' + (response.apellido || '');
+                            $('#transferencia_NombreCompleto').val(nombreCompleto.trim());
+
+
+                            if (response.montoAfiliacion > 0)
+                            {
+                                 $('#DetallePago_Monto_Transferencia').val(response.montoAfiliacion ? response.montoAfiliacion.toFixed(0) : '0');
+
+                                        // Buscar el valor correspondiente a 'Afiliacion' en el select
+                                  let categoriaAfiliacion = $("#DetallePago_Categoria_Transferencia option:contains('Afiliación')").val();
+
+                                  if(categoriaAfiliacion)
+                                  {
+                                      $('#DetallePago_Categoria_Transferencia').val(categoriaAfiliacion).trigger('change');
+                                      console.log("Categoría establecida a Afiliacion");
+                                  } else
+                                  {
+                                      console.warn("No se encontró la categoría Afiliacion en el select");
+                                  }
+                            }
+                            else
+                            {
+                                 $('#DetallePago_Monto_Transferencia').val(response.montoSeguroAcompañante ? response.montoSeguroAcompañante.toFixed(0) : '0');
+
+                                 let categoriaSeguro = $("#DetallePago_Categoria_Transferencia option:contains('Seguro de Acompañante')").val();
+
+                                 if (categoriaSeguro) {
+                                       $('#DetallePago_Categoria_Transferencia').val(categoriaSeguro).trigger('change');
+                                       console.log("Categoría establecida a Seguro de Acompañante");
+                                 } else
+                                 {
+                                     console.warn("No se encontró la categoría Seguro de Acompañante en el select");
+                                 }
+                            }
+
                             },
                             error: function (jqXHR, textStatus, errorThrown) {
                                 console.error("Error en la solicitud (Transferencia):", textStatus, errorThrown);

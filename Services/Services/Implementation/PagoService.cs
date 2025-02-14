@@ -302,6 +302,7 @@ namespace ServiceLayer.Services.Implementation
                 .ThenInclude(p => p.EstadoAutorizacion)
                 .Include(p => p.Recibo)
                 .Include(p => p.Miembro)
+                .ThenInclude(p => p.Categoria)
                 .Include(p => p.ListaDetalles)
                 .ThenInclude(dp => dp.CategoriaPago)
                 .Select(p => new VMPago
@@ -320,6 +321,11 @@ namespace ServiceLayer.Services.Implementation
                         Nombre = p.Miembro.Nombre,
                         Apellido = p.Miembro.Apellido,
                         Dni = p.Miembro.Dni,
+
+                        Categoria = new VMCategoria
+                        {
+                            Nombre = p.Miembro.Categoria.Nombre
+                        }
                     },
                     Recibo = new VMRecibo
                     {
