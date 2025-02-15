@@ -63,7 +63,6 @@ namespace Entity.WebAplication.ViewModels
         public int CategoriaId { get; set; }
         public VMRama? Rama { get; set; }
         public int? RamaId { get; set; }
-        public bool InisgniaMadera { get; set; }
         public VMFuncion? Funcion { get; set; }
         public int? FuncionId { get; set; }
         //public string CategoriaNombre { get; set; } = null!;

@@ -54,7 +54,7 @@ namespace Entity.WebAplication.Entities
         public int CategoriaId { get; set; }
         public Rama? Rama { get; set; }
         public int? RamaId { get; set; }
-        public bool InisgniaMadera { get; set; }
+        public bool InsigniaMadera { get; set; }
         public Funcion? Funcion { get; set; }
         public int? FuncionId { get; set; }
     }

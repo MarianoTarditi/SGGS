@@ -40,7 +40,7 @@ namespace ServiceLayer.Services.Implementation
             };
 
             // Obtener todos los miembros desde la base de datos, incluyendo la categoría asociada a cada miembro
-            var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Include(x => x.Categoria).ToListAsync();
+            var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Where(x => x.Activo == true).Include(x => x.Categoria).ToListAsync();
 
             // Contar cuántos miembros pertenecen a cada categoría
             foreach (var miembro in miembros)
@@ -54,6 +54,31 @@ namespace ServiceLayer.Services.Implementation
             return categoriasCount;
         }
 
+        public async Task<Dictionary<string, int>> GetEducadoresInsigniaAsync()
+        {
+            var insigniaCount = new Dictionary<string, int>
+            {
+                { "Con Insignia", 0 },
+                { "Sin Insignia", 0 }
+            };
+
+            // Obtener la cantidad de educadores con y sin insignia directamente desde la base de datos
+            insigniaCount["Con Insignia"] = await _unitOfWork.GetGenericRepository<Miembro>()
+                .GetAllList().Where(x => x.Activo == true)
+                .Include(x => x.Categoria)
+                .Where(x => x.Categoria.Nombre == "Educador" && x.InsigniaMadera == true)
+                .CountAsync();
+
+            insigniaCount["Sin Insignia"] = await _unitOfWork.GetGenericRepository<Miembro>()
+                .GetAllList().Where(x => x.Activo == true)
+                .Include(x => x.Categoria)
+                .Where(x => x.Categoria.Nombre == "Educador" && x.InsigniaMadera == false)
+                .CountAsync();
+
+            return insigniaCount;
+        }
+
+
 
         public async Task<Dictionary<string, int>> GetFuncionMiembroAsync()
         {
@@ -65,7 +90,7 @@ namespace ServiceLayer.Services.Implementation
             };
 
             // Obtener todos los miembros desde la base de datos, incluyendo la categoría asociada a cada miembro
-            var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Include(x => x.Funcion).ToListAsync();
+            var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Where(x => x.Activo == true).Include(x => x.Funcion).ToListAsync();
 
             // Contar cuántos miembros pertenecen a cada categoría
             foreach (var miembro in miembros)
@@ -126,6 +151,89 @@ namespace ServiceLayer.Services.Implementation
             }
             return religionCount;
         }
+
+        public async Task<Dictionary<string, int>> GetEstadosPagosAsync()
+        {
+            var estadosCount = new Dictionary<string, int>
+            {
+                { "Autorizado", 0 },
+                { "Pendiente", 0 },
+                { "Rechazado", 0 }
+            };
+
+            // Obtener todos los miembros desde la base de datos, incluyendo la categoría asociada a cada miembro
+            var pagos = await _unitOfWork.GetGenericRepository<Pago>().GetAllList().Where(x => x.Activo == true).Include(x => x.Autorizacion).ThenInclude(x => x.EstadoAutorizacion).ToListAsync();
+
+            // Contar cuántos miembros pertenecen a cada categoría
+            foreach (var pago in pagos)
+            {
+                if (pago.Autorizacion.EstadoAutorizacion != null && estadosCount.ContainsKey(pago.Autorizacion.EstadoAutorizacion.Estado))
+                {
+                    estadosCount[pago.Autorizacion.EstadoAutorizacion.Estado]++;
+                }
+            }
+
+            return estadosCount;
+        }
+
+        public async Task<Dictionary<string, int>> GetCategoriasPagosAsync()
+        {
+            var estadosCount = new Dictionary<string, int>
+            {
+                { "Afiliación", 0 },
+                { "Seguro de Acompañante", 0 }
+            };
+
+            // Obtener todos los pagos activos con sus detalles y categorías
+            var pagos = await _unitOfWork.GetGenericRepository<Pago>().GetAllList().Where(p => p.Activo) // Filtrar solo los pagos activos
+                .Include(p => p.ListaDetalles)
+                .ThenInclude(d => d.CategoriaPago)
+                .ToListAsync();
+
+            // Contar los pagos que contienen al menos un detalle con la categoría específica
+            foreach (var pago in pagos)
+            {
+                if (pago.ListaDetalles != null) // Evitar posibles nulos
+                {
+                    if (pago.ListaDetalles.Any(d => d.CategoriaPago.CategoriaNombre == "Afiliación"))
+                    {
+                        estadosCount["Afiliación"]++;
+                    }
+                    if (pago.ListaDetalles.Any(d => d.CategoriaPago.CategoriaNombre == "Seguro de Acompañante"))
+                    {
+                        estadosCount["Seguro de Acompañante"]++;
+                    }
+                }
+            }
+
+            return estadosCount;
+        }
+
+        public async Task<Dictionary<string, int>> GetModalidadesPagosAsync()
+        {
+            var tipoModalidadCount = new Dictionary<string, int>
+            {
+                { "Efectivo", 0 },
+                { "Transferencia", 0 },
+                { "Déposito", 0 }
+            };
+
+            // Obtener todos los pagos activos con sus detalles y categorías
+            var pagos = await _unitOfWork.GetGenericRepository<Pago>().GetAllList().Where(p => p.Activo) // Filtrar solo los pagos activos
+                .ToListAsync();
+
+            // Contar los pagos que contienen al menos un detalle con la categoría específica
+            foreach (var pago in pagos)
+            {
+                if (pago.TipoModalidad != null && tipoModalidadCount.ContainsKey(pago.TipoModalidad))
+                {
+                    tipoModalidadCount[pago.TipoModalidad]++;
+                }
+            }
+
+            return tipoModalidadCount;
+        }
+
 
         public async Task GestionarSaldosMiembros(decimal montoAfiliacion, decimal montoSeguro)
         {

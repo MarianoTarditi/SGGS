@@ -1,5 +1,6 @@
 ﻿using Entity.WebAplication.Entities;
 using Entity.WebAplication.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace ServiceLayer.Services.Interfaces
         public Task<IEnumerable<VMMiembro>> GetMiembrosDeudas();
         public Task<VMMiembro> ObtenerDetallesMiembro(int miembroId);
         public Task<Miembro?> GetMiembroConDeudaPorDNI(string dni);
+        public Task<Dictionary<string, int>> GetMiembrosPorRama();
+
 
 
     }

@@ -350,7 +350,7 @@ namespace DAL.Context
                 RamaId = 1,
                 CategoriaId = 1,
                 FuncionId = 1,
-                InisgniaMadera = true
+                InsigniaMadera = true
             });
 
 

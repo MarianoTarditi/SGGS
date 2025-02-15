@@ -27,21 +27,33 @@ namespace ProyectoWeb.Areas.Admin.Controllers
         private readonly IOrganismoService _organismoService;
         private readonly ILocalidadService _localidadService;
         private readonly IToastNotification _toastNotification;
+        private readonly ICuentaCorrienteService _cuentaCorrienteService;
         //private readonly IValidator<VMMiembro> _addValidator;
 
 
-        public MiembrosController(IMiembroService miembroService, IOrganismoService oganismoService, ILocalidadService localidadService/*, IValidator<VMMiembro> addValidator*/, IToastNotification toastNotification)
+        public MiembrosController(IMiembroService miembroService, IOrganismoService oganismoService, ILocalidadService localidadService/*, IValidator<VMMiembro> addValidator*/, IToastNotification toastNotification, ICuentaCorrienteService cuentaCorrienteService)
         {
             _miembroService = miembroService;
             _organismoService = oganismoService;
             _localidadService = localidadService;
             _toastNotification = toastNotification;
+            _cuentaCorrienteService = cuentaCorrienteService;
             //_addValidator = addValidator;
         }
 
         public async Task<IActionResult> GetMiembroList()
         {
             var miembro = await _miembroService.GetAllListAsync();
+
+            var ramasCount = await _cuentaCorrienteService.GetRamaMiembroAsync();
+            ViewBag.RamasCount = ramasCount;
+
+            var categoriaCount = await _cuentaCorrienteService.GetCategoriaMiembroAsync();
+            ViewBag.CategoriaCount = categoriaCount;
+
+            var insigniasCount = await _cuentaCorrienteService.GetEducadoresInsigniaAsync();
+            ViewBag.MiembroInsigniasCount = insigniasCount;
+
             return View(miembro);
         }
 
@@ -144,5 +156,6 @@ namespace ProyectoWeb.Areas.Admin.Controllers
                 return RedirectToAction("GetMiembroList", "Miembros", new { Area = "Admin" });
             }
         }
+
     }
 }

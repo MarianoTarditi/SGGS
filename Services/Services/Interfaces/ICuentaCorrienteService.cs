@@ -13,6 +13,12 @@ namespace ServiceLayer.Services.Interfaces
         public Task<Dictionary<string, int>> GetFuncionMiembroAsync();
         public Task<Dictionary<string, int>> GetRamaMiembroAsync();
         public Task<Dictionary<string, int>> GetReligionMiembroAsync();
+        public Task<Dictionary<string, int>> GetEducadoresInsigniaAsync();
+        public Task<Dictionary<string, int>> GetEstadosPagosAsync();
+        public Task<Dictionary<string, int>> GetCategoriasPagosAsync();
+        public Task<Dictionary<string, int>> GetModalidadesPagosAsync();
+
+
         public Task GestionarSaldosPagos(decimal montoAfiliacion, decimal montoSeguro);
         public Task GestionarSaldosMiembros(decimal montoAfiliacion, decimal montoSeguro);
         public Task<(decimal saldoAfiliacion, decimal saldoSeguroAcompañante, decimal saldoTotal, decimal debito, decimal credito, decimal debitoAfiliacion, decimal debitoSeguro, decimal creditoAfiliacion, decimal creditoSeguro)> ObtenerSaldoTotal();

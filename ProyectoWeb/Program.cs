@@ -44,9 +44,9 @@ if (!app.Environment.IsDevelopment())
 
 }
 app.MapGet("/", () => Results.Redirect("/Dashboard"));
-app.UseExceptionHandler("/Error/GeneralExceptions");
-app.UseStatusCodePagesWithRedirects("/Error/PageNotFound");
-app.UseStatusCodePagesWithReExecute("/Error/PageNotFound");
+//app.UseExceptionHandler("/Error/GeneralExceptions");
+//app.UseStatusCodePagesWithRedirects("/Error/PageNotFound");
+//app.UseStatusCodePagesWithReExecute("/Error/PageNotFound");
 app.UseNToastNotify();
 
 app.UseHttpsRedirection();

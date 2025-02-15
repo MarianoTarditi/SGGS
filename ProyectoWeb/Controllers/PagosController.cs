@@ -24,19 +24,31 @@ namespace ProyectoWeb.Controllers
         private readonly IPagoService _pagoService;
         private readonly IMiembroService _miembroService;
         private readonly IToastNotification _toasty;
+        private readonly ICuentaCorrienteService _cuentaCorrienteService;
 
 
-        public PagosController(IPagoService pagoService, IMiembroService miembroService, IToastNotification toasty)
+        public PagosController(IPagoService pagoService, IMiembroService miembroService, IToastNotification toasty, ICuentaCorrienteService cuentaCorrienteService)
         {
             _pagoService = pagoService;
             _miembroService = miembroService;
             _toasty = toasty;
+            _cuentaCorrienteService = cuentaCorrienteService;
         }
 
         public async Task<IActionResult> GetPagoList()
         {
             var pago = await _pagoService.GetAllListAsync();
             await _pagoService.RenovarDeudasVencidasAsync();
+
+            var estadoPagosCount = await _cuentaCorrienteService.GetEstadosPagosAsync();
+            ViewBag.EstadosPagosCount = estadoPagosCount;
+
+            var categoriaPagosCount = await _cuentaCorrienteService.GetCategoriasPagosAsync();
+            ViewBag.CategoriasPagosCount = categoriaPagosCount;
+
+            var tipoModalidadPagoCount = await _cuentaCorrienteService.GetModalidadesPagosAsync();
+            ViewBag.TipoModalidadPagoCount = tipoModalidadPagoCount;
+
             return View(pago);
         }
 

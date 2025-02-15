@@ -120,6 +120,54 @@
 <td><a asp-area="Admin" asp-controller="Miembros" asp-action="AddMiembro" class="btn btn-success"> Agregar </a></td>
 <td><button id="btnExportPdf" class="btn btn-danger">Exportar PDF</button></td>
 
+<div class="pagetitle text-center" style="padding-top: 30px">
+    <h1>Reportes de Miembros</h1>
+</div>
+
+<div class="row" style="margin-top: 80px">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Miembros por Categoría</h5>
+
+                <!-- Donut Chart -->
+                <div id="donutChartCategorias" style="min-height: 400px;" class="echart"></div>
+                <!-- End Donut Chart -->
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Protagonista por Rama</h5>
+
+                <!-- Donut Chart -->
+                <div id="donutChart" style="min-height: 400px;" class="echart"></div>
+                <!-- End Donut Chart -->
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Educadores con Insignia de Madera</h5>
+
+                <!-- Donut Chart -->
+                <div id="insigniaChart" style="min-height: 400px;" class="echart"></div>
+                <!-- End Donut Chart -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
@@ -235,6 +283,80 @@
         doc.save(`ListaMiembros_${fechaActual}.pdf`);
     });
 
+     document.addEventListener("DOMContentLoaded", () => {
+            // Obtener datos desde ViewBag y convertirlos en formato adecuado
+            var ramasData = @Html.Raw(Json.Serialize(ViewBag.RamasCount));
 
+            var chartData = Object.keys(ramasData).map(rama => ({
+                name: rama,
+                value: ramasData[rama]
+            }));
+
+            // Inicializar gráfico con datos dinámicos
+            echarts.init(document.querySelector("#donutChart")).setOption({
+                tooltip: { trigger: 'item' },
+                legend: { top: '5%', left: 'center' },
+                series: [{
+                    name: 'Miembros por Rama (Protagonistas)',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: { show: false, position: 'center' },
+                    emphasis: { label: { show: true, fontSize: '18', fontWeight: 'bold' }},
+                    labelLine: { show: false },
+                    data: chartData
+                }]
+            });
+     });
+   
+       document.addEventListener("DOMContentLoaded", () => {
+            // Obtener datos desde ViewBag y convertirlos en formato adecuado
+            var categoriasData = @Html.Raw(Json.Serialize(ViewBag.CategoriaCount));
+
+            var chartData = Object.keys(categoriasData).map(categoria => ({
+                name: categoria,
+                value: categoriasData[categoria]
+            }));
+
+            // Inicializar gráfico con datos dinámicos
+            echarts.init(document.querySelector("#donutChartCategorias")).setOption({
+                tooltip: { trigger: 'item' },
+                legend: { top: '5%', left: 'center' },
+                series: [{
+                    name: 'Miembros por Categoría',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: { show: false, position: 'center' },
+                    emphasis: { label: { show: true, fontSize: '18', fontWeight: 'bold' }},
+                    labelLine: { show: false },
+                    data: chartData
+                }]
+            });
+       });
+
+           document.addEventListener("DOMContentLoaded", () => {
+            var insigniaData = @Html.Raw(Json.Serialize(ViewBag.MiembroInsigniasCount));
+
+            var chartData = Object.keys(insigniaData).map(tipo => ({
+                name: tipo,
+                value: insigniaData[tipo]
+            }));
+
+            echarts.init(document.querySelector("#insigniaChart")).setOption({
+                tooltip: { trigger: 'item' },
+                legend: { top: '5%', left: 'center' },
+                series: [{
+                    name: 'Educadores con Insignia de Madera',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: { show: false, position: 'center' },
+                    emphasis: { label: { show: true, fontSize: '18', fontWeight: 'bold' }},
+                    labelLine: { show: false },
+                    data: chartData
+                }]
+            });
+        });
    
 </script>

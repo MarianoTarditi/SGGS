@@ -6,6 +6,7 @@ using DAL.Repositories.Interfaces;
 using DAL.UnitOfWork.Interfaces;
 using Entity.WebAplication.Entities;
 using Entity.WebAplication.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -138,7 +139,6 @@ namespace ServiceLayer.Services.Implementation
             var miembro = _mapper.Map<Miembro>(entity);
 
             miembro.Activo = true;
-            miembro.InisgniaMadera = entity.InisgniaMadera;
 
             // Obtener las entidades relacionadas
             miembro.Discapacidad = await _unitOfWork.GetGenericRepository<Discapacidad>().GetEntityByIdAsync(entity.MiembroDiscapacidadId.Value);
@@ -156,9 +156,11 @@ namespace ServiceLayer.Services.Implementation
             }
             if (entity.FuncionId.HasValue)
             {
-                var jefeGrupoExiste = await _unitOfWork.GetGenericRepository<Miembro>().Where(x => x.FuncionId == 4).SingleAsync();
+                var jefeGrupoExiste = await _unitOfWork.GetGenericRepository<Miembro>().Where(x => x.FuncionId == 4).SingleOrDefaultAsync();
+                miembro.InsigniaMadera = entity.InsigniaMadera;
 
-                if (jefeGrupoExiste != null)
+
+                if (jefeGrupoExiste == null)
                 {
                     miembro.Funcion = await _unitOfWork.GetGenericRepository<Funcion>().GetEntityByIdAsync(entity.FuncionId.Value);
                 }
@@ -342,6 +344,7 @@ namespace ServiceLayer.Services.Implementation
                     Email = x.Email,
                     Titulo = x.Titulo,
                     DescripcionDiscapacidad = x.DescripcionDiscapacidad,
+                    InsigniaMadera = x.InsigniaMadera,
 
                     Localidad = new VMLocalidad
                     {
@@ -420,5 +423,64 @@ namespace ServiceLayer.Services.Implementation
 
             return miembro;
         }
+
+        public async Task<Dictionary<string, int>> GetMiembrosPorRama()
+        {
+            var miembros = await _unitOfWork.GetGenericRepository<Miembro>()
+                .GetAllList()
+                .Include(m => m.Rama)
+                .Where(m => m.Categoria.Nombre == "Protagonista" &&
+                           (m.Rama.Nombre == "Rover" ||
+                            m.Rama.Nombre == "Caminante" ||
+                            m.Rama.Nombre == "Manada" ||
+                            m.Rama.Nombre == "Scout"))
+                .GroupBy(m => m.Rama.Nombre)
+                .Select(g => new { Rama = g.Key, Cantidad = g.Count() })
+                .ToListAsync();
+
+            return miembros.ToDictionary(m => m.Rama, m => m.Cantidad);
+        }
+
+        public async Task<Dictionary<string, int>> GetMiembrosPorCategoria()
+        {
+            var miembros = await _unitOfWork.GetGenericRepository<Miembro>()
+                .GetAllList()
+                .Include(m => m.Rama)
+                .Where(m => m.Categoria.Nombre == "Protagonista" &&
+                           (m.Rama.Nombre == "Rover" ||
+                            m.Rama.Nombre == "Caminante" ||
+                            m.Rama.Nombre == "Manada" ||
+                            m.Rama.Nombre == "Scout"))
+                .GroupBy(m => m.Rama.Nombre)
+                .Select(g => new { Rama = g.Key, Cantidad = g.Count() })
+                .ToListAsync();
+
+            return miembros.ToDictionary(m => m.Rama, m => m.Cantidad);
+        }
+
+        //public async Task<Dictionary<string, int>> GetCategoriaMiembroAsync()
+        //{
+        //    var categoriasCount = new Dictionary<string, int>
+        //    {
+        //        { "Protagonista", 0 },
+        //        { "Educador", 0 },
+        //        { "Acompañante", 0 }
+        //    };
+
+        //    // Obtener todos los miembros desde la base de datos, incluyendo la categoría asociada a cada miembro
+        //    var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Include(x => x.Categoria).ToListAsync();
+
+        //    // Contar cuántos miembros pertenecen a cada categoría
+        //    foreach (var miembro in miembros)
+        //    {
+        //        if (miembro.Categoria != null && categoriasCount.ContainsKey(miembro.Categoria.Nombre))
+        //        {
+        //            categoriasCount[miembro.Categoria.Nombre]++;
+        //        }
+        //    }
+
+        //    return categoriasCount;
+        //}
+
     }
 }

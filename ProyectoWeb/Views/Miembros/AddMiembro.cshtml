@@ -147,9 +147,11 @@
             </div>
 
             <div class="col-6" id="insigniaMaderaDiv" style="display: none;">
-                <label for="insigniaMadera">Insignia Madera</label>
-                <input type="checkbox" id="insigniaMadera" name="InsigniaMadera" @(Model?.InisgniaMadera == true ? "checked" : "") />
+                <label asp-for="InsigniaMadera">Insignia Madera</label>
+                <input type="checkbox" id="insigniaMadera" name="InsigniaMadera" @(Model?.InsigniaMadera == true ? "checked" : "") />
             </div>
+
+
 
             <div class="col-6" id="ramaDiv" style="display: none;">
                 <label asp-for="RamaId" class="form-label">Rama</label>
@@ -240,6 +242,16 @@
                     }
                 });
         }
+
+            document.addEventListener("DOMContentLoaded", function () {
+            var form = document.querySelector("form"); // Selecciona el formulario
+            form.addEventListener("submit", function () {
+                var checkbox = document.getElementById("insigniaMadera");
+                if (checkbox.checked) {
+                    checkbox.value = "true"; // Asegurar que el valor enviado es "true"
+                }
+            });
+        });
 
     </script>
 }
