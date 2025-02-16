@@ -283,7 +283,7 @@ namespace ServiceLayer.Services.Implementation
             var miembrosConDeudas = await _unitOfWork.GetGenericRepository<Miembro>()
                 .GetAllList()
                 .Include(m => m.Deuda)
-                .Where(m => m.Deuda != null && m.Deuda.DeudaPendiente == true && m.Activo == true)
+                .Where(m => m.Deuda != null && m.Deuda.DeudaPendiente == true && m.Activo == true && m.Deuda.Tiene == true)
                 .Select(m => new VMMiembro
                 {
                     Id = m.Id,

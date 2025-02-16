@@ -500,6 +500,7 @@ namespace ServiceLayer.Services.Implementation
             await _unitOfWork.CommitAsync();
         }
 
+     
 
 
         public async Task UpdateDeuda(DetallePago detalle)
