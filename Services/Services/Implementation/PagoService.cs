@@ -165,9 +165,10 @@ namespace ServiceLayer.Services.Implementation
                 }
 
                 var query = _unitOfWork.GetGenericRepository<Miembro>().GetAllList()
-                    .Where(m => m.Id == entity.MiembroId)
-                    .Include(m => m.Organismo)
-                    .ThenInclude(o => o.Resumen);
+                .Where(m => m.Id == entity.MiembroId)
+                .Include(m => m.Organismo)
+                .ThenInclude(o => o.Resumen)
+                .Include(m => m.Deuda); // Incluir la relación con Deuda
 
                 var miembro = await query.FirstOrDefaultAsync();
 
@@ -187,6 +188,7 @@ namespace ServiceLayer.Services.Implementation
                 pago.Activo = true;
                 pago.ResumenId = resumen.Id;
                 pago.MiembroId = miembro.Id;
+
 
                 // Asignar el Código y Monto del Pago
                 var ultimoCodigoPago = await _unitOfWork.GetGenericRepository<Pago>()
@@ -227,6 +229,27 @@ namespace ServiceLayer.Services.Implementation
                 await _unitOfWork.GetGenericRepository<Pago>().CreateEntityAsync(pago);
                 await _unitOfWork.CommitAsync();
 
+
+                if (pago.MiembroId != null)
+                {
+                    var dbContext = _unitOfWork.GetDbContext();
+
+                    var deuda = await _unitOfWork.GetGenericRepository<Deuda>()
+                        .GetAllList()
+                        .FirstOrDefaultAsync(d => d.MiembroId == pago.MiembroId);
+
+                    if (deuda != null)
+                    {
+                        deuda.DeudaPendiente = false;
+
+                        // Marcar el objeto como modificado manualmente
+                        dbContext.Entry(deuda).State = EntityState.Modified;
+
+                        // Guardar los cambios en la base de datos
+                        await _unitOfWork.CommitAsync();
+                    }
+                }
+
                 // Generar el recibo
                 var ultimoCodigoRecibo = await _unitOfWork.GetGenericRepository<Recibo>().GetAllList()
                     .OrderByDescending(o => o.Codigo).FirstOrDefaultAsync();
@@ -255,8 +278,7 @@ namespace ServiceLayer.Services.Implementation
                     };
                     pago.ListaDetalles.Add(nuevoDetalle);
                     await _unitOfWork.GetGenericRepository<DetallePago>().CreateEntityAsync(nuevoDetalle);
-                    //await RenovarDeudasVencidasAsync(nuevoDetalle);
-                    await UpdateDeuda(nuevoDetalle);
+                    //await UpdateDeuda(nuevoDetalle);
                 }
 
                 await _unitOfWork.CommitAsync();
@@ -373,10 +395,12 @@ namespace ServiceLayer.Services.Implementation
         public async Task<bool> CambiarEstadoAsync(int idPago, int nuevoEstadoId)
         {
             var pago = await _unitOfWork.GetGenericRepository<Pago>().GetAllList()
-                .Include(x => x.ListaDetalles)
-                .Include(x => x.Autorizacion)
-                .ThenInclude(x => x.EstadoAutorizacion)
-                .FirstOrDefaultAsync(p => p.Id == idPago);
+        .Include(x => x.ListaDetalles)
+        .Include(x => x.Autorizacion)
+        .ThenInclude(x => x.EstadoAutorizacion)
+        .Include(x => x.Miembro) // Incluir la relación con Miembro
+        .ThenInclude(m => m.Deuda) // Incluir la relación con Deuda
+        .FirstOrDefaultAsync(p => p.Id == idPago);
 
             if (pago == null)
             {
@@ -407,7 +431,24 @@ namespace ServiceLayer.Services.Implementation
             {
                 foreach (var detalle in pago.ListaDetalles)
                 {
+                    await UpdateDeuda(detalle);
                     await ActualizarSaldoSiAutorizado(detalle);
+
+                    if (pago.Miembro?.Deuda != null)
+                    {
+                        var dbContext = _unitOfWork.GetDbContext();
+
+                        // Obtener la deuda desde el contexto para evitar duplicados
+                        var deuda = await dbContext.Set<Deuda>().FindAsync(pago.Miembro.Deuda.Id);
+
+                        if (deuda != null)
+                        {
+                            deuda.FechaVencimiento = DateTime.Now.AddMinutes(2);
+
+                            dbContext.Entry(deuda).State = EntityState.Modified;
+                            await _unitOfWork.CommitAsync();
+                        }
+                    }
                 }
             }
 
@@ -415,6 +456,8 @@ namespace ServiceLayer.Services.Implementation
 
             return true;
         }
+
+
 
         public async Task RenovarDeudasVencidasAsync()
         {
@@ -429,6 +472,7 @@ namespace ServiceLayer.Services.Implementation
                 .ThenInclude(p => p.Autorizacion) // Incluir autorización del pago
                 .ToListAsync();
 
+
             var organismo = await _unitOfWork.GetGenericRepository<Organismo>()
                 .GetAllList()
                 .FirstOrDefaultAsync();
@@ -439,7 +483,7 @@ namespace ServiceLayer.Services.Implementation
             foreach (var deuda in deudasVencidas)
             {
                 deuda.Tiene = true;
-                deuda.FechaVencimiento = DateTime.Now.AddMinutes(5);
+                deuda.DeudaPendiente = true;
 
                 if (deuda.Miembro.CategoriaId == CategoriaSeguroAcompanante)
                 {
@@ -455,7 +499,6 @@ namespace ServiceLayer.Services.Implementation
 
             await _unitOfWork.CommitAsync();
         }
-
 
 
 
@@ -493,6 +536,7 @@ namespace ServiceLayer.Services.Implementation
             }
 
             deuda.Tiene = (deuda.MontoAfiliacion > 0 || deuda.MontoSeguroAcompañante > 0);
+            //deuda.DeudaPendiente = false;
             deuda.FechaCreacion = DateTime.Now;
 
             _unitOfWork.GetGenericRepository<Deuda>().Update(deuda);

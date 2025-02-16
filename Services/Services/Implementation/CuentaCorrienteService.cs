@@ -305,45 +305,7 @@ namespace ServiceLayer.Services.Implementation
         }
 
 
-        public async Task RenovarDeudasVencidasAsync()
-        {
-            const int CategoriaSeguroAcompanante = 6;
-            const string EstadoAutorizado = "Autorizado"; // Estado requerido para renovar deuda
-
-            // 🔹 Obtener deudas vencidas cuyos pagos estén autorizados
-            var deudasVencidas = await _unitOfWork.GetGenericRepository<Deuda>().Where(d => DateTime.Now >= d.FechaVencimiento
-                 && d.Miembro.Pagos.Any(p => p.Autorizacion.EstadoAutorizacion.Estado == "Autorizado")) // Solo si está autorizado
-                .Include(d => d.Miembro)
-                .ThenInclude(m => m.Pagos) // Incluir pagos del miembro
-                .ThenInclude(p => p.Autorizacion) // Incluir autorización del pago
-                .ToListAsync();
-
-            var organismo = await _unitOfWork.GetGenericRepository<Organismo>()
-                .GetAllList()
-                .FirstOrDefaultAsync();
-
-            if (organismo == null || !deudasVencidas.Any())
-                return;
-
-            foreach (var deuda in deudasVencidas)
-            {
-                deuda.Tiene = true;
-                deuda.FechaVencimiento = DateTime.Now.AddMinutes(5);
-
-                if (deuda.Miembro.CategoriaId == CategoriaSeguroAcompanante)
-                {
-                    deuda.MontoSeguroAcompañante = organismo.ValorSeguro;
-                    await GestionarSaldosMiembros(0, organismo.ValorSeguro);
-                }
-                else
-                {
-                    deuda.MontoAfiliacion = organismo.ValorAfiliacion;
-                    await GestionarSaldosMiembros(organismo.ValorAfiliacion, 0);
-                }
-            }
-
-            await _unitOfWork.CommitAsync();
-        }
+    
 
         public bool ActualizarPrecio(string tipo, decimal nuevoPrecio)
         {

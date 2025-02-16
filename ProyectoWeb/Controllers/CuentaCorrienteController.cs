@@ -11,16 +11,20 @@ namespace ProyectoWeb.Controllers
     {
         private readonly ICuentaCorrienteService _cuentaCorrienteService;
         private readonly IOrganismoService _organismoService;
+        private readonly IPagoService _pagoService;
 
 
-        public CuentaCorrienteController(ICuentaCorrienteService cuentaCorrienteService, IOrganismoService organismoService)
+        public CuentaCorrienteController(ICuentaCorrienteService cuentaCorrienteService, IOrganismoService organismoService, IPagoService pagoService)
         {
             _cuentaCorrienteService = cuentaCorrienteService;
             _organismoService = organismoService;
+            _pagoService = pagoService;
         }
 
         public async Task<IActionResult> Index()
         {
+            await _pagoService.RenovarDeudasVencidasAsync();
+
             var categoriasCount = await _cuentaCorrienteService.GetCategoriaMiembroAsync();
             var funcionesCount = await _cuentaCorrienteService.GetFuncionMiembroAsync();
             var ramasCount = await _cuentaCorrienteService.GetRamaMiembroAsync();

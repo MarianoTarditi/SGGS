@@ -23,7 +23,6 @@ namespace ServiceLayer.Services.Interfaces
         public Task GestionarSaldosMiembros(decimal montoAfiliacion, decimal montoSeguro);
         public Task<(decimal saldoAfiliacion, decimal saldoSeguroAcompañante, decimal saldoTotal, decimal debito, decimal credito, decimal debitoAfiliacion, decimal debitoSeguro, decimal creditoAfiliacion, decimal creditoSeguro)> ObtenerSaldoTotal();
         public bool ActualizarPrecio(string tipo, decimal nuevoPrecio);
-        Task RenovarDeudasVencidasAsync();
 
     }
 }

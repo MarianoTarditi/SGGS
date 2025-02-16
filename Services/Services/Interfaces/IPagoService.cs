@@ -26,7 +26,5 @@ namespace ServiceLayer.Services.Interfaces
         public Task<bool> CambiarEstadoAsync(int idPago, int nuevoEstadoId);
 
         public Task RenovarDeudasVencidasAsync();
-
-
     }
 }

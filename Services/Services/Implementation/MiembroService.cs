@@ -196,14 +196,15 @@ namespace ServiceLayer.Services.Implementation
             {
                 var deuda = new Deuda
                 {
-                    FechaVencimiento = DateTime.Now.AddMinutes(5),
                     FechaCreacion = DateTime.Now,
+                    FechaVencimiento = DateTime.Now,
                     MiembroId = miembro.Id,
                     OrganismoId = organismo?.Id,
                     Organismo = organismo,
                     MontoAfiliacion = 0,
                     MontoSeguroAcompañante = organismo.ValorSeguro,
-                    Tiene = (organismo?.ValorAfiliacion > 0 || organismo?.ValorSeguro > 0)
+                    Tiene = (organismo?.ValorAfiliacion > 0 || organismo?.ValorSeguro > 0),
+                    DeudaPendiente = true
                 };
                 await _unitOfWork.GetGenericRepository<Deuda>().CreateEntityAsync(deuda);
                 await _unitOfWork.CommitAsync();
@@ -214,14 +215,15 @@ namespace ServiceLayer.Services.Implementation
             {
                 var deuda = new Deuda
                 {
-                    FechaVencimiento = DateTime.Now.AddMinutes(5),
+                    FechaVencimiento = DateTime.Now,
                     FechaCreacion = DateTime.Now,
                     MiembroId = miembro.Id,
                     OrganismoId = organismo?.Id,
                     Organismo = organismo,
                     MontoAfiliacion = organismo.ValorAfiliacion,
                     MontoSeguroAcompañante = 0,
-                    Tiene = (organismo?.ValorAfiliacion > 0 || organismo?.ValorSeguro > 0)
+                    Tiene = (organismo?.ValorAfiliacion > 0 || organismo?.ValorSeguro > 0),
+                    DeudaPendiente = true,
                 };
                 await _unitOfWork.GetGenericRepository<Deuda>().CreateEntityAsync(deuda);
                 await _unitOfWork.CommitAsync();
@@ -281,7 +283,7 @@ namespace ServiceLayer.Services.Implementation
             var miembrosConDeudas = await _unitOfWork.GetGenericRepository<Miembro>()
                 .GetAllList()
                 .Include(m => m.Deuda)
-                .Where(m => m.Deuda != null && m.Deuda.Tiene && m.Activo == true)
+                .Where(m => m.Deuda != null && m.Deuda.DeudaPendiente == true && m.Activo == true)
                 .Select(m => new VMMiembro
                 {
                     Id = m.Id,
@@ -290,7 +292,7 @@ namespace ServiceLayer.Services.Implementation
                     MontoAfiliacion = m.Deuda.Organismo.ValorAfiliacion,
                     MontoSeguroAcompañante = m.Deuda.Organismo.ValorSeguro,
                     DeudaFechaVencimiento = m.Deuda.FechaVencimiento,
-                    DeudaTiene = m.Deuda.Tiene,
+                    DeudaTiene = m.Deuda.Tiene,                   
                 })
                 .ToListAsync();
 

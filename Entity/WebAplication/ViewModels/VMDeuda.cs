@@ -13,6 +13,8 @@ namespace Entity.WebAplication.ViewModels
     {
         public int Id { get; set; }
         public bool Tiene { get; set; }
+        public bool DeudaPendiente { get; set; }
+
         public VMMiembro Miembro { get; set; } = null!;
         [Required]
         public int MiembroId { get; set; }
@@ -30,7 +32,7 @@ namespace Entity.WebAplication.ViewModels
         public VMDeuda()
         {
             FechaCreacion = DateTime.Now;
-            FechaVencimiento = FechaCreacion.AddMonths(2); // La deuda vence en 1 mes
+            FechaVencimiento = DateTime.Now; // La deuda vence en 1 mes
         }
 
     }

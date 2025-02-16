@@ -37,8 +37,9 @@ namespace ProyectoWeb.Controllers
 
         public async Task<IActionResult> GetPagoList()
         {
+             await _pagoService.RenovarDeudasVencidasAsync();
+
             var pago = await _pagoService.GetAllListAsync();
-            await _pagoService.RenovarDeudasVencidasAsync();
 
             var estadoPagosCount = await _cuentaCorrienteService.GetEstadosPagosAsync();
             ViewBag.EstadosPagosCount = estadoPagosCount;

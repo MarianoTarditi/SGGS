@@ -308,6 +308,7 @@ namespace DAL.Context
                 MontoAfiliacion = 1000,
                 MontoSeguroAcompañante = 2000,
                 FechaCreacion = DateTime.Now,
+                DeudaPendiente = true
             });
 
             modelBuilder.Entity<Funcion>().HasData(
