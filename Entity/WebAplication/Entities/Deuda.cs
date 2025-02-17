@@ -16,6 +16,8 @@ namespace Entity.WebAplication.Entities
         [Precision(18, 2)]
         public decimal MontoSeguroAcompañante { get; set; }
         public bool DeudaPendiente { get; set; }
+        public bool SaldoDebitado { get; set; } = false;
+
         public bool Tiene { get; set; }
         public Miembro Miembro { get; set; } = null!;
         [Required]

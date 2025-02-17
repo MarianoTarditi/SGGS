@@ -23,8 +23,6 @@ namespace ProyectoWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            await _pagoService.RenovarDeudasVencidasAsync();
-
             var categoriasCount = await _cuentaCorrienteService.GetCategoriaMiembroAsync();
             var funcionesCount = await _cuentaCorrienteService.GetFuncionMiembroAsync();
             var ramasCount = await _cuentaCorrienteService.GetRamaMiembroAsync();

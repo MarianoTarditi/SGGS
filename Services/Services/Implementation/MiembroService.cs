@@ -31,10 +31,11 @@ namespace ServiceLayer.Services.Implementation
         private readonly IToastNotification _toasty;
         private readonly ICuentaCorrienteService _cuentaCorrienteService;
         private readonly IPagoService _pagoService;
+        private readonly IDeudaService _deudaService;
         private const string Section = "El miembro";
 
 
-        public MiembroService(IGenericRepository<Miembro> repository, IUnitOfWork unitOfWork, IMapper mapper, IToastNotification toasty, ICuentaCorrienteService cuentaCorrienteService, IPagoService pagoService)
+        public MiembroService(IGenericRepository<Miembro> repository, IUnitOfWork unitOfWork, IMapper mapper, IToastNotification toasty, ICuentaCorrienteService cuentaCorrienteService, IPagoService pagoService, IDeudaService deudaService)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
@@ -42,6 +43,7 @@ namespace ServiceLayer.Services.Implementation
             _toasty = toasty;
             _cuentaCorrienteService = cuentaCorrienteService;
             _pagoService = pagoService;
+            _deudaService = deudaService;
         }
 
 
@@ -224,6 +226,7 @@ namespace ServiceLayer.Services.Implementation
                     MontoSeguroAcompañante = 0,
                     Tiene = (organismo?.ValorAfiliacion > 0 || organismo?.ValorSeguro > 0),
                     DeudaPendiente = true,
+
                 };
                 await _unitOfWork.GetGenericRepository<Deuda>().CreateEntityAsync(deuda);
                 await _unitOfWork.CommitAsync();
@@ -459,30 +462,6 @@ namespace ServiceLayer.Services.Implementation
 
             return miembros.ToDictionary(m => m.Rama, m => m.Cantidad);
         }
-
-        //public async Task<Dictionary<string, int>> GetCategoriaMiembroAsync()
-        //{
-        //    var categoriasCount = new Dictionary<string, int>
-        //    {
-        //        { "Protagonista", 0 },
-        //        { "Educador", 0 },
-        //        { "Acompañante", 0 }
-        //    };
-
-        //    // Obtener todos los miembros desde la base de datos, incluyendo la categoría asociada a cada miembro
-        //    var miembros = await _unitOfWork.GetGenericRepository<Miembro>().GetAllList().Include(x => x.Categoria).ToListAsync();
-
-        //    // Contar cuántos miembros pertenecen a cada categoría
-        //    foreach (var miembro in miembros)
-        //    {
-        //        if (miembro.Categoria != null && categoriasCount.ContainsKey(miembro.Categoria.Nombre))
-        //        {
-        //            categoriasCount[miembro.Categoria.Nombre]++;
-        //        }
-        //    }
-
-        //    return categoriasCount;
-        //}
 
     }
 }

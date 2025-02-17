@@ -43,20 +43,13 @@ namespace ServiceLayer.Extensions
             services.AddTransient<IValidator<ResetPasswordVM>, ResetPasswordValidation>();
             services.AddTransient<IValidator<UserEditVM>, UserEditValidation>();
 
-
             services.AddScoped<ILocalidadService, LocalidadService>();
             services.AddScoped<ICuentaCorrienteService, CuentaCorrienteService>();
             services.AddScoped<IReciboService, ReciboService>();
             services.AddScoped<IModalidadService, ModalidadService>();
             services.AddScoped<IDetallePagoService, DetallePagoService>();
-            services.AddScoped<IPagoAutorizacionService, AutorizacionPagoService>();
             services.AddScoped<IDashboardService, DashboardService>();
-            services.AddHostedService<DeudaRenovacionService>();
-            services.AddSingleton<IHostedService, DeudaRenovacionService>(); // Registro como Singleton
-
-
-
-
+            services.AddScoped<IDeudaService, DeudaService>();
 
 
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(c => c.IsClass && !c.IsAbstract && c.Name.EndsWith("Service"));

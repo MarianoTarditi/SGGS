@@ -20,8 +20,6 @@ namespace ProyectoWeb.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            await _pagoService.RenovarDeudasVencidasAsync();
-
             ViewBag.Miembros = await _dashboardService.GetAllMiembrosCountAsync();
             ViewBag.Pagos = await _dashboardService.GetAllPagosCountAsync();
             ViewBag.Usuarios =  _dashboardService.GetAllUsersCountAsync();

@@ -25,6 +25,5 @@ namespace ServiceLayer.Services.Interfaces
         public Task<IEnumerable<VMEstadoAutorizacion>> GetEstadosAutorizacionAsync();
         public Task<bool> CambiarEstadoAsync(int idPago, int nuevoEstadoId);
 
-        public Task RenovarDeudasVencidasAsync();
     }
 }

@@ -14,6 +14,8 @@ namespace Entity.WebAplication.ViewModels
         public int Id { get; set; }
         public bool Tiene { get; set; }
         public bool DeudaPendiente { get; set; }
+        public bool SaldoDebitado { get; set; } = false;
+
 
         public VMMiembro Miembro { get; set; } = null!;
         [Required]

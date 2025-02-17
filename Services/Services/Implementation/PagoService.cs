@@ -32,6 +32,7 @@ namespace ServiceLayer.Services.Implementation
         private readonly IGenericRepository<ModalidadPago> _modalidadPagoRepository;
         private readonly IGenericRepository<Miembro> _miemebroRepository;
         private readonly ICuentaCorrienteService _cuentaCorrienteService;
+        private readonly IDeudaService _deudaService;
 
         private readonly IToastNotification _toasty;
         private const string Section = "El pago";
@@ -46,7 +47,8 @@ namespace ServiceLayer.Services.Implementation
             IGenericRepository<ModalidadPago> modalidadPagoRepository,
             IGenericRepository<Miembro> miemebroRepository,
             IToastNotification toasty,
-            ICuentaCorrienteService cuentaCorrienteService)
+            ICuentaCorrienteService cuentaCorrienteService,
+            IDeudaService deudaService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -59,6 +61,7 @@ namespace ServiceLayer.Services.Implementation
             _miemebroRepository = miemebroRepository;
             _toasty = toasty;
             _cuentaCorrienteService = cuentaCorrienteService;
+            _deudaService = deudaService;
         }
 
         public async Task<List<VMPago>> GetAllListAsync()
@@ -74,6 +77,7 @@ namespace ServiceLayer.Services.Implementation
                 .Include(p => p.ListaDetalles)
                 .ThenInclude(dp => dp.CategoriaPago) 
                 .ToListAsync();
+
 
             var pagoListaVM = pagos.Select(p => new VMPago
             {
@@ -115,6 +119,13 @@ namespace ServiceLayer.Services.Implementation
                 }).ToList()
 
             }).ToList();
+
+            var miembrosIds = pagos.Select(p => p.Miembro?.Id).Distinct().Where(id => id.HasValue).Select(id => id.Value).ToList();
+
+            foreach (var miembroId in miembrosIds)
+            {
+                await _deudaService.RenovarDeudasVencidasAsync(miembroId);
+            }
 
             return pagoListaVM;
         }
@@ -383,6 +394,8 @@ namespace ServiceLayer.Services.Implementation
                     }).ToList()
 
                 }).SingleOrDefaultAsync();
+
+
             return pago;
         }
 
@@ -420,19 +433,12 @@ namespace ServiceLayer.Services.Implementation
             _unitOfWork.GetDbContext().Entry(autorizacion).State = EntityState.Modified;
             await _unitOfWork.CommitAsync();
 
-            if(nuevoEstadoId == 6)
+            if(nuevoEstadoId == 1)
             {
                 foreach (var detalle in pago.ListaDetalles)
                 {
-                    await RestaurarDeudaYResumenSiRechazado(detalle);
-                }
-            }
-            else if(nuevoEstadoId == 1)
-            {
-                foreach (var detalle in pago.ListaDetalles)
-                {
-                    await UpdateDeuda(detalle);
-                    await ActualizarSaldoSiAutorizado(detalle);
+                    await _deudaService.UpdateDeuda(detalle);
+                    await _deudaService.ActualizarSaldoSiAutorizado(detalle);
 
                     if (pago.Miembro?.Deuda != null)
                     {
@@ -444,6 +450,7 @@ namespace ServiceLayer.Services.Implementation
                         if (deuda != null)
                         {
                             deuda.FechaVencimiento = DateTime.Now.AddMinutes(2);
+                            deuda.SaldoDebitado = false;
 
                             dbContext.Entry(deuda).State = EntityState.Modified;
                             await _unitOfWork.CommitAsync();
@@ -457,183 +464,6 @@ namespace ServiceLayer.Services.Implementation
             return true;
         }
 
-
-
-        public async Task RenovarDeudasVencidasAsync()
-        {
-            const int CategoriaSeguroAcompanante = 6;
-            const string EstadoAutorizado = "Autorizado"; // Estado requerido para renovar deuda
-
-            // 🔹 Obtener deudas vencidas cuyos pagos estén autorizados
-            var deudasVencidas = await _unitOfWork.GetGenericRepository<Deuda>().Where(d => DateTime.Now >= d.FechaVencimiento
-                 && d.Miembro.Pagos.Any(p => p.Autorizacion.EstadoAutorizacion.Estado == "Autorizado")) // Solo si está autorizado
-                .Include(d => d.Miembro)
-                .ThenInclude(m => m.Pagos) // Incluir pagos del miembro
-                .ThenInclude(p => p.Autorizacion) // Incluir autorización del pago
-                .ToListAsync();
-
-
-            var organismo = await _unitOfWork.GetGenericRepository<Organismo>()
-                .GetAllList()
-                .FirstOrDefaultAsync();
-
-            if (organismo == null || !deudasVencidas.Any())
-                return;
-
-            foreach (var deuda in deudasVencidas)
-            {
-                deuda.Tiene = true;
-                deuda.DeudaPendiente = true;
-
-                if (deuda.Miembro.CategoriaId == CategoriaSeguroAcompanante)
-                {
-                    deuda.MontoSeguroAcompañante = organismo.ValorSeguro;
-                    await _cuentaCorrienteService.GestionarSaldosMiembros(0, organismo.ValorSeguro);
-                }
-                else
-                {
-                    deuda.MontoAfiliacion = organismo.ValorAfiliacion;
-                    await _cuentaCorrienteService.GestionarSaldosMiembros(organismo.ValorAfiliacion, 0);
-                }
-            }
-
-            await _unitOfWork.CommitAsync();
-        }
-
-     
-
-
-        public async Task UpdateDeuda(DetallePago detalle)
-        {
-            //await RenovarDeudasVencidasAsync(detalle);
-
-            var deuda = await _unitOfWork.GetGenericRepository<Deuda>().Where(d => d.MiembroId == detalle.Pago.MiembroId)/*.Include(x => x.Organismo)*/.FirstOrDefaultAsync();
-
-
-            if (deuda == null)
-            {
-                throw new InvalidOperationException($"No se encontró una deuda para el miembro con ID: {detalle.Pagoid}");
-            }
-
-            // Guardamos los valores originales de la deuda por si el pago es rechazado
-            decimal deudaOriginalAfiliacion = deuda.MontoAfiliacion;
-            decimal deudaOriginalSeguro = deuda.MontoSeguroAcompañante;
-
-            if (detalle.CategoriaPagoId == 1) // Afiliación
-            {
-                if (detalle.Monto > deuda.MontoAfiliacion)
-                {
-                    throw new InvalidOperationException("¡El monto del pago no puede superar al monto de la deuda!");
-                }
-                deuda.MontoAfiliacion -= detalle.Monto;
-            }
-            else if (detalle.CategoriaPagoId == 2) // Seguro
-            {
-                if (detalle.Monto > deuda.MontoSeguroAcompañante)
-                {
-                    throw new InvalidOperationException("¡El monto del pago no puede superar al monto de la deuda!");
-                }
-                deuda.MontoSeguroAcompañante -= detalle.Monto;
-            }
-
-            deuda.Tiene = (deuda.MontoAfiliacion > 0 || deuda.MontoSeguroAcompañante > 0);
-            //deuda.DeudaPendiente = false;
-            deuda.FechaCreacion = DateTime.Now;
-
-            _unitOfWork.GetGenericRepository<Deuda>().Update(deuda);
-            await _unitOfWork.CommitAsync();
-
-            // Guardamos los valores originales en caso de rechazo
-            detalle.DeudaOriginalAfiliacion = deudaOriginalAfiliacion;
-            detalle.DeudaOriginalSeguro = deudaOriginalSeguro;
-        }
-
-        //Se ejecuta solo si el pago es autorizado
-        public async Task ActualizarSaldoSiAutorizado(DetallePago detalle)
-        {
-            if(detalle.CategoriaPagoId == 1)
-            {
-                await _cuentaCorrienteService.GestionarSaldosPagos(detalle.Monto, 0); // afiliacion
-            }
-            else if (detalle.CategoriaPagoId == 2)
-            {
-                await _cuentaCorrienteService.GestionarSaldosPagos(0, detalle.Monto);
-            }
-        }
-
-
-        public async Task RestaurarDeudaSiRechazado(DetallePago detalle)
-        {
-            var deuda = await _unitOfWork.GetGenericRepository<Deuda>()
-                .Where(d => d.MiembroId == detalle.Pago.MiembroId)
-                .FirstOrDefaultAsync();
-
-            if (deuda == null)
-            {
-                throw new InvalidOperationException($"No se encontró una deuda para el miembro con ID: {detalle.Pagoid}");
-            }
-
-            // Convertimos los valores nullable a decimal (si son null, toman el valor 0 por defecto)
-            deuda.MontoAfiliacion = detalle.DeudaOriginalAfiliacion.GetValueOrDefault();
-            deuda.MontoSeguroAcompañante = detalle.DeudaOriginalSeguro.GetValueOrDefault();
-            deuda.Tiene = (deuda.MontoAfiliacion > 0 || deuda.MontoSeguroAcompañante > 0);
-
-            _unitOfWork.GetGenericRepository<Deuda>().Update(deuda);
-            await _unitOfWork.CommitAsync();
-        }
-
-        public async Task RestaurarDeudaYResumenSiRechazado(DetallePago detalle)
-        {
-            var deuda = await _unitOfWork.GetGenericRepository<Deuda>()
-                .Where(d => d.MiembroId == detalle.Pago.MiembroId)
-                .FirstOrDefaultAsync();
-
-            if (deuda == null)
-            {
-                throw new InvalidOperationException($"No se encontró una deuda para el miembro con ID: {detalle.Pago.MiembroId}");
-            }
-
-            // Restaurar valores de la deuda
-            deuda.MontoAfiliacion = detalle.DeudaOriginalAfiliacion.GetValueOrDefault();
-            deuda.MontoSeguroAcompañante = detalle.DeudaOriginalSeguro.GetValueOrDefault();
-            deuda.Tiene = (deuda.MontoAfiliacion > 0 || deuda.MontoSeguroAcompañante > 0);
-
-            _unitOfWork.GetGenericRepository<Deuda>().Update(deuda);
-
-            //var resumen = await _unitOfWork.GetGenericRepository<Resumen>().GetAllList().AsNoTracking().SingleOrDefaultAsync();
-
-
-            //if (resumen == null)
-            //{
-            //    throw new InvalidOperationException($"No se encontró un resumen para el organismo con ID:");
-            //}
-
-            //// 🔹 Usamos propiedades existentes en "Resumen"
-            //resumen.Debito += detalle.Monto;  // Restar el monto rechazado del débito
-            //resumen.Credito -= detalle.Monto; // Volver a sumar el crédito disponible
-            //resumen.SaldoTotal -= detalle.Monto; // Ajustar el saldo total
-
-            //if (detalle.CategoriaPagoId == 1)
-            //{
-            //    resumen.DebitoAfiliacion += detalle.Monto;
-            //    resumen.CreditoAfiliacion -= detalle.Monto;
-            //    resumen.SaldoAfiliacion = detalle.Monto;
-            //}
-            //else if (detalle.CategoriaPagoId == 2)
-            //{
-            //    resumen.DebitoSeguroAcompañante += detalle.Monto;
-            //    resumen.CreditoSeguroAcompañante -= detalle.Monto;
-
-            //    resumen.SaldoSeguroAcompañante -= detalle.Monto;
-            //}
-
-            //_unitOfWork.GetGenericRepository<Resumen>().Update(resumen);
-
-            await _unitOfWork.CommitAsync();
-        }
-
-
-
         public async Task<IEnumerable<VMEstadoAutorizacion>> GetEstadosAutorizacionAsync()
         {
             var estadosVM = await _unitOfWork
@@ -645,17 +475,17 @@ namespace ServiceLayer.Services.Implementation
             return estadosVM;
         }
 
+        public async Task<IEnumerable<VMPagoModalidad>> GetModalidadesAsync()
+        {
+            var modalidadesVM = await _unitOfWork.GetGenericRepository<ModalidadPago>().GetAllList().ProjectTo<VMPagoModalidad>(_mapper.ConfigurationProvider).ToListAsync();
+            return modalidadesVM;
+        }
+
         public async Task DeleteDetalleAsync(int id)
         {
             var detallPago = await _pagoRepository.GetEntityByIdAsync(id);
             _pagoRepository.Delete(detallPago);
             await _unitOfWork.CommitAsync();
-        }
-
-        public async Task<IEnumerable<VMPagoModalidad>> GetModalidadesAsync()
-        {
-            var modalidadesVM = await _unitOfWork.GetGenericRepository<ModalidadPago>().GetAllList().ProjectTo<VMPagoModalidad>(_mapper.ConfigurationProvider).ToListAsync();
-            return modalidadesVM;
         }
     }
 }
