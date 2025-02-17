@@ -43,10 +43,7 @@ namespace ServiceLayer.Extensions
             services.AddTransient<IValidator<ResetPasswordVM>, ResetPasswordValidation>();
             services.AddTransient<IValidator<UserEditVM>, UserEditValidation>();
 
-            services.AddScoped<ILocalidadService, LocalidadService>();
             services.AddScoped<ICuentaCorrienteService, CuentaCorrienteService>();
-            services.AddScoped<IReciboService, ReciboService>();
-            services.AddScoped<IModalidadService, ModalidadService>();
             services.AddScoped<IDetallePagoService, DetallePagoService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IDeudaService, DeudaService>();

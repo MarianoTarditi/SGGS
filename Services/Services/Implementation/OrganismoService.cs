@@ -327,5 +327,17 @@ namespace ServiceLayer.Services.Implementation
 
             return (organismo.ValorAfiliacion, organismo.ValorSeguro);
         }
+
+        public async Task<List<VMLocalidad>> GetLocalidadesByProvinciaAsync(int provinciaId)
+        {
+            var localidades = await _unitOfWork.GetGenericRepository<Localidad>().Where(l => l.ProvinciaId == provinciaId).ToListAsync();
+
+            return localidades.Select(l => new VMLocalidad
+            {
+                Id = l.Id,
+                Nombre = l.Nombre,
+                ProvinciaId = l.ProvinciaId
+            }).ToList();
+        }
     }
 }

@@ -25,17 +25,15 @@ namespace ProyectoWeb.Areas.Admin.Controllers
 
         private readonly IMiembroService _miembroService;
         private readonly IOrganismoService _organismoService;
-        private readonly ILocalidadService _localidadService;
         private readonly IToastNotification _toastNotification;
         private readonly ICuentaCorrienteService _cuentaCorrienteService;
         //private readonly IValidator<VMMiembro> _addValidator;
 
 
-        public MiembrosController(IMiembroService miembroService, IOrganismoService oganismoService, ILocalidadService localidadService/*, IValidator<VMMiembro> addValidator*/, IToastNotification toastNotification, ICuentaCorrienteService cuentaCorrienteService)
+        public MiembrosController(IMiembroService miembroService, IOrganismoService oganismoService/*, IValidator<VMMiembro> addValidator*/, IToastNotification toastNotification, ICuentaCorrienteService cuentaCorrienteService)
         {
             _miembroService = miembroService;
             _organismoService = oganismoService;
-            _localidadService = localidadService;
             _toastNotification = toastNotification;
             _cuentaCorrienteService = cuentaCorrienteService;
             //_addValidator = addValidator;

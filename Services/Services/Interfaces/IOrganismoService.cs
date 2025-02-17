@@ -28,6 +28,7 @@ namespace ServiceLayer.Services.Interfaces
         public Task<IEnumerable<VMCategoria>> GetCategorias();
         public Task<IEnumerable<VMRama>> GetRamas();
         public Task<(decimal afiliacion, decimal seguro)> GetPreciosAfiliacionesAsync();
+        public Task<List<VMLocalidad>> GetLocalidadesByProvinciaAsync(int provinciaId);
 
 
 

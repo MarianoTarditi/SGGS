@@ -19,13 +19,11 @@ namespace ProyectoWeb.Areas.Admin.Controllers
         }
 
         private readonly IOrganismoService _organismoService;
-        private readonly ILocalidadService _localidadService;
 
 
-        public OrganismoController(IOrganismoService organismoService, ILocalidadService localidadService)
+        public OrganismoController(IOrganismoService organismoService)
         {
             _organismoService = organismoService;
-            _localidadService = localidadService;
         }
 
         public async Task<IActionResult> GetOrganismoList()
@@ -42,7 +40,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
             ViewBag.Provincias = new SelectList(await _organismoService.GetProvinciasAsync(), "Id", "Nombre", organismo.ProvinciaId);
 
             // Cargar las localidades dependiendo de la provincia del organismo
-            ViewBag.Localidades = new SelectList(await _localidadService.GetLocalidadesByProvinciaAsync(organismo.ProvinciaId), "Id", "Nombre", organismo.LocalidadId);
+            ViewBag.Localidades = new SelectList(await _organismoService.GetLocalidadesByProvinciaAsync(organismo.ProvinciaId), "Id", "Nombre", organismo.LocalidadId);
 
             return View(organismo);
         }
@@ -55,7 +53,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
                 return BadRequest("El ID de provincia es inválido.");
             }
 
-            var localidades = await _localidadService.GetLocalidadesByProvinciaAsync(provinciaId);
+            var localidades = await _organismoService.GetLocalidadesByProvinciaAsync(provinciaId);
             return Json(localidades);
         }
 
@@ -84,7 +82,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
             ViewBag.Provincias = new SelectList(await _organismoService.GetProvinciasAsync(), "Id", "Nombre", organismo.ProvinciaId);
 
             // Cargar las localidades dependiendo de la provincia del organismo
-            ViewBag.Localidades = new SelectList(await _localidadService.GetLocalidadesByProvinciaAsync(organismo.ProvinciaId), "Id", "Nombre", organismo.LocalidadId);
+            ViewBag.Localidades = new SelectList(await _organismoService.GetLocalidadesByProvinciaAsync(organismo.ProvinciaId), "Id", "Nombre", organismo.LocalidadId);
 
             //var provincias = await _organismoService.GetProvinciasAsync();
             //ViewBag.Provincias = new SelectList(provincias, "Id", "Nombre");
