@@ -197,24 +197,30 @@
                             <div class="tab-pane fade pt-3" id="profile-change-password">
                             <form asp-controller="Organismo" asp-action="UpdateOrganismo" method="post" class="row g-3">
                                 <input type="hidden" asp-for="Id" />
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
 
                                 <div class="col-7">
                                     <label asp-for="Nombre" class="form-label">Nombre</label>
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
                                     <input asp-for="Nombre" type="text" class="form-control" />
                                 </div>
 
                                 <div class="col-7">
                                     <label asp-for="Descripcion" class="form-label">Descripción</label>
+                                    <span asp-validation-for="Descripcion" class="text-danger"></span>
                                     <textarea asp-for="Descripcion" class="form-control" style="height: 100px"></textarea>
                                 </div>
 
                                 <div class="col-7">
                                     <label asp-for="FechaCreacion" class="form-label">Fecha de Creación</label>
+                                    <span asp-validation-for="FechaCreacion" class="text-danger"></span>
                                     <input asp-for="FechaCreacion" type="date" class="form-control">
                                 </div>
 
                                 <div class="col-7">
                                     <label for="inputProvincia" class="form-label">Provincia</label>
+                                    <span asp-validation-for="ProvinciaId" class="text-danger"></span>
                                     <select asp-for="ProvinciaId" id="inputProvincia" class="form-select" asp-items="ViewBag.Provincias" onchange="loadLocalidades()">
                                         <option value="">Seleccione una provincia...</option>
                                     </select>
@@ -222,6 +228,7 @@
 
                                 <div class="col-7">
                                     <label for="inputLocalidad" class="form-label">Localidad</label>
+                                    <span asp-validation-for="LocalidadId" class="text-danger"></span>
                                     <select asp-for="LocalidadId" id="inputLocalidad" class="form-select" asp-items="ViewBag.Localidades">
                                         <option value="">Seleccione una localidad...</option>
                                     </select>
@@ -229,36 +236,43 @@
 
                                 <div class="col-7">
                                     <label asp-for="Direccion" class="form-label">Dirección</label>
+                                    <span asp-validation-for="Direccion" class="text-danger"></span>
                                     <input asp-for="Direccion" type="text" class="form-control" />
                                 </div>
 
                                 <div class="col-7">
                                     <label asp-for="CodigoPostal" class="form-label">Código Postal</label>
+                                    <span asp-validation-for="CodigoPostal" class="text-danger"></span>
                                     <input asp-for="CodigoPostal" type="text" class="form-control" />
                                 </div>
 
                                  <div class="col-7">
                                     <label asp-for="Latitud" class="form-label">Latitud</label>
+                                    <span asp-validation-for="Latitud" class="text-danger"></span>
                                     <input asp-for="Latitud" type="text" class="form-control" />
                                 </div>
 
                                  <div class="col-7">
                                     <label asp-for="Longitud" class="form-label">Longitud</label>
+                                    <span asp-validation-for="Longitud" class="text-danger"></span>
                                     <input asp-for="Longitud" type="text" class="form-control" />
                                 </div>
 
                                 <div class="col-7">
                                     <label asp-for="Email" class="form-label">Email</label>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
                                     <input asp-for="Email" type="text" class="form-control" />
                                 </div>
 
                                  <div class="col-7">
                                     <label asp-for="Telefono" class="form-label">Teléfono</label>
+                                    <span asp-validation-for="Telefono" class="text-danger"></span>
                                     <input asp-for="Telefono" type="text" class="form-control" />
                                 </div>
 
                                 <div class="col-7">
                                     <label asp-for="Celular" class="form-label">Celular</label>
+                                    <span asp-validation-for="Celular" class="text-danger"></span>
                                     <input asp-for="Celular" type="text" class="form-control" />
                                 </div>
 
@@ -270,11 +284,13 @@
 
                                 <div class="col-7">
                                     <label asp-for="ValorAfiliacion" class="form-label">Valor Afiliación</label>
+                                    <span asp-validation-for="ValorAfiliacion" class="text-danger"></span>
                                     <input asp-for="ValorAfiliacion" type="text" class="form-control" />
                                 </div>
 
                                 <div class="col-7">
                                     <label asp-for="ValorSeguro" class="form-label">Valor Seguro de Acompañante</label>
+                                    <span asp-validation-for="ValorSeguro" class="text-danger"></span>
                                     <input asp-for="ValorSeguro" type="text" class="form-control" />
                                 </div>
 

@@ -21,6 +21,8 @@ using Entity.Identity.ViewModels;
 using ServiceLayer.FluentValidation.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
+using Entity.WebAplication.ViewModels;
+using ServiceLayer.FluentValidation.WebAplication;
 
 namespace ServiceLayer.Extensions
 {
@@ -42,11 +44,16 @@ namespace ServiceLayer.Extensions
             services.AddTransient<IValidator<ForgotPasswordVM>, ForgotPasswordValidation>();
             services.AddTransient<IValidator<ResetPasswordVM>, ResetPasswordValidation>();
             services.AddTransient<IValidator<UserEditVM>, UserEditValidation>();
+            services.AddTransient<IValidator<VMMiembro>, MiembroValidation>();
+            services.AddTransient<IValidator<VMOrganismo>, OrganismoValidator>();
+
+
 
             services.AddScoped<ICuentaCorrienteService, CuentaCorrienteService>();
             services.AddScoped<IDetallePagoService, DetallePagoService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IDeudaService, DeudaService>();
+            services.AddScoped<IOrganismoService, OrganismoService>();
 
 
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(c => c.IsClass && !c.IsAbstract && c.Name.EndsWith("Service"));

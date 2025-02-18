@@ -143,13 +143,15 @@ namespace ServiceLayer.Services.Implementation
             miembro.Activo = true;
 
             // Obtener las entidades relacionadas
-            miembro.Discapacidad = await _unitOfWork.GetGenericRepository<Discapacidad>().GetEntityByIdAsync(entity.MiembroDiscapacidadId.Value);
-            miembro.Estudio = await _unitOfWork.GetGenericRepository<Estudio>().GetEntityByIdAsync(entity.EstudioId.Value);
+            miembro.Discapacidad = entity.MiembroDiscapacidadId.HasValue
+                ? await _unitOfWork.GetGenericRepository<Discapacidad>().GetEntityByIdAsync(entity.MiembroDiscapacidadId.Value)
+                : null;
+
+            miembro.Estudio = await _unitOfWork.GetGenericRepository<Estudio>().GetEntityByIdAsync(entity.EstudioId.Value);    
             miembro.Sexo = await _unitOfWork.GetGenericRepository<Sexo>().GetEntityByIdAsync(entity.SexoId.Value);
             miembro.EstadoCivil = await _unitOfWork.GetGenericRepository<EstadoCivil>().GetEntityByIdAsync(entity.EstadoCivilId.Value);
             miembro.Religion = await _unitOfWork.GetGenericRepository<Religion>().GetEntityByIdAsync(entity.ReligionId.Value);
             miembro.Localidad = await _unitOfWork.GetGenericRepository<Localidad>().GetEntityByIdAsync(entity.LocalidadId.Value);
-
             miembro.Categoria = await _unitOfWork.GetGenericRepository<Categoria>().GetEntityByIdAsync(entity.CategoriaId);
 
             if (entity.RamaId.HasValue)

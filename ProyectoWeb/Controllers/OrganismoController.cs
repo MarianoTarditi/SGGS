@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using Entity.WebAplication.Entities;
 using Entity.WebAplication.ViewModels;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,11 +20,13 @@ namespace ProyectoWeb.Areas.Admin.Controllers
         }
 
         private readonly IOrganismoService _organismoService;
+        private readonly IValidator<VMOrganismo> _organismoValidator;
 
 
-        public OrganismoController(IOrganismoService organismoService)
+        public OrganismoController(IOrganismoService organismoService, IValidator<VMOrganismo> organismoValidator)
         {
             _organismoService = organismoService;
+            _organismoValidator = organismoValidator;
         }
 
         public async Task<IActionResult> GetOrganismoList()

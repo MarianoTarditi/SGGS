@@ -8,6 +8,16 @@
     var organismoId = ViewBag.OrganismoId as int?;
 }
 
+<style>
+    .obligatorio {
+        font-size: 0.875rem; /* Tamaño de fuente pequeño */
+        color: #6c757d; /* Color gris sutil */
+        margin-left: 5px; /* Espacio entre el label y el mensaje */
+    }
+
+</style>
+
+
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">@ViewData["Title"]</h5>
@@ -16,93 +26,123 @@
         <!-- Vertical Form -->
         <form id="formMiembro" asp-area="Admin" asp-controller="Miembros" asp-action="AddMiembro" method="post" class="row g-3">
             <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
 
             <div class="col-6">
-                <label asp-for="Nombre" class="form-label">Nombre</label>
+                <label asp-for="Nombre" class="form-label">
+                    Nombre <span class="text-muted obligatorio">(obligatorio)</span>
+                </label>
+                <span asp-validation-for="Nombre" class="text-danger"></span>
                 <input asp-for="Nombre" type="text" class="form-control" />
             </div>
 
             <div class="col-6">
-                <label asp-for="Apellido" class="form-label">Apellido</label>
+                <label asp-for="Apellido" class="form-label">
+                    Apellido <span class="text-muted obligatorio">(obligatorio)</span>
+                </label>
+                <span asp-validation-for="Apellido" class="text-danger"></span>
                 <input asp-for="Apellido" type="text" class="form-control" />
             </div>
 
+
             <div class="col-6">
-                <label asp-for="Email" class="form-label">Email</label>
+                <label asp-for="Email" class="form-label">Email
+                    <span class="text-muted obligatorio">(obligatorio)</span>
+                </label>
+                <span asp-validation-for="Email" class="text-danger"></span>
                 <input asp-for="Email" type="text" class="form-control" />
             </div>
 
             <div class="col-6">
-                <label asp-for="Dni" class="form-label">DNI</label>
+                <label asp-for="Dni" class="form-label">DNI
+                    <span class="text-muted obligatorio">(obligatorio - sin puntos ni espacios)</span>
+                </label>
+                <span asp-validation-for="Dni" class="text-danger"></span>
                 <input asp-for="Dni" type="text" class="form-control" />
             </div>
 
             <div class="col-6">
-                <label asp-for="Telefono" class="form-label">Teléfono</label>
+                <label asp-for="Telefono" class="form-label">Teléfono
+                    <span class="text-muted obligatorio">(obligatorio) sin puntos ni espacios</span>
+                </label>
+                <span asp-validation-for="Telefono" class="text-danger"></span>
                 <input asp-for="Telefono" type="text" class="form-control" />
             </div>
 
             <div class="col-6">
-                <label asp-for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                <label asp-for="FechaNacimiento" class="form-label">Fecha de Nacimiento
+                    <span class="text-muted obligatorio">(obligatorio)</span>
+                </label>
+                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
                 <input asp-for="FechaNacimiento" type="date" class="form-control" />
             </div>
 
             <div class="col-6">
-                <label for="inputReligion" class="form-label">Religión</label>
+                <label for="inputReligion" class="form-label">Religión <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="ReligionId" class="text-danger"></span>
                 <select asp-for="ReligionId" class="form-select" asp-items="ViewBag.Religiones">
                     <option value="">Seleccione una opción...</option>
                 </select>
             </div>
 
             <div class="col-6">
-                <label for="inputSexo" class="form-label">Sexo</label>
+                <label for="inputSexo" class="form-label">Sexo <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="SexoId" class="text-danger"></span>
                 <select asp-for="SexoId" class="form-select" asp-items="ViewBag.Sexos">
                     <option value="">Seleccione una opción...</option>
                 </select>
             </div>
 
             <div class="col-6">
-                <label for="inputNacionalidad" class="form-label">Nacionalidad</label>
+                <label for="inputNacionalidad" class="form-label">Nacionalidad <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="NacionalidadId" class="text-danger"></span>
                 <select asp-for="NacionalidadId" class="form-select" asp-items="ViewBag.Nacionalidades">
                     <option value="">Seleccione una opción...</option>
                 </select>
             </div>
 
             <div class="col-6">
-                <label for="inputProvincia" class="form-label">Provincia</label>
+                <label for="inputProvincia" class="form-label">Provincia <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="ProvinciaId" class="text-danger"></span>
                 <select asp-for="ProvinciaId" id="inputProvincia" class="form-select" asp-items="ViewBag.Provincias" onchange="loadLocalidades()">
                     <option value="">Seleccione una opción...</option>
                 </select>
             </div>
 
             <div class="col-6">
-                <label for="inputLocalidad" class="form-label">Localidad</label>
+                <label for="inputLocalidad" class="form-label">Localidad <span class="text-muted obligatorio">(obligatorio - debe seleccionar antes la provincia)</span></label>
+                <span asp-validation-for="LocalidadId" class="text-danger"></span>
                 <select asp-for="LocalidadId" id="inputLocalidad" class="form-select">
                     <option value="">Seleccione una opción...</option>
                 </select>
             </div>
 
             <div class="col-6">
-                <label for="inputEstadoCivil" class="form-label">Estado Civil</label>
+                <label for="inputEstadoCivil" class="form-label">Estado Civil <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="EstadoCivilId" class="text-danger"></span>
                 <select asp-for="EstadoCivilId" class="form-select" asp-items="ViewBag.EstadosCiviles">
                     <option value="">Seleccione una opción...</option>
                 </select>
             </div>
 
             <div class="col-6">
-                <label asp-for="CodigoPostal" class="form-label">Código Postal</label>
+                <label asp-for="CodigoPostal" class="form-label">Código Postal <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="CodigoPostal" class="text-danger"></span>
                 <input asp-for="CodigoPostal" type="text" class="form-control" />
             </div>
 
             <div class="col-6">
-                <label for="inputIdioma" class="form-label">Idioma</label>
+                <label for="inputIdioma" class="form-label">Idioma <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="IdiomaId" class="text-danger"></span>
                 <select asp-for="IdiomaId" class="form-select" asp-items="ViewBag.Idiomas">
                     <option value="">Seleccione una opción...</option>
                 </select>
             </div>
 
             <div class="col-6">
-                <label for="inputEstudio" class="form-label">Estudios</label>
+                <label for="inputEstudio" class="form-label">Estudios <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="EstudioId" class="text-danger"></span>
                 <select asp-for="EstudioId" class="form-select" asp-items="ViewBag.Estudios">
                     <option value="">Seleccione una opción...</option>
                 </select>
@@ -110,6 +150,7 @@
 
             <div class="col-6">
                 <label asp-for="Titulo" class="form-label">Título</label>
+                <span asp-validation-for="Titulo" class="text-danger"></span>
                 <input asp-for="Titulo" type="text" class="form-control" />
             </div>
 
@@ -122,18 +163,21 @@
 
             <div class="col-6">
                 <label asp-for="DescripcionDiscapacidad" class="form-label">Descripción de la Discapacidad</label>
+                <span asp-validation-for="DescripcionDiscapacidad" class="text-danger"></span>
                 <textarea asp-for="DescripcionDiscapacidad" class="form-control" style="height: 60px"></textarea>
             </div>
 
             <div class="col-6">
-                <label asp-for="OrganismoId" class="form-label">Organismo</label>
+                <label asp-for="OrganismoId" class="form-label">Organismo <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="OrganismoId" class="text-danger"></span>
                 <select asp-for="OrganismoId" class="form-select" asp-items="ViewBag.Organismos">
                     <option value="">Seleccione un organismo...</option>
                 </select>
             </div>
 
             <div class="col-6">
-                <label asp-for="CategoriaId" class="form-label">Categoría</label>
+                <label asp-for="CategoriaId" class="form-label">Categoría <span class="text-muted obligatorio">(obligatorio)</span></label>
+                <span asp-validation-for="CategoriaId" class="text-danger"></span>
                 <select asp-for="CategoriaId" class="form-select" asp-items="ViewBag.Categorias" id="CategoriaId">
                     <option value="">Seleccione una categoría...</option>
                 </select>

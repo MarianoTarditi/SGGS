@@ -1,5 +1,10 @@
-﻿using Entity.WebAplication.Entities;
+﻿using Azure.Core;
+using Entity.WebAplication.Entities;
 using Entity.WebAplication.ViewModels;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+
+
 //using FluentValidation;
 //using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
@@ -27,16 +32,16 @@ namespace ProyectoWeb.Areas.Admin.Controllers
         private readonly IOrganismoService _organismoService;
         private readonly IToastNotification _toastNotification;
         private readonly ICuentaCorrienteService _cuentaCorrienteService;
-        //private readonly IValidator<VMMiembro> _addValidator;
+        private readonly IValidator<VMMiembro> _miembroValidator;
 
 
-        public MiembrosController(IMiembroService miembroService, IOrganismoService oganismoService/*, IValidator<VMMiembro> addValidator*/, IToastNotification toastNotification, ICuentaCorrienteService cuentaCorrienteService)
+        public MiembrosController(IMiembroService miembroService, IOrganismoService oganismoService/*, IValidator<VMMiembro> addValidator*/, IToastNotification toastNotification, ICuentaCorrienteService cuentaCorrienteService, IValidator<VMMiembro> miembroValidator)
         {
             _miembroService = miembroService;
             _organismoService = oganismoService;
             _toastNotification = toastNotification;
             _cuentaCorrienteService = cuentaCorrienteService;
-            //_addValidator = addValidator;
+            _miembroValidator = miembroValidator;
         }
 
         public async Task<IActionResult> GetMiembroList()
@@ -125,7 +130,39 @@ namespace ProyectoWeb.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMiembro(VMMiembro entity)
         {
-          
+            var validation = await _miembroValidator.ValidateAsync(entity);
+
+            // Cargar los valores de los comboBox siempre, incluso si hay validación
+            var provincias = await _organismoService.GetProvinciasAsync();
+            var nacionalidades = await _organismoService.GetNacionalidadesAsync();
+            var estudios = await _organismoService.GetEstudiosAsync();
+            var estadosCiviles = await _organismoService.GetEstadosCivilesAsync();
+            var discapacidades = await _organismoService.GetDiscapacidadesAsync();
+            var religiones = await _organismoService.GetReligionesAsync();
+            var sexos = await _organismoService.GetSexosAsync();
+            var idiomas = await _organismoService.GetIdiomasAsync();
+            var organismos = await _organismoService.GetAllListAsync();
+
+            var funciones = await _organismoService.GetFunciones();
+            var ramas = await _organismoService.GetRamas();
+            var categorias = await _organismoService.GetCategorias();
+
+            ViewBag.Provincias = new SelectList(provincias, "Id", "Nombre");
+            ViewBag.Nacionalidades = new SelectList(nacionalidades, "Id", "Pais");
+            ViewBag.Estudios = new SelectList(estudios, "Id", "Nivel");
+            ViewBag.EstadosCiviles = new SelectList(estadosCiviles, "Id", "Nombre");
+            ViewBag.Discapacidades = new SelectList(discapacidades, "Id", "Nombre");
+            ViewBag.Religiones = new SelectList(religiones, "Id", "Nombre");
+            ViewBag.Sexos = new SelectList(sexos, "Id", "Nombre");
+            ViewBag.Idiomas = new SelectList(idiomas, "Id", "Nombre");
+            ViewBag.Organismos = new SelectList(organismos, "Id", "Nombre");
+
+            ViewBag.Funciones = new SelectList(funciones, "Id", "Nombre");
+            ViewBag.Ramas = new SelectList(ramas, "Id", "Nombre");
+            ViewBag.Categorias = new SelectList(categorias, "Id", "Nombre");
+
+            if (validation.IsValid)
+            {
                 if (entity.Id > 0) // Si tiene ID, actualizar
                 {
                     await _miembroService.UpdateEntityAsync(entity);
@@ -135,8 +172,15 @@ namespace ProyectoWeb.Areas.Admin.Controllers
                     await _miembroService.CreateEntityAsync(entity);
                 }
 
-                return RedirectToAction("GetMiembroList", "Miembros", new { Area = "Admin" });                   
+                return RedirectToAction("GetMiembroList", "Miembros", new { Area = "Admin" });
+            }
+
+            validation.AddToModelState(this.ModelState);
+
+            ViewBag.OrganismoId = 1; // Asegurar que OrganismoId no sea null en la vista
+            return View(entity);
         }
+
 
 
         public async Task<IActionResult> DeleteMiembro(int id)
