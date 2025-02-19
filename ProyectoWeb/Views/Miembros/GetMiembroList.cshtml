@@ -205,7 +205,7 @@
 
 
 
-    document.getElementById("btnExportPdf").addEventListener("click", function () {
+                     document.getElementById("btnExportPdf").addEventListener("click", function () {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF("p", "mm", "a4");
 
@@ -213,75 +213,127 @@
         const fechaActual = new Date().toLocaleDateString();
         const horaActual = new Date().toLocaleTimeString();
 
-        // Agregar título
+        // **Título**
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text("Lista de Miembros", 105, 12, { align: "center" });
+        doc.setFontSize(16);
+        doc.setTextColor(40, 40, 40);
+        doc.text("Reporte de Miembros", 105, 15, { align: "center" });
 
-        // Agregar fecha de exportación
-        doc.setFontSize(9);
-        doc.setFont("helvetica", "italic");
-        doc.text(`Fecha de exportación: ${fechaActual} - ${horaActual}`, 14, 18);
-
-        // Línea decorativa
+        // **Línea decorativa**
         doc.setDrawColor(0, 0, 0);
-        doc.line(14, 22, 196, 22);
+        doc.line(14, 20, 196, 20);
 
-        // Obtener datos de la tabla sin la columna "Acciones"
+        // **Fecha de exportación**
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Fecha de exportación: ${fechaActual} - ${horaActual}`, 14, 26);
+
+        let startY = 35; // Posición inicial
+
+        // **Tabla: Listado de Miembros (AHORA APARECE PRIMERO)**
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.text("Listado de Miembros", 14, startY);
+
+        // **Obtener datos de la tabla HTML sin la columna "Acciones"**
         const table = document.getElementById("table");
         const headers = [];
         const data = [];
 
-        // Extraer encabezados (excepto la columna "Acciones")
+        // Extraer encabezados (EXCLUYENDO "Acciones")
         table.querySelectorAll("thead th").forEach((th, index) => {
-            if (index !== 7) { // La columna "Acciones" es la número 7 (empezando desde 0)
+            if (th.innerText.trim() !== "Acciones") { // Ignorar columna "Acciones"
                 headers.push(th.innerText);
             }
         });
 
-        // Extraer datos de las filas (sin la columna "Acciones")
+        // Extraer filas sin la columna "Acciones"
         table.querySelectorAll("tbody tr").forEach(tr => {
             const rowData = [];
             tr.querySelectorAll("td").forEach((td, index) => {
-                if (index !== 7) { // Omitir la columna "Acciones"
+                if (table.querySelector("thead th").children[index]?.innerText.trim() !== "Acciones") {
                     rowData.push(td.innerText);
                 }
             });
             data.push(rowData);
         });
 
-        // Configuración de la tabla compacta sin la columna "Acciones"
+        // **Generar tabla en el PDF**
         doc.autoTable({
+            startY: startY + 5,
             head: [headers],
             body: data,
-            startY: 25,
             theme: 'grid',
             styles: { fontSize: 9, cellPadding: 2, valign: 'middle' },
-            headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255], fontStyle: 'bold' },
+            headStyles: { fillColor: [52, 73, 94], textColor: [255, 255, 255] },
             alternateRowStyles: { fillColor: [240, 240, 240] },
-            columnStyles: {
-                0: { cellWidth: 12 },  // ID más reducido
-                1: { cellWidth: 25 },  // Nombre
-                2: { cellWidth: 25 },  // Apellido
-                3: { cellWidth: 18 },  // DNI
-                4: { cellWidth: 30 },  // Categoría
-                5: { cellWidth: 20 },  // Teléfono
-                6: { cellWidth: 25 },  // Localidad
-            },
             margin: { top: 25, left: 10, right: 10 }
         });
 
-        // Pie de página con número de página
+        // **Obtener los datos del ViewBag**
+        const categoriaCount = @Html.Raw(Json.Serialize(ViewBag.CategoriaCount));
+        const ramasCount = @Html.Raw(Json.Serialize(ViewBag.RamasCount));
+        const miembroInsigniasCount = @Html.Raw(Json.Serialize(ViewBag.MiembroInsigniasCount));
+
+        startY = doc.lastAutoTable.finalY + 10;
+
+        // **Tabla: Miembros por Categoría**
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.text("Miembros por Categoría", 14, startY);
+        doc.autoTable({
+            startY: startY + 5,
+            head: [["Categoría", "Cantidad"]],
+            body: Object.entries(categoriaCount),
+            theme: "grid",
+            headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255] },
+            styles: { fontSize: 10 },
+            margin: { left: 14, right: 14 }
+        });
+
+        // **Tabla: Protagonistas por Rama**
+        startY = doc.lastAutoTable.finalY + 10;
+        doc.text("Protagonista por Rama", 14, startY);
+        doc.autoTable({
+            startY: startY + 5,
+            head: [["Rama", "Cantidad"]],
+            body: Object.entries(ramasCount),
+            theme: "grid",
+            headStyles: { fillColor: [39, 174, 96], textColor: [255, 255, 255] },
+            styles: { fontSize: 10 },
+            margin: { left: 14, right: 14 }
+        });
+
+        // **Tabla: Educadores con Insignia de Madera**
+        startY = doc.lastAutoTable.finalY + 10;
+        doc.text("Educadores con Insignia de Madera", 14, startY);
+        doc.autoTable({
+            startY: startY + 5,
+            head: [["Estado", "Cantidad"]],
+            body: Object.entries(miembroInsigniasCount),
+            theme: "grid",
+            headStyles: { fillColor: [231, 76, 60], textColor: [255, 255, 255] },
+            styles: { fontSize: 10 },
+            margin: { left: 14, right: 14 }
+        });
+
+        // **Pie de página con número de páginas**
         const pageCount = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
             doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
             doc.text(`Página ${i} de ${pageCount}`, 105, 287, { align: "center" });
         }
 
-        // Descargar el PDF
+        // **Descargar el PDF**
         doc.save(`ListaMiembros_${fechaActual}.pdf`);
     });
+
+
+
+
 
      document.addEventListener("DOMContentLoaded", () => {
             // Obtener datos desde ViewBag y convertirlos en formato adecuado
