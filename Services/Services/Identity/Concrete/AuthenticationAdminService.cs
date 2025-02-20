@@ -83,5 +83,37 @@ namespace ServiceLayer.Services.Identity.Concrete
 
             return IdentityResult.Success;
         }
-    }
+
+       
+
+            public async Task<IdentityResult> DeleteUserAsync(string userName)
+            {
+                // Buscar al usuario por su nombre de usuario
+                var user = await _userManager.FindByNameAsync(userName);
+
+                if (user == null)
+                {
+                    // Si el usuario no existe, retornar un error
+                    return IdentityResult.Failed(new IdentityError
+                    {
+                        Description = "El usuario no existe."
+                    });
+                }
+
+                // Eliminar el usuario
+                var deleteResult = await _userManager.DeleteAsync(user);
+
+                if (!deleteResult.Succeeded)
+                {
+                    // Si hubo un error al eliminar al usuario, retornar un error
+                    return IdentityResult.Failed(new IdentityError
+                    {
+                        Description = "Hubo un problema al intentar eliminar el usuario."
+                    });
+                }
+
+                // Si la eliminación fue exitosa
+                return IdentityResult.Success;
+            }
+        }  
 }

@@ -10,6 +10,8 @@ using FluentValidation;
 using ServiceLayer.FluentValidation.Identity;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using System.Drawing;
+using Entity.Identity.Entities;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +45,35 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 
 }
-app.MapGet("/", () => Results.Redirect("/Dashboard"));
+
+app.MapGet("/", async (HttpContext context, UserManager<AppUser> userManager) =>
+{
+    // Verifica si el usuario está autenticado
+    if (context.User.Identity?.IsAuthenticated ?? false)
+    {
+        // Obtiene el usuario autenticado
+        var user = await userManager.GetUserAsync(context.User);
+
+        if (user != null)
+        {
+            // Obtiene los roles del usuario
+            var roles = await userManager.GetRolesAsync(user);
+
+            // Si es un "External Member", lo redirige a la página de espera
+            if (roles.Contains("External Member"))
+            {
+                return Results.Redirect("/EsperarAprobacion");
+            }
+        }
+    }
+
+    // Redirige al Dashboard por defecto si no es External Member
+    return Results.Redirect("/Dashboard");
+});
+
+
+
+//app.MapGet("/", () => Results.Redirect("/Dashboard"));
 //app.UseExceptionHandler("/Error/GeneralExceptions");
 //app.UseStatusCodePagesWithRedirects("/Error/PageNotFound");
 //app.UseStatusCodePagesWithReExecute("/Error/PageNotFound");

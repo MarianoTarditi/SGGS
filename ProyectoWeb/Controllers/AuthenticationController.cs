@@ -158,6 +158,15 @@ namespace ProyectoWeb.Controllers
             var logInResult = await _signInManager.PasswordSignInAsync(hasUser, request.Password, request.RememberMe, true);
             if (logInResult.Succeeded)
             {
+                // Obtiene los roles del usuario
+                var roles = await _userManager.GetRolesAsync(hasUser);
+
+                // Si el usuario tiene el rol "ExternalMember", lo redirigimos a la página de espera.
+                if (roles.Contains("External Member"))
+                {
+                    return RedirectToAction("Index", "EsperarAprobacion");
+                }
+
                 // Si el inicio de sesión es exitoso, muestra un mensaje de éxito y redirige a la URL deseada.
                 _toasty.AddSuccessToastMessage(
                     NotificationMessagesIdentity.LogInSuccess,

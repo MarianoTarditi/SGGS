@@ -39,6 +39,21 @@ namespace RepositoryLayer.Configuration.Identity
             member.PasswordHash = memberPasswordHash;
             builder.HasData(member);
 
+            var externalMembrer = new AppUser
+            {
+                Id = Guid.Parse("F906A15B-50F8-4E47-B44F-DF9AC87DEE9A").ToString(),
+                Email = "jorgemartinez@gmail.com",
+                NormalizedEmail = "JORGEMARTINEZ@GMAIL.COM",
+                UserName = "jorge",
+                NormalizedUserName = "JORGE",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                SecurityStamp = Guid.NewGuid().ToString(),
+            };
+
+            var externalMemberPasswordHash = PasswordHash(externalMembrer, "Password12**");
+            externalMembrer.PasswordHash = externalMemberPasswordHash;
+            builder.HasData(externalMembrer);
+
         }
 
         private string PasswordHash(AppUser user, string password)

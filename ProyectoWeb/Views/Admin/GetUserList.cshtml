@@ -42,6 +42,12 @@
                                     data-currentrole="@item.UserRoles.FirstOrDefault()">
                                 Cambiar Rol
                             </button>
+
+                            <!-- Botón Eliminar Usuario -->
+                            <button type="button" class="btn btn-danger eliminar-usuario"
+                                    data-username="@item.UserName">
+                                Eliminar
+                            </button>
                         </td>
                     </tr>
                 }
@@ -129,5 +135,33 @@
         });
     });
 
+
+    $(document).ready(function () {
+        $(".eliminar-usuario").click(function () {
+            var userName = $(this).data("username");
+
+            if (!confirm("¿Estás seguro de que deseas eliminar a " + userName + "?")) {
+                return;
+            }
+
+            $.ajax({
+                url: '/Admin/DeleteUser',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ UserName: userName }),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        setTimeout(() => location.reload(), 700);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Ocurrió un error al eliminar el usuario.");
+                }
+            });
+        });
+    });
 
 </script>

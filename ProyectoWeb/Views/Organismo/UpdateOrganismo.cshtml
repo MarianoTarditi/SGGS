@@ -110,7 +110,7 @@
 
             <div>
                 <button type="submit" class="btn btn-primary">Aceptar</button>
-                <button type="button" class="btn btn-danger" onclick="window.history.back();">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="redirigirAEditar(1026)">Cancelar</button>
                 <button type="reset" class="btn btn-secondary">Limpiar</button>
             </div>
         </form><!-- Vertical Form -->
@@ -152,5 +152,9 @@
                 loadLocalidades();
             }
         });
+
+        function redirigirAEditar(id) {
+            window.location.href = `/Organismo/GetOrganismo?id=${id}`;
+        }
     </script>
 }

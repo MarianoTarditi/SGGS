@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Acceso Restringido";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="height: 80vh; margin-right: 250px;">
+    <div class="card shadow-lg p-4 text-center" style="border-radius: 12px;">
+        <div class="card-body">
+            <i class="fas fa-user-lock fa-4x text-warning mb-3"></i>
+            <h2 class="text-danger fw-bold">Acceso Restringido</h2>
+            <p class="text-muted">Su cuenta está en espera de aprobación. Un administrador debe asignarle los permisos necesarios para poder accerder al sistema.</p>
+            <hr>
+            <p class="small text-secondary">Mientras espera, puede cerrar sesión y volver a intentarlo más tarde.</p>
+            <a href="@Url.Action("LogOut", "AuthenticationUser")" class="btn btn-danger mt-2">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </div>
+    </div>
+</div>
+

@@ -63,5 +63,23 @@ namespace ProyectoWeb.Controllers
 
             return Json(new { success = true, message = NotificationMessagesIdentity.UserEdit(request.UserName!), type = "success" });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserRequestVM request)
+        {
+            if (string.IsNullOrEmpty(request.UserName))
+            {
+                return Json(new { success = false, message = "El nombre de usuario no puede estar vacío." });
+            }
+
+            var deleteResult = await _admin.DeleteUserAsync(request.UserName);
+            if (!deleteResult.Succeeded)
+            {
+                return Json(new { success = false, message = "Error al eliminar el usuario." });
+            }
+
+            return Json(new { success = true, message = $"Usuario {request.UserName} eliminado correctamente." });
+        }
+
     }
 }

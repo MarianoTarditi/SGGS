@@ -20,7 +20,14 @@ namespace RepositoryLayer.Configuration.Identity
                 Name = "Member",
                 NormalizedName = "MEMBER",
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
+            }, new AppRole
+            {
+                Id = Guid.Parse("A086370D-A143-42D2-AD86-1D32EB9E7546").ToString(),
+                Name = "External Member",
+                NormalizedName = "EXTERNAL MEMBER",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
             });
+
         }
     }
 }

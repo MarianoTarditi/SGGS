@@ -16,6 +16,10 @@ namespace RepositoryLayer.Configuration.Identity
             {
                 UserId = Guid.Parse("6B0E483C-EBAE-4ED3-827E-8ED27F7D9131").ToString(),
                 RoleId = Guid.Parse("AFFEDC34-9713-423A-880E-4A61CEEFB7B1").ToString()
+            }, new AppUserRole
+            {
+                UserId = Guid.Parse("F906A15B-50F8-4E47-B44F-DF9AC87DEE9A").ToString(),
+                RoleId = Guid.Parse("A086370D-A143-42D2-AD86-1D32EB9E7546").ToString()
             });
         }
     }

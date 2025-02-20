@@ -8,5 +8,7 @@ namespace ServiceLayer.Services.Identity.Abstract
         Task<List<UserVM>> GetUserListAsync();
         Task<IdentityResult> ExtendClaimAsync(string username);
         public Task<IdentityResult> UpdateUserRoleAsync(string username, string newRole);
+        public Task<IdentityResult> DeleteUserAsync(string userName);
+
     }
 }
