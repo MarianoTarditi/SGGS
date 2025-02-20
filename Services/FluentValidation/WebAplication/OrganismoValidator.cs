@@ -16,6 +16,7 @@ namespace ServiceLayer.FluentValidation.WebAplication
         {
             RuleFor(x => x.Nombre)
                .NotEmpty().WithMessage(ValidationMessages.NullEmptyMessage("El nombre"))
+               .NotNull().WithMessage(ValidationMessages.NullEmptyMessage("El nombre"))
                .MaximumLength(30).WithMessage(ValidationMessages.MaximumCharachterAllowence("El nombre", 30));
 
             RuleFor(x => x.CodigoPostal)
