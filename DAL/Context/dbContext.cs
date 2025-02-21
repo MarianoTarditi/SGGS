@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using CoreLayer.BaseEntities;
-using Entity.WebAplication.Entities.Evento;
 
 
 namespace DAL.Context
@@ -43,16 +42,6 @@ namespace DAL.Context
         public DbSet<Deuda> Deudas { get; set; }
         //public DbSet<Asociacion> Asociaciones { get; set; }
         public DbSet<ModalidadPago> ModalidadPagos { get; set; }
-
-        public DbSet<Evento> Eventos { get; set; }
-        public DbSet<AutorizacionEvento> AutorizacionesEventos { get; set; }
-        public DbSet<DestacamientoPolicial> DestacamientosPoliciales { get; set; }
-        public DbSet<Locacion> Locaciones { get; set; }
-        public DbSet<Propietario> Propietarios { get; set; }
-        public DbSet<TransportePrivado> TransportesPrivados { get; set; }
-        public DbSet<UnidadSanitaria> UnidadesSanitarias { get; set; }
-        public DbSet<VehiculoPropio> VechiculosPropios { get; set; }
-        public DbSet<EventoMiembro> EventosMiembros { get; set; }
         public DbSet<Educador> Educadores { get; set; }
         public DbSet<EstadoAutorizacion> EstadoAutorizaciones { get; set; }
 
@@ -73,9 +62,6 @@ namespace DAL.Context
             modelBuilder.Entity<AutorizacionPago>().Property(x => x.CreatedDate).IsRequired().HasMaxLength(10);
             modelBuilder.Entity<AutorizacionPago>().Property(x => x.UpdatedDate).HasMaxLength(10);
 
-            modelBuilder.Entity<AutorizacionEvento>().Property(x => x.RowVersion).IsRowVersion();
-            modelBuilder.Entity<AutorizacionEvento>().Property(x => x.CreatedDate).IsRequired().HasMaxLength(10);
-            modelBuilder.Entity<AutorizacionEvento>().Property(x => x.UpdatedDate).HasMaxLength(10);
 
             modelBuilder.Entity<Categoria>().Property(x => x.RowVersion).IsRowVersion();
             modelBuilder.Entity<Categoria>().Property(x => x.CreatedDate).IsRequired().HasMaxLength(10);
@@ -225,29 +211,6 @@ namespace DAL.Context
          .OnDelete(DeleteBehavior.Cascade);
 
 
-
-
-            modelBuilder.Entity<EventoMiembro>()
-       .HasKey(em => new { em.MiembroId, em.EventoId });
-
-            modelBuilder.Entity<EventoMiembro>()
-                   .HasOne(em => em.Miembro)
-                   .WithMany(m => m.EventosMiembros)
-                   .HasForeignKey(em => em.MiembroId)
-                   .OnDelete(DeleteBehavior.Cascade); // Eliminación en cascada para Miembro
-
-            // Relación con Evento
-            modelBuilder.Entity<EventoMiembro>()
-                .HasOne(em => em.Evento)
-                .WithMany(e => e.EventosMiembros)
-                .HasForeignKey(em => em.EventoId)
-                .OnDelete(DeleteBehavior.Restrict); // Cambiar a Restrict o NoAction para Evento
-
-            //    modelBuilder.Entity<Organismo>()
-            //.HasOne(o => o.Resumen) // Relación uno a uno
-            //.WithOne(r => r.Organismo) // Relación inversa
-            //.HasForeignKey<Resumen>(r => r.OrganismoId); // Clave foránea
-
             modelBuilder.Entity<Pago>()
             .HasOne(p => p.Autorizacion)
             .WithMany(a => a.Pagos)
@@ -257,15 +220,6 @@ namespace DAL.Context
          .HasOne(p => p.Recibo)
          .WithOne(r => r.Pago)
          .HasForeignKey<Recibo>(r => r.PagoId); // PagoId es la clave foránea en Recibo
-
-            // Relación uno a uno entre Pago y AutorizacionPago
-            //    modelBuilder.Entity<Pago>()
-            //.HasOne(p => p.Autorizacion)
-            //.WithOne(a => a.Pago)
-            //.HasForeignKey<Pago>(p => p.AutorizacionId);
-
-
-
 
             modelBuilder.Entity<Miembro>()
             .HasOne(m => m.Organismo)
@@ -371,17 +325,6 @@ namespace DAL.Context
                 Autorizado = true,
                 Fecha = DateTime.Now,
                 Observacion = "Pago Autorizado con exito",
-                EstadoAutorizacionId = 1
-            });
-
-            modelBuilder.Entity<AutorizacionEvento>().HasData(
-            new AutorizacionEvento
-            {
-                Id = 1,
-                Fecha = DateTime.Now,
-                CreatedDate = "05/05/2025",
-                Autorizado = true,
-                Observacion = "Evento Autorizado con exito",
                 EstadoAutorizacionId = 1
             });
 
@@ -586,92 +529,6 @@ namespace DAL.Context
                 CreatedDate = "05/05/2025",
                 CategoriaNombre = "asd",
             });
-
-            modelBuilder.Entity<DestacamientoPolicial>().HasData(
-            new DestacamientoPolicial
-            {
-                Id = 1,
-                Direccion = "Dardo rocha 78",
-                Nombre = "PoliciaRojas",
-                Telefono = 2445445
-            });
-
-            modelBuilder.Entity<Locacion>().HasData(
-            new Locacion
-            {
-                Id = 1,
-                Ciudad = "Rojas",
-                Direccion = "Dardo rocha 78",
-                Provincia = "Buenos Aires",
-                PropietarioId = 1,
-            });
-
-            modelBuilder.Entity<Propietario>().HasData(
-            new Propietario
-            {
-                Id = 1,
-                Nombre = "Ernesto",
-                Telefono = 2445445,
-            });
-
-            modelBuilder.Entity<TransportePrivado>().HasData(
-            new TransportePrivado
-            {
-                Id = 1,
-                Direccion = "Dardo rocha 78",
-                Telefono = 2445445,
-                NumeroHabilitacion = "542",
-                RazonSocial = "45"
-            });
-
-            modelBuilder.Entity<UnidadSanitaria>().HasData(
-            new UnidadSanitaria
-            {
-                Id = 1,
-                Direccion = "Dardo rocha 78",
-                Telefono = 2445445,
-                Nombre = "HospitalRojas"
-            });
-
-            modelBuilder.Entity<VehiculoPropio>().HasData(
-            new VehiculoPropio
-            {
-                Id = 1,
-                Marca = "Ford",
-                Modelo = "Fiesta",
-                Patente = "IAA344",
-                Tipo = "GEF"
-            });
-
-            modelBuilder.Entity<EventoMiembro>().HasData(
-            new EventoMiembro
-            {
-                EventoId = 1,
-                MiembroId = 1
-            });
-
-            modelBuilder.Entity<Evento>().HasData(
-            new Evento
-            {
-                Id = 1,
-                Fecha = DateTime.Now,
-                FechaLlegada = DateTime.Now,
-                FechaSalida = DateTime.Now,
-                HoraLlegada = DateTime.Now,
-                HoraSalida = DateTime.Now,
-                Celular = 2474403379,
-                Codigo = 1,
-                DestacamientoPolicialId = 1,
-                JefeDeCampoId = 1,
-                LocacionId = 1,
-                NombreDirecZona = "sad",
-                TransportePrivdadoId = 1,
-                UnidadSanitariaId = 1,
-                Activo = true,
-                VehiculoPropioId = 1,
-                AutorizacionId = 1,
-            });
-
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

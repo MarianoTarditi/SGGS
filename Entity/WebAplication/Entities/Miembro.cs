@@ -1,5 +1,4 @@
 ﻿using CoreLayer.BaseEntities;
-using Entity.WebAplication.Entities.Evento;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,9 +41,7 @@ namespace Entity.WebAplication.Entities
         public int EstadoCivilId { get; set; }
         public Estudio? Estudio { get; set; }
         public int? EstudioId { get; set; }
-   
-        public List<EventoMiembro>? EventosMiembros { get; set; }
-        public Deuda? Deuda { get; set; }
+           public Deuda? Deuda { get; set; }
         public List<Pago>? Pagos { get; set; }
 
 

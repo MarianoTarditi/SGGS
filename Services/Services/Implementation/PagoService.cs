@@ -26,12 +26,6 @@ namespace ServiceLayer.Services.Implementation
         private readonly IMapper _mapper;
 
         private readonly IGenericRepository<Pago> _pagoRepository;
-        private readonly IGenericRepository<DetallePago> _detallePagoRepository;
-        private readonly IGenericRepository<AutorizacionPago> _autorizacionPagoRepository;
-        private readonly IGenericRepository<Recibo> _reciboRepository;
-        private readonly IGenericRepository<ModalidadPago> _modalidadPagoRepository;
-        private readonly IGenericRepository<Miembro> _miemebroRepository;
-        private readonly ICuentaCorrienteService _cuentaCorrienteService;
         private readonly IDeudaService _deudaService;
 
         private readonly IToastNotification _toasty;
@@ -41,26 +35,14 @@ namespace ServiceLayer.Services.Implementation
             IUnitOfWork unitOfWork,
             IMapper mapper,
             IGenericRepository<Pago> pagoRepository,
-            IGenericRepository<DetallePago> detallePagoRepository,
-            IGenericRepository<AutorizacionPago> autorizacionPagoRepository,
-            IGenericRepository<Recibo> reciboRepository,
-            IGenericRepository<ModalidadPago> modalidadPagoRepository,
-            IGenericRepository<Miembro> miemebroRepository,
             IToastNotification toasty,
-            ICuentaCorrienteService cuentaCorrienteService,
             IDeudaService deudaService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
 
             _pagoRepository = pagoRepository;
-            _detallePagoRepository = detallePagoRepository;
-            _autorizacionPagoRepository = autorizacionPagoRepository;
-            _reciboRepository = reciboRepository;
-            _modalidadPagoRepository = modalidadPagoRepository;
-            _miemebroRepository = miemebroRepository;
             _toasty = toasty;
-            _cuentaCorrienteService = cuentaCorrienteService;
             _deudaService = deudaService;
         }
 

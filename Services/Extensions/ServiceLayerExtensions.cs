@@ -50,7 +50,6 @@ namespace ServiceLayer.Extensions
 
 
             services.AddScoped<ICuentaCorrienteService, CuentaCorrienteService>();
-            services.AddScoped<IDetallePagoService, DetallePagoService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IDeudaService, DeudaService>();
             services.AddScoped<IOrganismoService, OrganismoService>();

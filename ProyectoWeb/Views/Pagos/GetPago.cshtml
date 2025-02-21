@@ -24,6 +24,9 @@
 
     <hr style="border: none; height: 1px; background: #ddd; margin: 20px 0;" />
 
+    <button id="exportarPdf" class="btn btn-danger">Exportar a PDF</button>
+
+
     @if(User.IsInRole("SuperAdmin"))
     {
         <!-- Contenedor de botones alineados horizontalmente -->
@@ -161,6 +164,10 @@
 
 <!-- JS de Toastr -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
 
 
 <script>
@@ -217,6 +224,40 @@
         .catch(error => {
             console.error('Error:', error);
             toastr.error("Ocurrió un error inesperado.", "Error");
+        });
+    });
+
+    $(document).ready(function () {
+        $("#exportarPdf").click(function () {
+            var idPago = @Model.Id; // Obtener el ID del pago actual
+            window.location.href = "/Pagos/ExportarRecibo?id=" + idPago;
+        });
+    });
+
+    document.getElementById("exportarPdf").addEventListener("click", function () {
+        // Selecciona el contenedor del recibo
+        var reciboElement = document.querySelector("div[style*='max-width: 800px']");
+
+        if (!reciboElement) {
+            alert("No se encontró el recibo para exportar.");
+            return;
+        }
+
+        // Utiliza html2canvas para capturar el recibo como imagen
+        html2canvas(reciboElement, {
+            scale: 2, // Aumenta la calidad del renderizado
+            useCORS: true
+        }).then(canvas => {
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jspdf.jsPDF("p", "mm", "a4");
+            const imgWidth = 190; // Ancho de la imagen en mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
+            pdf.save(`Recibo_${new Date().toISOString().split('T')[0]}.pdf`);
+        }).catch(error => {
+            console.error("Error al generar el PDF:", error);
+            alert("Hubo un error al exportar el recibo.");
         });
     });
 

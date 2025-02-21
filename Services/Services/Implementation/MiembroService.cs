@@ -30,20 +30,17 @@ namespace ServiceLayer.Services.Implementation
         private readonly IMapper _mapper;
         private readonly IToastNotification _toasty;
         private readonly ICuentaCorrienteService _cuentaCorrienteService;
-        private readonly IPagoService _pagoService;
-        private readonly IDeudaService _deudaService;
+
         private const string Section = "El miembro";
 
 
-        public MiembroService(IGenericRepository<Miembro> repository, IUnitOfWork unitOfWork, IMapper mapper, IToastNotification toasty, ICuentaCorrienteService cuentaCorrienteService, IPagoService pagoService, IDeudaService deudaService)
+        public MiembroService(IGenericRepository<Miembro> repository, IUnitOfWork unitOfWork, IMapper mapper, IToastNotification toasty, ICuentaCorrienteService cuentaCorrienteService)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _toasty = toasty;
             _cuentaCorrienteService = cuentaCorrienteService;
-            _pagoService = pagoService;
-            _deudaService = deudaService;
         }
 
 
@@ -189,9 +186,8 @@ namespace ServiceLayer.Services.Implementation
                 miembro.Organismo = organismo;
             }
 
-            // Crear el Miembro en la BD (esto genera el MiembroId)
             await _unitOfWork.GetGenericRepository<Miembro>().CreateEntityAsync(miembro);
-            await _unitOfWork.CommitAsync(); // Guardar cambios para obtener el MiembroId
+            await _unitOfWork.CommitAsync(); 
 
 
             //var miembroAcompañante = await _unitOfWork.GetGenericRepository<Miembro>().Where(x => x.CategoriaId == 6).SingleAsync();
