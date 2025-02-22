@@ -234,6 +234,51 @@ namespace ServiceLayer.Services.Implementation
             return tipoModalidadCount;
         }
 
+        public async Task<Tuple<Dictionary<string, int>, int>> GetPagosPorDia(DateTime startDate, DateTime endDate)
+        {
+            // Crear un diccionario con los últimos 14 días y valores en 0
+            var pagosPorDia = Enumerable.Range(0, (endDate - startDate).Days + 1)
+                .Select(i => new { Fecha = startDate.AddDays(i).ToString("yyyy-MM-dd"), Cantidad = 0 })
+                .ToDictionary(x => x.Fecha, x => x.Cantidad);
+
+            // Obtener los pagos de la base de datos
+            var pagos = await _unitOfWork.GetGenericRepository<Pago>()
+                .GetAllList()
+                .Where(p => !string.IsNullOrEmpty(p.CreatedDate)) // Filtrar nulos o vacíos
+                .ToListAsync();
+
+            // Filtrar y agrupar pagos en memoria
+            var pagosAgrupados = pagos
+                .Where(p => DateTime.TryParse(p.CreatedDate, out _)) // Convertir solo los que son válidos
+                .Where(p => DateTime.Parse(p.CreatedDate).Date >= startDate && DateTime.Parse(p.CreatedDate).Date <= endDate) // Filtrar por el rango de fechas
+                .GroupBy(p => DateTime.Parse(p.CreatedDate).Date) // Agrupar por fecha sin hora
+                .Select(g => new
+                {
+                    Fecha = g.Key.ToString("yyyy-MM-dd"),
+                    Cantidad = g.Count()
+                })
+                .ToList();
+
+            // Actualizar el diccionario con los valores obtenidos de la BD
+            foreach (var pago in pagosAgrupados)
+            {
+                pagosPorDia[pago.Fecha] = pago.Cantidad;
+            }
+
+            // Calcular el valor máximo de pagos en el rango de fechas
+            var maxPagos = pagosPorDia.Values.Max();
+
+            return Tuple.Create(pagosPorDia, maxPagos);
+        }
+
+
+
+
+
+
+
+
+
 
         public async Task GestionarSaldosMiembros(decimal montoAfiliacion, decimal montoSeguro)
         {

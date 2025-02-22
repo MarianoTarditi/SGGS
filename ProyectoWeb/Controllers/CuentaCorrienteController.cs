@@ -21,14 +21,34 @@ namespace ProyectoWeb.Controllers
             _pagoService = pagoService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate)
         {
             var categoriasCount = await _cuentaCorrienteService.GetCategoriaMiembroAsync();
             var funcionesCount = await _cuentaCorrienteService.GetFuncionMiembroAsync();
             var ramasCount = await _cuentaCorrienteService.GetRamaMiembroAsync();
             var religionesCount = await _cuentaCorrienteService.GetReligionMiembroAsync();
 
-            var (saldoAfiliacion, saldoSeguro, saldoTotal, debito, credito, debitoAfiliacion, debitoSeguro, creditoAfiliacion, CreditoSeguro) = await _cuentaCorrienteService.ObtenerSaldoTotal();
+            startDate ??= DateTime.Today.AddDays(-13);  // Últimos 14 días
+            endDate ??= DateTime.Today;
+
+            // Pasar las fechas a la vista para que se mantengan seleccionadas
+            ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
+            ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
+
+            // Llamar al servicio correctamente y declarar explícitamente los tipos
+            var pagosPorDiaTuple = await _cuentaCorrienteService.GetPagosPorDia(startDate.Value, endDate.Value);
+            Dictionary<string, int> pagosPorDia = pagosPorDiaTuple.Item1;
+            int maxPagos = pagosPorDiaTuple.Item2;
+
+            // Pasar los datos al ViewBag
+            ViewBag.PagosCount = pagosPorDia;
+            ViewBag.MaxPagos = maxPagos;
+
+    
+
+
+
+        var(saldoAfiliacion, saldoSeguro, saldoTotal, debito, credito, debitoAfiliacion, debitoSeguro, creditoAfiliacion, CreditoSeguro) = await _cuentaCorrienteService.ObtenerSaldoTotal();
 
             ViewBag.SaldoTotal = saldoTotal;
             ViewBag.SaldoAfiliacion = saldoAfiliacion;
@@ -46,6 +66,8 @@ namespace ProyectoWeb.Controllers
             ViewBag.FuncionesCount = funcionesCount;
             ViewBag.RamasCount = ramasCount;
             ViewBag.ReligionesCount = religionesCount;
+
+
 
             var (valorAfiliacion, valorSeguro) = await _organismoService.GetPreciosAfiliacionesAsync();
 

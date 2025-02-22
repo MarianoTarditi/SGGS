@@ -17,6 +17,8 @@ namespace ServiceLayer.Services.Interfaces
         public Task<Dictionary<string, int>> GetEstadosPagosAsync();
         public Task<Dictionary<string, int>> GetCategoriasPagosAsync();
         public Task<Dictionary<string, int>> GetModalidadesPagosAsync();
+        public Task<Tuple<Dictionary<string, int>, int>> GetPagosPorDia(DateTime startDate, DateTime endDate);
+
 
 
         public Task GestionarSaldosPagos(decimal montoAfiliacion, decimal montoSeguro);
