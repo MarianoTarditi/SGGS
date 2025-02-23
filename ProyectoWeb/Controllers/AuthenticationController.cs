@@ -78,7 +78,7 @@ namespace ProyectoWeb.Controllers
             }
 
             // Asigna al usuario el rol predeterminado de "Member".
-            var assignRoleResult = await _userManager.AddToRoleAsync(user, "Member");
+            var assignRoleResult = await _userManager.AddToRoleAsync(user, "External Member");
             if (!assignRoleResult.Succeeded)
             {
                 // Si falla la asignación de rol, elimina al usuario creado y muestra los errores.

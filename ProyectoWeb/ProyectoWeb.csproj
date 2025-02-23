@@ -29,14 +29,10 @@
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj" />
     <ProjectReference Include="..\Entity\Entity.csproj" />
-    <ProjectReference Include="..\Services\ServiceLayer.csproj" />
+    <ProjectReference Include="..\Services\BLL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\User\Controllers\" />
-    <Folder Include="Areas\User\Models\" />
     <Folder Include="Components\" />
     <Folder Include="wwwroot\Admin\assets2\" />
   </ItemGroup>

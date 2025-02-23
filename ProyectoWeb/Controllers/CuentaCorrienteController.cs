@@ -6,7 +6,7 @@ using ServiceLayer.Services.Interfaces;
 
 namespace ProyectoWeb.Controllers
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SuperAdmin,Member")]
     public class CuentaCorrienteController : Controller
     {
         private readonly ICuentaCorrienteService _cuentaCorrienteService;

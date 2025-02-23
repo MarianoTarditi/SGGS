@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entity", "Entity\Entity.csproj", "{D7CC8487-527F-4C47-923D-CF6356A5955A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceLayer", "Services\ServiceLayer.csproj", "{72C75980-D588-47FB-B4AD-1E72A983830F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BLL", "Services\BLL.csproj", "{72C75980-D588-47FB-B4AD-1E72A983830F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
