@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Azure.Core;
-using CoreLayer.Enumerators;
+using Entity.Identity.ViewModels.Error;
 using DAL.Enumerators;
 using Entity.Identity.Entities;
 using Entity.Identity.ViewModels;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using ServiceLayer.Helpers.Generic.Image;
 using ServiceLayer.Services.Identity.Abstract;
+using Entity.Identity.Entities.Enumerators;
 
 namespace ServiceLayer.Services.Identity.Concrete
 {

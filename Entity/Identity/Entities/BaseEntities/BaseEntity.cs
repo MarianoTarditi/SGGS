@@ -1,4 +1,4 @@
-﻿namespace CoreLayer.BaseEntities
+﻿namespace Entity.Identity.Entities.BaseEntities
 {
     public abstract class BaseEntity : IBaseEntity
     {

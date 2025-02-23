@@ -1,4 +1,4 @@
-﻿using CoreLayer.BaseEntities;
+﻿using Entity.Identity.Entities.BaseEntities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

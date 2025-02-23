@@ -499,6 +499,7 @@
         </form>
 
         <div id="columnChart"></div>
+        <div id="columnChart2"></div>
 
 </div>
 
@@ -642,60 +643,91 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-            document.addEventListener("DOMContentLoaded", () => {
+                                        document.addEventListener("DOMContentLoaded", () => {
+            if (document.querySelector("#columnChart")) {
+                console.log("Rendering columnChart...");
                 new ApexCharts(document.querySelector("#columnChart"), {
                     series: [{
                         name: 'Cantidad de Pagos',
-                        data: @Html.Raw(Json.Serialize(ViewBag.PagosCount.Values)) // Los valores de cantidad de pagos
+                        data: @Html.Raw(Json.Serialize(ViewBag.PagosCount?.Values ?? new List<int>()))
                     }],
-                    chart: {
-                        type: 'bar',
-                        height: 350
+                    chart: { type: 'bar', height: 350 },
+                    xaxis: {
+                        categories: @Html.Raw(Json.Serialize(ViewBag.PagosCount?.Keys ?? new List<string>())),
+                        labels: {
+                            style: {
+                                colors: '#000000' // Color negro para los números en el eje X
+                            }
+                        }
                     },
-                    plotOptions: {
-                        bar: {
-                            horizontal: false,
-                            columnWidth: '55%',
-                            endingShape: 'rounded'
+                    yaxis: {
+                        min: 0, // Asegura que comience desde 0
+                        tickAmount: Math.max(...@Html.Raw(Json.Serialize(ViewBag.PagosCount?.Values ?? new List<int>())), 1), // Define cantidad de ticks en base al máximo valor
+                        labels: {
+                            formatter: function (val) { return val.toFixed(0); }, // Asegura que se muestren solo números enteros
+                            style: {
+                                colors: '#000000' // Color negro para los números en el eje Y
+                            }
                         }
                     },
                     dataLabels: {
-                        enabled: false
-                    },
-                    stroke: {
-                        show: true,
-                        width: 2,
-                        colors: ['transparent']
-                    },
-                    xaxis: {
-                        categories: @Html.Raw(Json.Serialize(ViewBag.PagosCount.Keys)) // Las fechas de los últimos 14 días
-                    },
-                    yaxis: {
-                        title: {
-                            text: 'Cantidad de Pagos'
-                        },
-                        labels: {
-                            formatter: function (val) {
-                                return Math.floor(val); // Asegurarse de que el valor sea un número entero
-                            }
-                        },
-                        min: 0, // El valor mínimo es 0
-                        max: @ViewBag.MaxPagos, // El valor máximo es el máximo de pagos de los últimos 14 días
-                        tickAmount: 5 // Ajustar el número de ticks en el eje Y
-                    },
-                    fill: {
-                        opacity: 1
+                        enabled: true,
+                        formatter: function (val) { return Math.floor(val); }, // Muestra números enteros
+                        style: {
+                            colors: ['#FFFFFF'] // Color blanco para los números en las barras
+                        }
                     },
                     tooltip: {
                         y: {
-                            formatter: function (val) {
-                                return "Pagos: " + Math.floor(val); // Muestra como número entero
+                            formatter: function (val) { return Math.floor(val) + " pagos"; },
+                            style: {
+                                color: '#000000' // Color negro para los números en el tooltip
                             }
                         }
                     }
                 }).render();
-            });
-   
+            }
+
+
+
+
+    if (document.querySelector("#columnChart2")) {
+        console.log("Rendering columnChart2...");
+        new ApexCharts(document.querySelector("#columnChart2"), {
+            series: [{
+                name: 'Monto Total de Pagos',
+                data: @Html.Raw(Json.Serialize(ViewBag.MontosCount?.Values ?? new List<decimal>()))
+            }],
+            chart: { type: 'bar', height: 350 },
+            xaxis: {
+                categories: @Html.Raw(Json.Serialize(ViewBag.MontosCount?.Keys ?? new List<string>())),
+                labels: {
+                    style: {
+                        colors: '#000000' // Color negro para los números en el eje X
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) { return "$" + val.toFixed(2); }, // Agrega el signo de $ en las etiquetas de las barras
+                style: {
+                    colors: ['#FFFFFF'] // Color blanco para los números en las barras
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) { return "$" + val.toFixed(2); }, // Agrega el signo de $ en el tooltip
+                    style: {
+                        color: '#000000' // Color negro para los números en el tooltip
+                    }
+                }
+            }
+        }).render();
+    }
+});
+
+
+
 
 
 

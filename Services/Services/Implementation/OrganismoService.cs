@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Azure.Core;
-using CoreLayer.Enumerators;
+using Entity.Identity.Entities.Enumerators;
 using DAL.Context;
 using DAL.Repositories.Interfaces;
 using DAL.UnitOfWork.Interfaces;

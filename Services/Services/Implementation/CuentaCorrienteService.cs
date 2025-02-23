@@ -271,9 +271,43 @@ namespace ServiceLayer.Services.Implementation
             return Tuple.Create(pagosPorDia, maxPagos);
         }
 
+        public async Task<Tuple<Dictionary<string, decimal>, decimal>> GetMontoTotalPorDia(DateTime startDate, DateTime endDate)
+        {
+            // Crear un diccionario con los días en el rango y valores en 0
+            var montoPorDia = Enumerable.Range(0, (endDate - startDate).Days + 1)
+                .Select(i => new { Fecha = startDate.AddDays(i).ToString("yyyy-MM-dd"), MontoTotal = 0m }) // Usar decimal para representar los montos
+                .ToDictionary(x => x.Fecha, x => x.MontoTotal);
+
+            // Obtener los pagos de la base de datos
+            var pagos = await _unitOfWork.GetGenericRepository<Pago>()
+                .GetAllList().Include(x => x.Recibo)
+                .Where(p => !string.IsNullOrEmpty(p.CreatedDate) && p.Recibo.Total > 0) // Filtrar nulos o vacíos y pagos válidos
+                .ToListAsync();
+
+            // Filtrar y agrupar pagos por fecha
+            var pagosAgrupados = pagos
+                .Where(p => DateTime.TryParse(p.CreatedDate, out _)) // Filtrar solo pagos con fecha válida
+                .Where(p => DateTime.Parse(p.CreatedDate).Date >= startDate && DateTime.Parse(p.CreatedDate).Date <= endDate) // Filtrar por el rango de fechas
+                .GroupBy(p => DateTime.Parse(p.CreatedDate).Date) // Agrupar por fecha sin hora
+                .Select(g => new
+                {
+                    Fecha = g.Key.ToString("yyyy-MM-dd"),
+                    MontoTotal = g.Sum(p => p.Recibo != null ? p.Recibo.Total : 0) // Sumar el monto de los pagos (recibo) en ese día
+                })
+                .ToList();
 
 
+            // Actualizar el diccionario con los valores obtenidos de la base de datos
+            foreach (var pago in pagosAgrupados)
+            {
+                montoPorDia[pago.Fecha] = pago.MontoTotal;
+            }
 
+            // Calcular el valor máximo de monto total en el rango de fechas
+            var maxMonto = montoPorDia.Values.Max();
+
+            return Tuple.Create(montoPorDia, maxMonto);
+        }
 
 
 

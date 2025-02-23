@@ -26,5 +26,8 @@ namespace ServiceLayer.Services.Interfaces
         public Task<(decimal saldoAfiliacion, decimal saldoSeguroAcompañante, decimal saldoTotal, decimal debito, decimal credito, decimal debitoAfiliacion, decimal debitoSeguro, decimal creditoAfiliacion, decimal creditoSeguro)> ObtenerSaldoTotal();
         public bool ActualizarPrecio(string tipo, decimal nuevoPrecio);
 
+        public Task<Tuple<Dictionary<string, decimal>, decimal>> GetMontoTotalPorDia(DateTime startDate, DateTime endDate);
+
+
     }
 }

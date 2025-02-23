@@ -1,4 +1,4 @@
-﻿namespace CoreLayer.Enumerators
+﻿namespace Entity.Identity.Entities.Enumerators
 {
     public enum ImageType
     {

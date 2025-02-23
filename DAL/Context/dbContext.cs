@@ -4,8 +4,7 @@ using Entity.WebAplication.ViewModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using CoreLayer.BaseEntities;
-
+using Entity.Identity.Entities.BaseEntities;
 
 namespace DAL.Context
 {

@@ -28,14 +28,14 @@ namespace ProyectoWeb.Controllers
             var ramasCount = await _cuentaCorrienteService.GetRamaMiembroAsync();
             var religionesCount = await _cuentaCorrienteService.GetReligionMiembroAsync();
 
-            startDate ??= DateTime.Today.AddDays(-13);  // Últimos 14 días
-            endDate ??= DateTime.Today;
+            if (startDate == null) startDate = DateTime.Today.AddDays(-14); // Rango por defecto
+            if (endDate == null) endDate = DateTime.Today;
 
             // Pasar las fechas a la vista para que se mantengan seleccionadas
             ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
             ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
 
-            // Llamar al servicio correctamente y declarar explícitamente los tipos
+            // Obtener la cantidad de pagos por día
             var pagosPorDiaTuple = await _cuentaCorrienteService.GetPagosPorDia(startDate.Value, endDate.Value);
             Dictionary<string, int> pagosPorDia = pagosPorDiaTuple.Item1;
             int maxPagos = pagosPorDiaTuple.Item2;
@@ -44,11 +44,19 @@ namespace ProyectoWeb.Controllers
             ViewBag.PagosCount = pagosPorDia;
             ViewBag.MaxPagos = maxPagos;
 
-    
+            // Obtener el monto total de pagos por día
+            var montoPagosPorDiaTuple = await _cuentaCorrienteService.GetMontoTotalPorDia(startDate.Value, endDate.Value);
+            Dictionary<string, decimal> montosPorDia = montoPagosPorDiaTuple.Item1;
+            decimal maxMonto = montoPagosPorDiaTuple.Item2; // Aquí debería ser decimal, no int
+
+            // Pasar los datos al ViewBag con nombres diferentes para evitar sobrescribir
+            ViewBag.MontosCount = montosPorDia;
+            ViewBag.MaxMonto = maxMonto;
 
 
 
-        var(saldoAfiliacion, saldoSeguro, saldoTotal, debito, credito, debitoAfiliacion, debitoSeguro, creditoAfiliacion, CreditoSeguro) = await _cuentaCorrienteService.ObtenerSaldoTotal();
+
+            var (saldoAfiliacion, saldoSeguro, saldoTotal, debito, credito, debitoAfiliacion, debitoSeguro, creditoAfiliacion, CreditoSeguro) = await _cuentaCorrienteService.ObtenerSaldoTotal();
 
             ViewBag.SaldoTotal = saldoTotal;
             ViewBag.SaldoAfiliacion = saldoAfiliacion;

@@ -1,4 +1,4 @@
-﻿namespace CoreLayer.Models
+﻿namespace Entity.Identity.Entities.ImageUploadModel
 {
     public class ImageUploadModel
     {

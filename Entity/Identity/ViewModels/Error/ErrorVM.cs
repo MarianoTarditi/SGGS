@@ -1,4 +1,4 @@
-﻿namespace CoreLayer.Models
+﻿namespace Entity.Identity.ViewModels.Error
 {
     public class ErrorVM
     {
@@ -20,7 +20,5 @@
 
         public List<string> Errors { get; set; } = new List<string>();
         public short StatusCode { get; set; }
-
-
     }
 }

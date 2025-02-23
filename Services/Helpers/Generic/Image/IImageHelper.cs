@@ -1,6 +1,7 @@
-﻿using CoreLayer.Enumerators;
-using CoreLayer.Models;
+﻿using Entity.Identity.Entities.ImageUploadModel;
+using Entity.Identity.ViewModels.Error;
 using Microsoft.AspNetCore.Http;
+using Entity.Identity.Entities.Enumerators;
 
 namespace ServiceLayer.Helpers.Generic.Image
 {

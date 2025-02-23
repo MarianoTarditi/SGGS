@@ -1,4 +1,4 @@
-﻿using CoreLayer.BaseEntities;
+﻿using Entity.Identity.Entities.BaseEntities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;

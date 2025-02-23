@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BLL\CoreLayer.csproj" />
     <ProjectReference Include="..\DAL\DAL.csproj" />
     <ProjectReference Include="..\Entity\Entity.csproj" />
     <ProjectReference Include="..\Services\ServiceLayer.csproj" />
@@ -38,7 +37,6 @@
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\User\Controllers\" />
     <Folder Include="Areas\User\Models\" />
-    <Folder Include="Models\" />
     <Folder Include="Components\" />
     <Folder Include="wwwroot\Admin\assets2\" />
   </ItemGroup>

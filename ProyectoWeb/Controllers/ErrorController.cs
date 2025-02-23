@@ -1,4 +1,4 @@
-﻿using CoreLayer.Models;
+﻿using Entity.Identity.ViewModels.Error;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
