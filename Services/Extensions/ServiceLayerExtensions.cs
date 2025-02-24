@@ -35,7 +35,6 @@ namespace ServiceLayer.Extensions
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<dbContext>();
 
@@ -47,13 +46,10 @@ namespace ServiceLayer.Extensions
             services.AddTransient<IValidator<VMMiembro>, MiembroValidation>();
             services.AddTransient<IValidator<VMOrganismo>, OrganismoValidator>();
 
-
-
             services.AddScoped<ICuentaCorrienteService, CuentaCorrienteService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IDeudaService, DeudaService>();
             services.AddScoped<IOrganismoService, OrganismoService>();
-
 
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(c => c.IsClass && !c.IsAbstract && c.Name.EndsWith("Service"));
 

@@ -431,7 +431,7 @@ namespace ServiceLayer.Services.Implementation
 
                         if (deuda != null)
                         {
-                            deuda.FechaVencimiento = DateTime.Now.AddMinutes(2);
+                            deuda.FechaVencimiento = DateTime.Now.AddMonths(1);
                             deuda.SaldoDebitado = false;
 
                             dbContext.Entry(deuda).State = EntityState.Modified;
