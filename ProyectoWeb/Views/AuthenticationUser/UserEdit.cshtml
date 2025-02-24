@@ -88,9 +88,20 @@
         </div>
     </div>
 
-    <div class="col-12">
-        <button class="btn btn-primary w-8" type="submit">Guardar Cambios</button>
-    </div>
+    @if (User.IsInRole("External Member"))
+    {
+        <div class="col-12">
+            <button class="btn btn-primary w-8" type="submit">Guardar Cambios</button>
+            <button class="btn btn-secondary w-8" type="button" onclick="window.history.back();">Volver</button>
+        </div>
+    }
+    else
+    {
+        <div class="col-12">
+            <button class="btn btn-primary w-8" type="submit">Guardar Cambios</button>
+        </div>
+    }
+
 </form>
 
 

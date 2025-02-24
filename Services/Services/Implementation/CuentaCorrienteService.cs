@@ -309,11 +309,6 @@ namespace ServiceLayer.Services.Implementation
             return Tuple.Create(montoPorDia, maxMonto);
         }
 
-
-
-
-
-
         public async Task GestionarSaldosMiembros(decimal montoAfiliacion, decimal montoSeguro)
         {
             var resumen = await _unitOfWork.GetGenericRepository<Resumen>().GetAllList().SingleOrDefaultAsync();

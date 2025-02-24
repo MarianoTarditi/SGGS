@@ -613,87 +613,100 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-                                        document.addEventListener("DOMContentLoaded", () => {
-            if (document.querySelector("#columnChart")) {
-                console.log("Rendering columnChart...");
-                new ApexCharts(document.querySelector("#columnChart"), {
-                    series: [{
-                        name: 'Cantidad de Pagos',
-                        data: @Html.Raw(Json.Serialize(ViewBag.PagosCount?.Values ?? new List<int>()))
-                    }],
-                    chart: { type: 'bar', height: 350 },
-                    xaxis: {
-                        categories: @Html.Raw(Json.Serialize(ViewBag.PagosCount?.Keys ?? new List<string>())),
-                        labels: {
+                                                    document.addEventListener("DOMContentLoaded", () => {
+                if (document.querySelector("#columnChart")) {
+                    console.log("Rendering columnChart...");
+                    new ApexCharts(document.querySelector("#columnChart"), {
+                        series: [{
+                            name: 'Cantidad de Pagos',
+                            data: @Html.Raw(Json.Serialize(ViewBag.PagosCount?.Values ?? new List<int>()))
+                        }],
+                        chart: { type: 'bar', height: 350 },
+                        title: {
+                            text: "Cantidad de pagos por día", // Título del gráfico
+                            align: 'center',
                             style: {
-                                colors: '#000000' // Color negro para los números en el eje X
+                                fontSize: '16px',
+                                color: '#000000'
+                            }
+                        },
+                        xaxis: {
+                            categories: @Html.Raw(Json.Serialize(ViewBag.PagosCount?.Keys ?? new List<string>())),
+                            labels: {
+                                style: {
+                                    colors: '#000000'
+                                }
+                            }
+                        },
+                        yaxis: {
+                            min: 0,
+                            tickAmount: Math.max(...@Html.Raw(Json.Serialize(ViewBag.PagosCount?.Values ?? new List<int>())), 1),
+                            labels: {
+                                formatter: function (val) { return val.toFixed(0); },
+                                style: {
+                                    colors: '#000000'
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function (val) { return Math.floor(val); },
+                            style: {
+                                colors: ['#FFFFFF']
+                            }
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function (val) { return Math.floor(val) + " pagos"; },
+                                style: {
+                                    color: '#000000'
+                                }
                             }
                         }
-                    },
-                    yaxis: {
-                        min: 0, // Asegura que comience desde 0
-                        tickAmount: Math.max(...@Html.Raw(Json.Serialize(ViewBag.PagosCount?.Values ?? new List<int>())), 1), // Define cantidad de ticks en base al máximo valor
-                        labels: {
-                            formatter: function (val) { return val.toFixed(0); }, // Asegura que se muestren solo números enteros
+                    }).render();
+                }
+
+                if (document.querySelector("#columnChart2")) {
+                    console.log("Rendering columnChart2...");
+                    new ApexCharts(document.querySelector("#columnChart2"), {
+                        series: [{
+                            name: 'Monto Total de Pagos',
+                            data: @Html.Raw(Json.Serialize(ViewBag.MontosCount?.Values ?? new List<decimal>()))
+                        }],
+                        chart: { type: 'bar', height: 350 },
+                        title: {
+                            text: "Montos de pagos por día", // Título del gráfico
+                            align: 'center',
                             style: {
-                                colors: '#000000' // Color negro para los números en el eje Y
+                                fontSize: '16px',
+                                color: '#000000'
+                            }
+                        },
+                        xaxis: {
+                            categories: @Html.Raw(Json.Serialize(ViewBag.MontosCount?.Keys ?? new List<string>())),
+                            labels: {
+                                style: {
+                                    colors: '#000000'
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function (val) { return "$" + val.toFixed(2); },
+                            style: {
+                                colors: ['#FFFFFF']
+                            }
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function (val) { return "$" + val.toFixed(2); },
+                                style: {
+                                    color: '#000000'
+                                }
                             }
                         }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        formatter: function (val) { return Math.floor(val); }, // Muestra números enteros
-                        style: {
-                            colors: ['#FFFFFF'] // Color blanco para los números en las barras
-                        }
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: function (val) { return Math.floor(val) + " pagos"; },
-                            style: {
-                                color: '#000000' // Color negro para los números en el tooltip
-                            }
-                        }
-                    }
-                }).render();
-            }
-
-
-
-
-    if (document.querySelector("#columnChart2")) {
-        console.log("Rendering columnChart2...");
-        new ApexCharts(document.querySelector("#columnChart2"), {
-            series: [{
-                name: 'Monto Total de Pagos',
-                data: @Html.Raw(Json.Serialize(ViewBag.MontosCount?.Values ?? new List<decimal>()))
-            }],
-            chart: { type: 'bar', height: 350 },
-            xaxis: {
-                categories: @Html.Raw(Json.Serialize(ViewBag.MontosCount?.Keys ?? new List<string>())),
-                labels: {
-                    style: {
-                        colors: '#000000' // Color negro para los números en el eje X
-                    }
+                    }).render();
                 }
-            },
-            dataLabels: {
-                enabled: true,
-                formatter: function (val) { return "$" + val.toFixed(2); }, // Agrega el signo de $ en las etiquetas de las barras
-                style: {
-                    colors: ['#FFFFFF'] // Color blanco para los números en las barras
-                }
-            },
-            tooltip: {
-                y: {
-                    formatter: function (val) { return "$" + val.toFixed(2); }, // Agrega el signo de $ en el tooltip
-                    style: {
-                        color: '#000000' // Color negro para los números en el tooltip
-                    }
-                }
-            }
-        }).render();
-    }
 });
 
 
