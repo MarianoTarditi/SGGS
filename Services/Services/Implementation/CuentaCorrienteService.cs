@@ -215,7 +215,7 @@ namespace ServiceLayer.Services.Implementation
             {
                 { "Efectivo", 0 },
                 { "Transferencia", 0 },
-                { "Déposito", 0 }
+                { "Deposito", 0 }
             };
 
             // Obtener todos los pagos activos con sus detalles y categorías

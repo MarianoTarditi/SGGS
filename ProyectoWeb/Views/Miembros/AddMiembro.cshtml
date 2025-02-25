@@ -268,7 +268,7 @@
             var localidadesDropdown = document.getElementById('inputLocalidad');
             localidadesDropdown.innerHTML = '<option value="">Cargando...</option>';
 
-            fetch(`/Organismo/GetLocalidades?provinciaId=${provinciaId}`)
+            fetch(`/Miembros/GetLocalidades?provinciaId=${provinciaId}`)
                 .then(response => response.json())
                 .then(data => {
                     localidadesDropdown.innerHTML = '<option value="">Seleccione una localidad...</option>';

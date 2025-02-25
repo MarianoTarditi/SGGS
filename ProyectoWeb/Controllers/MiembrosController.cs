@@ -134,6 +134,8 @@ namespace ProyectoWeb.Areas.Admin.Controllers
 
             // Cargar los valores de los comboBox siempre, incluso si hay validación
             var provincias = await _organismoService.GetProvinciasAsync();
+
+
             var nacionalidades = await _organismoService.GetNacionalidadesAsync();
             var estudios = await _organismoService.GetEstudiosAsync();
             var estadosCiviles = await _organismoService.GetEstadosCivilesAsync();
@@ -181,7 +183,17 @@ namespace ProyectoWeb.Areas.Admin.Controllers
             return View(entity);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetLocalidades(int provinciaId)
+        {
+            if (provinciaId <= 0)
+            {
+                return BadRequest("El ID de provincia es inválido.");
+            }
 
+            var localidades = await _miembroService.GetLocalidadesByProvinciaAsync(provinciaId);
+            return Json(localidades);
+        }
 
         public async Task<IActionResult> DeleteMiembro(int id)
         {
