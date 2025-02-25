@@ -42,7 +42,7 @@ namespace ServiceLayer.Services.Identity.Concrete
             var passwordCheck = await _userManager.CheckPasswordAsync(user!, request.Password);
             if (!passwordCheck)
             {
-                var errors = new IdentityError() { Code = "PasswordError", Description = "Wrong Password!" };
+                var errors = new IdentityError() { Code = "PasswordError", Description = "Contraseña incorrecta!" };
                 var passwordFail = IdentityResult.Failed(errors);
 
                 return passwordFail;

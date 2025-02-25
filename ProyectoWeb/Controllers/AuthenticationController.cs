@@ -27,6 +27,7 @@ namespace ProyectoWeb.Controllers
         private readonly IValidator<ForgotPasswordVM> _forgotPasswordValidator;
         private readonly IValidator<ResetPasswordVM> _resetPasswordValidator;
 
+        // Authentication Service
         private readonly IAuthenticationMainService _authenticationService;
 
         // Mapper - Notification
@@ -77,7 +78,7 @@ namespace ProyectoWeb.Controllers
                 return View();
             }
 
-            // Asigna al usuario el rol predeterminado de "Member".
+            // Asigna al usuario el rol predeterminado de "External Member".
             var assignRoleResult = await _userManager.AddToRoleAsync(user, "External Member");
             if (!assignRoleResult.Succeeded)
             {
@@ -156,6 +157,7 @@ namespace ProyectoWeb.Controllers
 
             // Intenta iniciar sesión con el usuario encontrado y la contraseña proporcionada.
             var logInResult = await _signInManager.PasswordSignInAsync(hasUser, request.Password, request.RememberMe, true);
+
             if (logInResult.Succeeded)
             {
                 // Obtiene los roles del usuario
@@ -289,8 +291,8 @@ namespace ProyectoWeb.Controllers
             }
         }
          public IActionResult AccessDenied()
-        {
+         {
             return View();
-        }
+         }
     }
 }

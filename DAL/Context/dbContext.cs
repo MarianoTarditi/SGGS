@@ -53,9 +53,6 @@ namespace DAL.Context
 
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<Asociacion>().Property(x => x.RowVersion).IsRowVersion();
-            //modelBuilder.Entity<Asociacion>().Property(x => x.CreatedDate).IsRequired().HasMaxLength(10);
-            //modelBuilder.Entity<Asociacion>().Property(x => x.UpdatedDate).HasMaxLength(10);
 
             modelBuilder.Entity<AutorizacionPago>().Property(x => x.RowVersion).IsRowVersion();
             modelBuilder.Entity<AutorizacionPago>().Property(x => x.CreatedDate).IsRequired().HasMaxLength(10);
