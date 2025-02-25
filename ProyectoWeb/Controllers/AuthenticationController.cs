@@ -290,6 +290,8 @@ namespace ProyectoWeb.Controllers
                 return RedirectToAction("ResetPassword", "Authentication", new { userId, token, errors });
             }
         }
+
+
          public IActionResult AccessDenied()
          {
             return View();
