@@ -10,7 +10,10 @@ using ServiceLayer.Messages.Identity;
 using ServiceLayer.Services.Identity.Abstract;
 using ServiceLayer.Helpers.Identity.ModelStateHelper;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using NToastNotify;
+using DAL.Context;
+using DAL.UnitOfWork.Interfaces;
 
 namespace ProyectoWeb.Controllers
 {
@@ -27,14 +30,16 @@ namespace ProyectoWeb.Controllers
         private readonly IValidator<ForgotPasswordVM> _forgotPasswordValidator;
         private readonly IValidator<ResetPasswordVM> _resetPasswordValidator;
 
+        private readonly IUnitOfWork _UnitOfWork;
+
         // Authentication Service
         private readonly IAuthenticationMainService _authenticationService;
-
+        private readonly ILogger<AuthenticationController> _logger;
         // Mapper - Notification
         private readonly IMapper _iMapper;
         private readonly IToastNotification _toasty;
 
-        public AuthenticationController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IValidator<SignUpVM> signUpValidator, IValidator<LogInVM> logInValidator, IValidator<ForgotPasswordVM> forgotPasswordValidator, IMapper iMapper, IValidator<ResetPasswordVM> resetPasswordValidator, IAuthenticationMainService authenticationService, IToastNotification toasty)
+        public AuthenticationController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IValidator<SignUpVM> signUpValidator, IValidator<LogInVM> logInValidator, IValidator<ForgotPasswordVM> forgotPasswordValidator, IMapper iMapper, IValidator<ResetPasswordVM> resetPasswordValidator, IAuthenticationMainService authenticationService, IToastNotification toasty, ILogger<AuthenticationController> logger, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -45,6 +50,8 @@ namespace ProyectoWeb.Controllers
             _resetPasswordValidator = resetPasswordValidator;
             _authenticationService = authenticationService;
             _toasty = toasty;
+            _logger = logger;
+            _UnitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -133,63 +140,89 @@ namespace ProyectoWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> LogIn(LogInVM request, string? returnUrl = null)
         {
-            // Define la URL de redirección por defecto si no se proporciona una personalizada.
-            returnUrl = returnUrl ?? Url.Action("Index", "Dashboard", new { Area = "Admin" });
-
-            // Valida los datos de inicio de sesión según las reglas de `_logInValidator`.
-            var validation = await _logInValidator.ValidateAsync(request);
-            if (!validation.IsValid)
+            try
             {
-                // Si la validación falla, agrega los errores al `ModelState` y retorna la vista.
-                validation.AddToModelState(ModelState);
-                return View();
-            }
+                returnUrl = returnUrl ?? Url.Action("Index", "Dashboard", new { Area = "Admin" });
 
-            // Busca al usuario por su correo electrónico.
-            var hasUser = await _userManager.FindByEmailAsync(request.Email);
-            if (hasUser == null)
-            {
-                // Si el usuario no existe, muestra un error en la vista.
-                ViewBag.Result = "NotSucceed";
-                ModelState.AddModelErrorList(new List<string> { "Email y/o contraseña incorrectos" });
-                return View();
-            }
-
-            // Intenta iniciar sesión con el usuario encontrado y la contraseña proporcionada.
-            var logInResult = await _signInManager.PasswordSignInAsync(hasUser, request.Password, request.RememberMe, true);
-
-            if (logInResult.Succeeded)
-            {
-                // Obtiene los roles del usuario
-                var roles = await _userManager.GetRolesAsync(hasUser);
-
-                // Si el usuario tiene el rol "ExternalMember", lo redirigimos a la página de espera.
-                if (roles.Contains("External Member"))
+                var validation = await _logInValidator.ValidateAsync(request);
+                if (!validation.IsValid)
                 {
-                    return RedirectToAction("Index", "EsperarAprobacion");
+                    validation.AddToModelState(ModelState);
+                    return View();
                 }
 
-                // Si el inicio de sesión es exitoso, muestra un mensaje de éxito y redirige a la URL deseada.
-                _toasty.AddSuccessToastMessage(
-                    NotificationMessagesIdentity.LogInSuccess,
-                    new ToastrOptions { Title = NotificationMessagesIdentity.SuccessedTitle });
-                return Redirect(returnUrl!);
-            }
+                var hasUser = await _userManager.FindByEmailAsync(request.Email);
+                if (hasUser == null)
+                {
+                    ViewBag.Result = "NotSucceed";
+                    ModelState.AddModelErrorList(new List<string> { "Email y/o contraseña incorrectos" });
+                    return View();
+                }
 
-            // Si el usuario está bloqueado, muestra un mensaje indicando el bloqueo temporal.
-            if (logInResult.IsLockedOut)
-            {
-                ViewBag.Result = "LockedOut";
-                ModelState.AddModelErrorList(new List<string> { "¡Su cuenta se ha bloqueado por 60 segundos!" });
+                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                {
+                    ModelState.AddModelError(string.Empty, "El correo electrónico y la contraseña son obligatorios.");
+                    return View();
+                }
+
+                var logInResult = await _signInManager.PasswordSignInAsync(hasUser, request.Password, request.RememberMe, true);
+
+                if (logInResult.Succeeded)
+                {
+                    var roles = await _userManager.GetRolesAsync(hasUser);
+                    string userRole = roles.FirstOrDefault() ?? "Sin rol";
+
+                    if (roles.Contains("External Member"))
+                    {
+                        return RedirectToAction("Index", "EsperarAprobacion");
+                    }
+
+                    // **Guardar el Timestamp en sesión**
+                    HttpContext.Session.SetString("SessionStartTime", DateTime.Now.ToString("o")); // Formato ISO 8601
+
+                    // **Registro en la tabla de auditoría**
+                    var auditLog = new AuditLogAuthentication
+                    {
+                        UserId = hasUser.Id,
+                        UserName = hasUser.UserName,
+                        UserRole = userRole,
+                        UserEmail = request.Email,
+                        Action = "Inicio de sesión",
+                        Timestamp = DateTime.Now,
+                        SessionDuration = null // No se conoce aún
+                    };
+
+                    _UnitOfWork.GetDbContext().Add(auditLog);
+                    await _UnitOfWork.CommitAsync();
+
+                    _toasty.AddSuccessToastMessage(
+                        NotificationMessagesIdentity.LogInSuccess,
+                        new ToastrOptions { Title = NotificationMessagesIdentity.SuccessedTitle });
+
+                    return Redirect(returnUrl!);
+                }
+
+                if (logInResult.IsLockedOut)
+                {
+                    ViewBag.Result = "LockedOut";
+                    ModelState.AddModelErrorList(new List<string> { "¡Su cuenta se ha bloqueado por 60 segundos!" });
+                    return View();
+                }
+
+                ViewBag.Result = "FailedAttempt";
+                ModelState.AddModelErrorList(
+                    new List<string> { $"Contraseña o email incorrecto. Intento fallido: {await _userManager.GetAccessFailedCountAsync(hasUser)}" });
+
                 return View();
             }
-
-            // Si el intento falla, muestra un mensaje indicando un intento fallido y cuántos han ocurrido.
-            ViewBag.Result = "FailedAttempt";
-            ModelState.AddModelErrorList(
-                new List<string> { $"Contraseña o email incorrecto. Intento fallido: {await _userManager.GetAccessFailedCountAsync(hasUser)}" });
-            return View();
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError("ArgumentNullException during login: ", ex);
+                ModelState.AddModelError(string.Empty, "An error occurred during login.");
+                return View(request);
+            }
         }
+
 
 
         [HttpGet]

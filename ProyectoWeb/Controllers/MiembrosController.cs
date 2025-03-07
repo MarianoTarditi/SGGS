@@ -44,6 +44,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
             _miembroValidator = miembroValidator;
         }
 
+        [Authorize(Policy = "CanViewMiembrosPolicy")]
         public async Task<IActionResult> GetMiembroList()
         {
             var miembro = await _miembroService.GetAllListAsync();
@@ -60,6 +61,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
             return View(miembro);
         }
 
+        [Authorize(Policy = "CanViewExMiembrosPolicy")]
         public async Task<IActionResult> GetExMiembrosList()
         {
             var miembro = await _miembroService.GetAllInactiveListAsync();
@@ -80,6 +82,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "CanCreateMiembrosPolicy")]
         public async Task<IActionResult> AddMiembro(int? id)
         {
             var provincias = await _organismoService.GetProvinciasAsync();
@@ -195,6 +198,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
             return Json(localidades);
         }
 
+        [Authorize(Policy = "CanViewOrganismoPolicy")]
         public async Task<IActionResult> DeleteMiembro(int id)
         {
             // Si el usuario no tiene el rol necesario, muestra un mensaje y redirige

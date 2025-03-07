@@ -4,6 +4,7 @@ using Azure.Core;
 using DAL.Context;
 using DAL.Repositories.Interfaces;
 using DAL.UnitOfWork.Interfaces;
+using Entity.Identity.Entities;
 using Entity.WebAplication.Entities;
 using Entity.WebAplication.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -472,5 +473,8 @@ namespace ServiceLayer.Services.Implementation
                 ProvinciaId = l.ProvinciaId
             }).ToList();
         }
+
+      
+
     }
 }

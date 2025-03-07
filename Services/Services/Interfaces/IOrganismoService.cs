@@ -29,8 +29,7 @@ namespace ServiceLayer.Services.Interfaces
         public Task<IEnumerable<VMRama>> GetRamas();
         public Task<(decimal afiliacion, decimal seguro)> GetPreciosAfiliacionesAsync();
         public Task<List<VMLocalidad>> GetLocalidadesByProvinciaAsync(int provinciaId);
-
-
+        public Task<Tuple<Dictionary<string, int>, int>> GetAltasPorDia(DateTime startDate, DateTime endDate);
 
     }
 }

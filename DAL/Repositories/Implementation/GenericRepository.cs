@@ -60,7 +60,7 @@ namespace DAL.Repositories.Implementation
         {
             try
             {
-               return  _context.Set<T>().AsNoTracking().AsQueryable();
+               return  _context.Set<T>().AsQueryable();
                  
             }
             catch

@@ -96,16 +96,6 @@
                                 <span>Ajustes</span>
                             </a>
                         </li>
-                        @*      <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" asp-area="User" asp-controller="AuthenticationUser" asp-action="UserEdit2">
-                                <i class="bi bi-gear"></i>
-                                <span>User Settings 2</span>
-                            </a>
-                        </li> *@
 
                         <li>
                             <hr class="dropdown-divider">
@@ -239,27 +229,6 @@
                 </li>
 
 
-@*                 <li class="nav-item">
-                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Eventos" ? "active" : "collapsed")"
-                    href="index.html">
-                        <i class="bi bi-calendar-event-fill"></i>
-                        <span>Auditoria</span>
-                    </a>
-                </li> *@
-
-
-
-                @*    <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "AcercaDe" &&
-                        ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "collapsed")"
-                   asp-area="" asp-controller="AcercaDe" asp-action="Index">
-                    <i class="bi bi-file-earmark-person-fill"></i>
-                    <span>Acerca De</span>
-                </a>
-            </li> *@
-
-
-
                 <li class="nav-heading">Settings</li>
 
                 <li class="nav-item">
@@ -267,33 +236,83 @@
                         ViewContext.RouteData.Values["Action"]?.ToString() == "UserEdit" ? "active" : "collapsed")"
                     asp-area="" asp-controller="AuthenticationUser" asp-action="UserEdit">
                         <i class="bi bi-gear-fill"></i>
-                        <span>User Settings</span>
+                        <span>Modificar Usuario</span>
                     </a>
                 </li>
 
-
-                @*   @if (User.IsInRole("SuperAdmin"))
-            {
-               *@  <li class="nav-item">
-                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" &&
-                            ViewContext.RouteData.Values["Action"]?.ToString() == "GetUserList" ? "active" : "collapsed")"
-                    asp-area="" asp-controller="Admin" asp-action="GetUserList">
-                        <i class="bi bi-person-fill"></i>
-                        <span>User List</span>
+                <li class="nav-item">
+                    <!-- Menú principal "Configuración de Usuarios" -->
+                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Role" ? "" : "collapsed")"
+                       data-bs-target="#user-config-nav"
+                       data-bs-toggle="collapse"
+                       href="#">
+                        <i class="bi bi-people-fill"></i><span>User/Roles Settings</span><i class="bi bi-chevron-down ms-auto"></i>
                     </a>
-                </li>
-                @* } *@
+                    <ul id="user-config-nav" class="nav-content collapse @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Role" ? "show" : "")">
+                        <!-- Opción "Lista de Usuarios" -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" &&
+ViewContext.RouteData.Values["Action"]?.ToString() == "GetUserList" ? "active" : "collapsed")"
+                               asp-area="" asp-controller="Admin" asp-action="GetUserList">
+                                <i class="bi bi-circle"></i>
+                                <span>Lista de Usuarios</span>
+                            </a>
+                        </li>
 
+                        <!-- Opción "Lista de Roles" -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Role" &&
+ViewContext.RouteData.Values["Action"]?.ToString() == "ListRoles" ? "active" : "collapsed")"
+                               asp-area="" asp-controller="Role" asp-action="ListRoles">
+                                <i class="bi bi-circle"></i>
+                                <span>Lista de Roles</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <!-- Menú principal "Auditoría" -->
+                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Auditoria" ? "" : "collapsed")"
+                       data-bs-target="#auditoria-nav"
+                       data-bs-toggle="collapse"
+                       href="#">
+                        <i class="bi bi-person-video3"></i>
+                        <span>Auditoría</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="auditoria-nav" class="nav-content collapse @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Auditoria" ? "show" : "")">
+                        <!-- Opción "Lista de Usuarios" -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Auditoria" &&
+ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "collapsed")"
+                               asp-area="" asp-controller="Auditoria" asp-action="Index">
+                                <i class="bi bi-circle"></i>
+                                <span>Auditoría</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Auditoria" &&
+ViewContext.RouteData.Values["Action"]?.ToString() == "AuditoriaAuhentication" ? "active" : "collapsed")"
+                               asp-area="" asp-controller="Auditoria" asp-action="AuditoriaAuhentication">
+                                <i class="bi bi-circle"></i>
+                                <span>Auditoría Authentication</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+      
 
                 <li class="nav-item">
                     <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Help" &&
                         ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "collapsed")"
-                    asp-area="" asp-controller="Help" asp-action="Index">
+                       asp-area="" asp-controller="Help" asp-action="Index">
                         <i class="bi bi-question-circle-fill"></i>
                         <span>Ayuda</span>
                     </a>
                 </li>
-
             </ul>
         
 

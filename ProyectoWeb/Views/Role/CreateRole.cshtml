@@ -1,0 +1,41 @@
+﻿@model CreateRolVM
+
+@{
+    ViewBag.Title = "Create New Role";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Crear Nuevo Rol</h2>
+
+    <form asp-action="CreateRole" method="post" class="needs-validation" novalidate>
+        <div asp-validation-summary="All" class="alert alert-danger" role="alert">
+        </div>
+
+        <!-- Role Name -->
+        <div class="form-group row">
+            <label asp-for="RoleName" class="col-sm-2 col-form-label font-weight-bold">Nombre del Rol</label>
+            <div class="col-sm-10">
+                <input asp-for="RoleName" class="form-control" placeholder="Ingrese el nombre del rol" required>
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group row">
+            <label asp-for="Description" class="col-sm-2 col-form-label font-weight-bold">Descripción</label>
+            <div class="col-sm-10">
+                <textarea asp-for="Description" class="form-control" placeholder="Ingrese una descripción para el rol" rows="3" required></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group row">
+            <div class="col-sm-10 offset-sm-2">
+                <button type="submit" class="btn btn-success" style="width: auto;">
+                    Crear Rol
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

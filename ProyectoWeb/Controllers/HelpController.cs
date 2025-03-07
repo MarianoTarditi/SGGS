@@ -5,7 +5,7 @@ namespace ProyectoWeb.Controllers
 {
     public class HelpController : Controller
     {
-        [Authorize]
+        [Authorize(Policy = "CanViewAyudaPolicy")]
         public IActionResult Index()
         {
             return View();

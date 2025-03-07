@@ -105,9 +105,6 @@ namespace ServiceLayer.Services.Implementation
 
         public async Task UpdateDeuda(DetallePago detalle)
         {
-
-
-
             var deuda = await _unitOfWork.GetGenericRepository<Deuda>().Where(d => d.MiembroId == detalle.Pago.MiembroId)/*.Include(x => x.Organismo)*/.FirstOrDefaultAsync();
 
             if (deuda == null)
@@ -154,7 +151,7 @@ namespace ServiceLayer.Services.Implementation
 
                 deuda.Tiene = (deuda.MontoAfiliacion > 0 || deuda.MontoSeguroAcompañante > 0);
                 //deuda.DeudaPendiente = false;
-                deuda.FechaCreacion = DateTime.Now;
+                //deuda.FechaCreacion = DateTime.Now;
             }
 
             _unitOfWork.GetGenericRepository<Deuda>().Update(deuda);

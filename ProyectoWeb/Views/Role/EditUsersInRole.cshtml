@@ -1,0 +1,45 @@
+﻿@model List<UserRoleViewModel>
+
+@{
+    var roleId = ViewBag.roleId;
+}
+
+<div class="container my-5">
+    <form asp-controller="Role" asp-action="EditUsersInRole" method="post">
+        <div class="card shadow-sm">
+
+            <input type="hidden" name="roleId" id="roleId" value="@roleId" />
+            <input type="hidden" name="roleId" id="roleId" value="@ViewBag.roleId" />
+
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Rol: @ViewBag.RollName</h3>
+            </div>
+
+            <div class="card-header">
+                <h4>Añadir o Remover Usuarios de este Rol</h4>
+            </div>
+
+            <div class="card-body">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <div class="form-check mb-2">
+                        <input type="hidden" asp-for="@Model[i].UserId" />
+                        <input type="hidden" asp-for="@Model[i].UserName" />
+                        <input asp-for="@Model[i].IsSelected" class="form-check-input" id="user_@Model[i].UserId" />
+                        <label class="form-check-label" for="user_@Model[i].UserId">
+                            @Model[i].UserName
+                        </label>
+                    </div>
+                }
+            </div>
+
+            <div class="card-footer text-start">
+                <button type="submit" class="btn btn-primary" style="width:auto">Actualizar</button>
+                <a asp-controller="Role" asp-action="EditRole" asp-route-roleId="@roleId" class="btn btn-secondary" style="width:auto">
+                    Cancelar
+                </a>
+            </div>
+
+        </div>
+    </form>
+</div>

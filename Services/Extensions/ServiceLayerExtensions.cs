@@ -23,6 +23,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
 using Entity.WebAplication.ViewModels;
 using ServiceLayer.FluentValidation.WebAplication;
+using BLL.Services.Interfaces;
+using BLL.Services.Implementation;
 
 namespace ServiceLayer.Extensions
 {
@@ -50,6 +52,9 @@ namespace ServiceLayer.Extensions
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IDeudaService, DeudaService>();
             services.AddScoped<IOrganismoService, OrganismoService>();
+            services.AddScoped<IAuditLogService, AuditLogService>();
+
+
 
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(c => c.IsClass && !c.IsAbstract && c.Name.EndsWith("Service"));
 

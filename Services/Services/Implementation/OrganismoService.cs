@@ -245,6 +245,39 @@ namespace ServiceLayer.Services.Implementation
              return organismo;
         }
 
+        public async Task<Tuple<Dictionary<string, int>, int>> GetAltasPorDia(DateTime startDate, DateTime endDate)
+        {
+            var altasPorDia = Enumerable.Range(0, (endDate - startDate).Days + 1)
+                .Select(i => new { Fecha = startDate.AddDays(i).ToString("yyyy-MM-dd"), Cantidad = 0 })
+                .ToDictionary(x => x.Fecha, x => x.Cantidad);
+
+            var miembros = await _unitOfWork.GetGenericRepository<Miembro>()
+                .GetAllList()
+                .Where(m => !string.IsNullOrEmpty(m.CreatedDate)) // Filtrar nulos o vacíos
+                .ToListAsync();
+
+            var altasAgrupadas = miembros
+                .Where(m => DateTime.TryParse(m.CreatedDate, out _)) // Convertir solo los que son válidos
+                .Where(m => DateTime.Parse(m.CreatedDate).Date >= startDate && DateTime.Parse(m.CreatedDate).Date <= endDate) // Filtrar por fecha
+                .GroupBy(m => DateTime.Parse(m.CreatedDate).Date) // Agrupar por fecha sin hora
+                .Select(g => new
+                {
+                    Fecha = g.Key.ToString("yyyy-MM-dd"),
+                    Cantidad = g.Count()
+                })
+                .ToList();
+
+            foreach (var alta in altasAgrupadas)
+            {
+                altasPorDia[alta.Fecha] = alta.Cantidad;
+            }
+
+            var maxAltas = altasPorDia.Values.Max();
+
+            return Tuple.Create(altasPorDia, maxAltas);
+        }
+
+
 
 
 

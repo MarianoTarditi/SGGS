@@ -6,7 +6,7 @@
 }
 
 
-<div style="max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px;">
+ <div style="max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px;">
     <!-- Encabezado con el logo y datos -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <div>
@@ -73,7 +73,7 @@
     }
     
 
-    <!-- Modal -->
+     <!-- Modal -->
     <div class="modal fade" id="basicModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -104,7 +104,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Información del recibo -->
     <div style="margin-bottom: 20px; padding: 10px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd; position: relative;">
         <!-- Contenedor de los botones en la parte superior izquierda -->
@@ -112,12 +112,12 @@
         <!-- Título y datos del recibo -->
         <h7 style="margin: 0; color: #007bff;"><strong>Recibo</strong></h7>
         <div style="margin-top: 10px;">
-            <p style="margin: 5px 0;"><strong>Código:</strong> @Model.Recibo.Codigo</p>
-            <p style="margin: 5px 0;"><strong>Fecha:</strong> @Model.Recibo.Fecha.ToString("dd/MM/yyyy")</p>
+            <p style="margin: 5px 0;"><strong>Código:</strong> @Model.Codigo</p>
+            <p style="margin: 5px 0;"><strong>Fecha:</strong> @Model.FechaDePago.ToString("dd/MM/yyyy")</p>
         </div>
     </div>
-
-
+   
+    
     <!-- Sección del miembro -->
     <div style="margin-bottom: 20px; padding: 10px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
         <h7 style="margin: 0; color: #007bff;"><strong>Miembro</strong></h7>
@@ -154,8 +154,8 @@
     <!-- Total -->
     <div style="text-align: right; margin-top: 20px; background: #007bff; color: #fff; padding: 10px; border-radius: 5px;">
         <p style="margin: 0;"><strong>Total:</strong> $ @Model.Total.ToString("N2")</p>
-    </div>
-</div>
+    </div> 
+</div>  
 
 
 <!-- CSS de Toastr -->

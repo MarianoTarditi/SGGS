@@ -27,12 +27,23 @@ builder.Services.AddControllersWithViews().AddNToastNotifyToastr(new ToastrOptio
 builder.Services.AddDbContext<dbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Tiempo de expiración de la sesión
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.LoadRepositoryLayerExtensions(builder.Configuration);
 builder.Services.LoadServiceLayerExtensions(builder.Configuration);
 
 // NLog: Setup NLog for Dependency injection
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
+
+builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();
@@ -85,7 +96,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
 
-
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -93,22 +104,6 @@ app.UseMiddleware<SecurityStampCheck>();
 
 
 #pragma warning disable ASP0014
-//app.UseEndpoints(endpoint =>
-//{
-//    endpoint.MapAreaControllerRoute(
-//        name: "Admin",
-//        areaName: "Admin",
-//        pattern: "Admin/{controller=Dashboard}/{action=Index}/{id?}");
-
-//    endpoint.MapAreaControllerRoute(
-//        name: "User",
-//        areaName: "User",
-//        pattern: "User/{controller=Dashboard}/{action=Index}/{id?}");
-
-//    endpoint.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Index}/{id?}");
-//});
 
 app.UseEndpoints(endpoints =>
 {

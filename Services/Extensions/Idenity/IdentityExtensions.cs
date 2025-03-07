@@ -51,6 +51,8 @@ namespace ServiceLayer.Extensions.Identity
                 opt.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Tiempo de expiración de la cookie
             });
 
+
+
             
             services.Configure<DataProtectionTokenProviderOptions>(opt => // Configuración del token de protección
             {
@@ -63,16 +65,49 @@ namespace ServiceLayer.Extensions.Identity
             services.Configure<GmailInformationVM>(config.GetSection("EmailSettings")); // Configuración de los datos de Gmail desde el archivo de configuración
 
             services.AddScoped<IAuthorizationHandler, AdminObserverRequirementHandler>(); // Registro del manejador de autorización personalizado
+            //services.AddScoped<IAuthorizationHandler, PermissionAuthorizationService>(); // Registro del manejador de autorización personalizado
 
-            
-            services.AddAuthorization(options => // Configuración de políticas de autorización
+
+            services.AddAuthorization(options =>
             {
-                options.AddPolicy("AdminObserver", policy =>
-                {
-                    policy.AddRequirements(new AdminObserverRequirement()); // Requerimientos de la política de "AdminObserver"
-                });
+                // Agregar cada permiso como una política específica
+                options.AddPolicy("CanViewDashboardPolicy", policy => policy.RequireClaim("Ver Dashboard"));
+                options.AddPolicy("CanViewCuentaCorrientePolicy", policy => policy.RequireClaim("Ver Cuenta Corriente"));
+                options.AddPolicy("CanViewMiembrosPolicy", policy => policy.RequireClaim("Ver Miembros"));
+                options.AddPolicy("CanViewExMiembrosPolicy", policy => policy.RequireClaim("Ver Ex-Miembros"));
+                options.AddPolicy("CanViewPagosPolicy", policy => policy.RequireClaim("Ver Pagos"));
+                options.AddPolicy("CanViewOrganismoPolicy", policy => policy.RequireClaim("Ver Organismo"));
+                options.AddPolicy("CanViewUsuariosPolicy", policy => policy.RequireClaim("Ver Lista de Usuarios"));
+                options.AddPolicy("CanViewAyudaPolicy", policy => policy.RequireClaim("Ver Ayuda"));
+                options.AddPolicy("CanViewRolesPolicy", policy => policy.RequireClaim("Ver Roles"));
+                options.AddPolicy("CanViewEsperarAprobacionPolicy", policy => policy.RequireClaim("Ver EsperarAprobacionView"));
+                options.AddPolicy("CanViewAuditoriaPolicy", policy => policy.RequireClaim("Ver Auditoria"));
+                options.AddPolicy("CanViewAuditoriaAuthenticationPolicy", policy => policy.RequireClaim("Ver AuditoriaAuthentication"));
+
+
+                options.AddPolicy("CanCreateMiembrosPolicy", policy => policy.RequireClaim("Crear Miembros"));
+                options.AddPolicy("CanCreatePagosPolicy", policy => policy.RequireClaim("Crear Pagos"));
+                options.AddPolicy("CanCreateRolPolicy", policy => policy.RequireClaim("Crear Roles"));
+                options.AddPolicy("CanAñadirRemoverRolesPolicy", policy => policy.RequireClaim("Añadir/Remover Roles"));
+
+                options.AddPolicy("CanDeleteMiembrosPolicy", policy => policy.RequireClaim("Eliminar Miembros"));
+                options.AddPolicy("CanDeleteUserPolicy", policy => policy.RequireClaim("Eliminar Usuarios"));
+                options.AddPolicy("CanDeleteRolPolicy", policy => policy.RequireClaim("Eliminar Roles"));
+
+                options.AddPolicy("CanUpdateMiembrosPolicy", policy => policy.RequireClaim("Modificar Miembros"));
+                options.AddPolicy("CanUpdateOrganismosPolicy", policy => policy.RequireClaim("Modificar Organismo"));
+                options.AddPolicy("CanUpdateUsuariosPolicy", policy => policy.RequireClaim("Modificar Usuarios"));
+                options.AddPolicy("CanUpdateRolesPolicy", policy => policy.RequireClaim("Modificar Roles"));
+                options.AddPolicy("CanUpdateReclamacionesPolicy", policy => policy.RequireClaim("Modificar Reclamaciones"));
+               
+                options.AddPolicy("CanAutorizePagosPolicy", policy => policy.RequireClaim("Autorizar Pagos"));
+
+                options.AddPolicy("RestoreExMiembrosPolicy", policy => policy.RequireClaim("Restaurar Ex-Miembros"));
+
+
             });
-           
+
+
             services.Configure<SecurityStampValidatorOptions>(opt => // Configuración de la validación del sello de seguridad
             {
                 opt.ValidationInterval = TimeSpan.FromMinutes(30); // Intervalo de validación del sello de seguridad

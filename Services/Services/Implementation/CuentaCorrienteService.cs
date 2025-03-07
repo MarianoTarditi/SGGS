@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using DAL.Context;
 using DAL.Repositories.Interfaces;
 using DAL.UnitOfWork.Interfaces;
 using Entity.WebAplication.Entities;
@@ -280,21 +281,22 @@ namespace ServiceLayer.Services.Implementation
 
             // Obtener los pagos de la base de datos
             var pagos = await _unitOfWork.GetGenericRepository<Pago>()
-                .GetAllList().Include(x => x.Recibo)
-                .Where(p => !string.IsNullOrEmpty(p.CreatedDate) && p.Recibo.Total > 0) // Filtrar nulos o vacíos y pagos válidos
+                .GetAllList()
+                .Where(p => !string.IsNullOrEmpty(p.CreatedDate)) // Filtrar nulos o vacíos y pagos válidos
                 .ToListAsync();
 
             // Filtrar y agrupar pagos por fecha
             var pagosAgrupados = pagos
-                .Where(p => DateTime.TryParse(p.CreatedDate, out _)) // Filtrar solo pagos con fecha válida
-                .Where(p => DateTime.Parse(p.CreatedDate).Date >= startDate && DateTime.Parse(p.CreatedDate).Date <= endDate) // Filtrar por el rango de fechas
-                .GroupBy(p => DateTime.Parse(p.CreatedDate).Date) // Agrupar por fecha sin hora
-                .Select(g => new
-                {
-                    Fecha = g.Key.ToString("yyyy-MM-dd"),
-                    MontoTotal = g.Sum(p => p.Recibo != null ? p.Recibo.Total : 0) // Sumar el monto de los pagos (recibo) en ese día
-                })
-                .ToList();
+               .Where(p => DateTime.TryParse(p.CreatedDate, out _)) // Filtrar solo pagos con fecha válida
+               .Where(p => DateTime.Parse(p.CreatedDate).Date >= startDate && DateTime.Parse(p.CreatedDate).Date <= endDate) // Filtrar por el rango de fechas
+               .GroupBy(p => DateTime.Parse(p.CreatedDate).Date) // Agrupar por fecha sin hora
+               .Select(g => new
+               {
+                   Fecha = g.Key.ToString("yyyy-MM-dd"),
+                   MontoTotal = g.Sum(p => p.ListaDetalles != null ? p.ListaDetalles.Sum(dp => dp.Monto) : 0) // Sumar los montos de DetallePago
+               })
+               .ToList();
+
 
 
             // Actualizar el diccionario con los valores obtenidos de la base de datos
@@ -311,13 +313,28 @@ namespace ServiceLayer.Services.Implementation
 
         public async Task GestionarSaldosMiembros(decimal montoAfiliacion, decimal montoSeguro)
         {
-            var resumen = await _unitOfWork.GetGenericRepository<Resumen>().GetAllList().SingleOrDefaultAsync();
+            // 🔹 Obtener solo el ID del resumen
+            var resumenId = await _unitOfWork.GetGenericRepository<Resumen>()
+                .GetAllList()
+                .Select(r => r.Id)
+                .FirstOrDefaultAsync();
 
-            if (resumen == null)
+            if (resumenId == 0)
             {
                 throw new InvalidOperationException("No se encontró un resumen de saldo.");
             }
 
+            // 🔹 Buscar la entidad nuevamente con FindAsync para asegurar rastreo
+            var resumen = await _unitOfWork.GetDbContext().Set<Resumen>().FindAsync(resumenId);
+
+            if (resumen == null)
+            {
+                throw new InvalidOperationException("No se pudo recuperar el resumen.");
+            }
+
+            Console.WriteLine($"[ANTES] DebitoAfiliacion: {resumen.DebitoAfiliacion}, SaldoAfiliacion: {resumen.SaldoAfiliacion}");
+
+            // 🔹 Modificar valores
             if (montoAfiliacion == 0)
             {
                 resumen.DebitoSeguroAcompañante += montoSeguro;
@@ -329,13 +346,21 @@ namespace ServiceLayer.Services.Implementation
                 resumen.SaldoAfiliacion -= montoAfiliacion;
             }
 
-            // ✅ Actualizar los valores generales de débito y saldo
             resumen.Debito = resumen.DebitoAfiliacion + resumen.DebitoSeguroAcompañante;
             resumen.SaldoTotal = resumen.SaldoAfiliacion + resumen.SaldoSeguroAcompañante;
 
-            _unitOfWork.GetGenericRepository<Resumen>().Update(resumen);
+            // 🔹 Marcar la entidad como modificada
+            var entry = _unitOfWork.GetDbContext().Entry(resumen);
+            entry.State = EntityState.Modified;
+            // 🔹 Guardar cambios
             await _unitOfWork.CommitAsync();
+
+            // 🔹 Verificar después de guardar
+            Console.WriteLine($"[DESPUÉS] Debito: {resumen.Debito}, DebitoSeguro: {resumen.DebitoSeguroAcompañante}");
         }
+
+
+
 
         public async Task GestionarSaldosPagos(decimal montoAfiliacion, decimal montoSeguro)
         {
@@ -368,7 +393,7 @@ namespace ServiceLayer.Services.Implementation
         // ✅ Método para obtener el saldo total de cada categoría y el general
         public async Task<(decimal saldoAfiliacion, decimal saldoSeguroAcompañante, decimal saldoTotal, decimal debito, decimal credito, decimal debitoAfiliacion, decimal debitoSeguro, decimal creditoAfiliacion, decimal creditoSeguro)> ObtenerSaldoTotal()
         {
-            var resumen = await _unitOfWork.GetGenericRepository<Resumen>().GetAllList().AsNoTracking().SingleOrDefaultAsync();
+            var resumen = await _unitOfWork.GetGenericRepository<Resumen>().GetAllList().SingleOrDefaultAsync();
 
             if (resumen == null)
             {

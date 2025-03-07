@@ -31,6 +31,9 @@ namespace DAL.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -52,21 +55,21 @@ namespace DAL.Migrations
                         new
                         {
                             Id = "9b67832b-7091-48e8-aa0a-f1b3baeca418",
-                            ConcurrencyStamp = "f5b70fd3-85e9-4b63-a036-746879b93937",
+                            ConcurrencyStamp = "1e26ff29-202a-479a-a243-e0559b3b1124",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = "affedc34-9713-423a-880e-4a61ceefb7b1",
-                            ConcurrencyStamp = "d68c4f08-c46f-49da-9717-e2aba87d82b3",
+                            ConcurrencyStamp = "45925e92-1293-4d35-964c-125619b8f5c1",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
                             Id = "a086370d-a143-42d2-ad86-1d32eb9e7546",
-                            ConcurrencyStamp = "4c4d58a0-8aea-40d8-9f8c-d68226aae822",
+                            ConcurrencyStamp = "39b141d2-3429-4c14-91c2-8e9e9af7b1d8",
                             Name = "External Member",
                             NormalizedName = "EXTERNAL MEMBER"
                         });
@@ -147,15 +150,15 @@ namespace DAL.Migrations
                         {
                             Id = "070a9212-d4a9-44da-8479-4ec813b63621",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "34d39f44-2f9e-43c0-9a6d-ced0c62094c6",
+                            ConcurrencyStamp = "3ff470b5-130d-4f4d-b676-b0ffab4026b9",
                             Email = "test.video.lesson@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST.VIDEO.LESSON@GMAIL.COM",
                             NormalizedUserName = "TESTADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGVXK4SLfHEJ28vYgBhbnZ49tj9evZy7iUzg5OcPgpSUA9EkBCWC3m3Y43jmsD3ITg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEI689wMbu8KunWcCKKGx/4y3iiM+6qlHJ26aYjum88jf8grVkaQKmP0BO/pvknnK9A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9282c43f-016f-4be6-9bf9-582833110610",
+                            SecurityStamp = "877cb63d-ada6-4b0f-bd87-da2bbfff0f32",
                             TwoFactorEnabled = false,
                             UserName = "TestAdmin"
                         },
@@ -163,15 +166,15 @@ namespace DAL.Migrations
                         {
                             Id = "6b0e483c-ebae-4ed3-827e-8ed27f7d9131",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1667daee-f3c5-4c55-9187-6c15d5283006",
+                            ConcurrencyStamp = "129758b6-fb14-4a31-988a-a70e3e874b2d",
                             Email = "test.video.lesson2@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST.VIDEO.LESSON2@GMAIL.COM",
                             NormalizedUserName = "TESTMEMBER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOtLySZprgKTmKT+FoYLWs3EOfZdFrqoYxelPO1t8N/g1bnEMN7HPNowBlqKl5PYyg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOvNBnr4wq89RT+eInkGqVHXdXObrgjS2HhaXM4OjhV2+FqdV4Lja5Fc3/giggUzTA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "95b9c927-e0f8-48be-a703-eb0ec0a4e156",
+                            SecurityStamp = "2d9cbaba-6bd9-4df2-ac3b-2b4c8622953a",
                             TwoFactorEnabled = false,
                             UserName = "TestMember"
                         },
@@ -179,18 +182,97 @@ namespace DAL.Migrations
                         {
                             Id = "f906a15b-50f8-4e47-b44f-df9ac87dee9a",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "255ec2e4-e0b2-465f-9eb6-8f5a9a25711b",
+                            ConcurrencyStamp = "1856613d-740d-4a9e-aee7-4548d92b42a5",
                             Email = "jorgemartinez@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "JORGEMARTINEZ@GMAIL.COM",
                             NormalizedUserName = "JORGE",
-                            PasswordHash = "AQAAAAIAAYagAAAAED/wmRvg4QcqJJmlr0PeY46bxO1T4m3txCg7j++iWIciV8OcmQjn5SrfjyBCfDvnqw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEE4ltPWwLa0jmqgQ1E7/udsPugSCvlmO0H/FaFnaVWf9iluJ6aSAHSseT/aGyHK0XA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ecf9c1ef-17f8-4c55-930a-a1bc83f76f01",
+                            SecurityStamp = "a6ca75b8-4649-4914-8b9d-c3d8d0f0bb0d",
                             TwoFactorEnabled = false,
                             UserName = "jorge"
                         });
+                });
+
+            modelBuilder.Entity("Entity.Identity.Entities.AuditLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Changes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EntityId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditsLogs");
+                });
+
+            modelBuilder.Entity("Entity.Identity.Entities.AuditLogAuthentication", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan?>("SessionDuration")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserRole")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogsAuthentications");
                 });
 
             modelBuilder.Entity("Entity.WebAplication.Entities.AutorizacionPago", b =>
@@ -218,12 +300,6 @@ namespace DAL.Migrations
                     b.Property<string>("Observacion")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
@@ -241,7 +317,7 @@ namespace DAL.Migrations
                             Autorizado = true,
                             CreatedDate = "05/05/2025",
                             EstadoAutorizacionId = 1,
-                            Fecha = new DateTime(2025, 2, 24, 21, 16, 21, 655, DateTimeKind.Local).AddTicks(7352),
+                            Fecha = new DateTime(2025, 3, 6, 16, 43, 41, 60, DateTimeKind.Local).AddTicks(6880),
                             Observacion = "Pago Autorizado con exito"
                         });
                 });
@@ -262,12 +338,6 @@ namespace DAL.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -302,12 +372,6 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -356,12 +420,6 @@ namespace DAL.Migrations
 
                     b.Property<int>("Pagoid")
                         .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -424,12 +482,6 @@ namespace DAL.Migrations
                     b.Property<int?>("OrganismoId")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<bool>("SaldoDebitado")
                         .HasColumnType("bit");
 
@@ -455,8 +507,8 @@ namespace DAL.Migrations
                             Id = 1,
                             CreatedDate = "05/05/2025",
                             DeudaPendiente = true,
-                            FechaCreacion = new DateTime(2025, 2, 24, 21, 16, 21, 655, DateTimeKind.Local).AddTicks(7039),
-                            FechaVencimiento = new DateTime(2025, 2, 24, 21, 16, 21, 655, DateTimeKind.Local).AddTicks(7031),
+                            FechaCreacion = new DateTime(2025, 3, 6, 16, 43, 41, 60, DateTimeKind.Local).AddTicks(6742),
+                            FechaVencimiento = new DateTime(2025, 3, 6, 16, 43, 41, 60, DateTimeKind.Local).AddTicks(6736),
                             MiembroId = 1,
                             MontoAfiliacion = 1000m,
                             MontoSeguroAcompañante = 2000m,
@@ -482,12 +534,6 @@ namespace DAL.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -526,12 +572,6 @@ namespace DAL.Migrations
                     b.Property<bool>("InsigniaMadera")
                         .HasColumnType("bit");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
@@ -557,12 +597,6 @@ namespace DAL.Migrations
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -603,12 +637,6 @@ namespace DAL.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -656,12 +684,6 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
@@ -696,12 +718,6 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
@@ -735,12 +751,6 @@ namespace DAL.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -781,12 +791,6 @@ namespace DAL.Migrations
 
                     b.Property<int>("ProvinciaId")
                         .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -885,12 +889,6 @@ namespace DAL.Migrations
                     b.Property<int>("ReligionId")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<int>("SexoId")
                         .HasColumnType("int");
 
@@ -946,7 +944,7 @@ namespace DAL.Migrations
                             Email = "marianotarditi2004@gmail.com",
                             EstadoCivilId = 1,
                             EstudioId = 1,
-                            FechaNacimiento = new DateTime(2025, 2, 24, 21, 16, 21, 655, DateTimeKind.Local).AddTicks(7169),
+                            FechaNacimiento = new DateTime(2025, 3, 6, 16, 43, 41, 60, DateTimeKind.Local).AddTicks(6819),
                             FuncionId = 1,
                             IdiomaId = 1,
                             InsigniaMadera = true,
@@ -986,12 +984,6 @@ namespace DAL.Migrations
                     b.Property<int>("PagoId")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
@@ -1010,7 +1002,7 @@ namespace DAL.Migrations
                         {
                             Id = 1,
                             CreatedDate = "05/05/2025",
-                            FechaDePago = new DateTime(2025, 2, 24, 21, 16, 21, 655, DateTimeKind.Local).AddTicks(7771),
+                            FechaDePago = new DateTime(2025, 3, 6, 16, 43, 41, 60, DateTimeKind.Local).AddTicks(7292),
                             NombreCompleto = "Mariano Tarditi",
                             Observacion = "Pago hecho con transferencia",
                             PagoId = 1
@@ -1033,12 +1025,6 @@ namespace DAL.Migrations
                     b.Property<string>("Pais")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -1110,12 +1096,6 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<long>("Telefono")
                         .HasColumnType("bigint");
 
@@ -1149,7 +1129,7 @@ namespace DAL.Migrations
                             Descripcion = "Grupo Scout de Entre Rios",
                             Direccion = "Dardo rocha 78",
                             Email = "sggs@gmail.com",
-                            FechaCreacion = new DateTime(2025, 2, 24, 21, 16, 21, 655, DateTimeKind.Local).AddTicks(7904),
+                            FechaCreacion = new DateTime(2025, 3, 6, 16, 43, 41, 60, DateTimeKind.Local).AddTicks(7440),
                             Latitud = "-33.03604633935",
                             LocalidadId = 1,
                             Longitud = "-59.008276462555",
@@ -1187,12 +1167,6 @@ namespace DAL.Migrations
 
                     b.Property<int>("ResumenId")
                         .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("TipoModalidad")
                         .HasColumnType("nvarchar(max)");
@@ -1246,12 +1220,6 @@ namespace DAL.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -1425,12 +1393,6 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
@@ -1445,62 +1407,6 @@ namespace DAL.Migrations
                             Id = 1,
                             CreatedDate = "05/05/2025",
                             Nombre = "sad"
-                        });
-                });
-
-            modelBuilder.Entity("Entity.WebAplication.Entities.Recibo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Codigo")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedDate")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("PagoId")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<decimal>("Total")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UpdatedDate")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PagoId")
-                        .IsUnique()
-                        .HasFilter("[PagoId] IS NOT NULL");
-
-                    b.ToTable("Recibos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Codigo = 1012,
-                            CreatedDate = "05/05/2025",
-                            Fecha = new DateTime(2025, 2, 24, 21, 16, 21, 655, DateTimeKind.Local).AddTicks(7568),
-                            PagoId = 1,
-                            Total = 3000m
                         });
                 });
 
@@ -1520,12 +1426,6 @@ namespace DAL.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -1584,12 +1484,6 @@ namespace DAL.Migrations
                     b.Property<int>("OrganismoId")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<decimal>("SaldoAfiliacion")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -1647,12 +1541,6 @@ namespace DAL.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("UpdatedDate")
                         .HasMaxLength(10)
@@ -2083,16 +1971,6 @@ namespace DAL.Migrations
                     b.Navigation("Resumen");
                 });
 
-            modelBuilder.Entity("Entity.WebAplication.Entities.Recibo", b =>
-                {
-                    b.HasOne("Entity.WebAplication.Entities.Pago", "Pago")
-                        .WithOne("Recibo")
-                        .HasForeignKey("Entity.WebAplication.Entities.Recibo", "PagoId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Pago");
-                });
-
             modelBuilder.Entity("Entity.WebAplication.Entities.Resumen", b =>
                 {
                     b.HasOne("Entity.WebAplication.Entities.Organismo", "Organismo")
@@ -2220,8 +2098,6 @@ namespace DAL.Migrations
 
                     b.Navigation("ModalidadPago")
                         .IsRequired();
-
-                    b.Navigation("Recibo");
                 });
 
             modelBuilder.Entity("Entity.WebAplication.Entities.Provincia", b =>

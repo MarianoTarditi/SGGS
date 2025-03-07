@@ -13,7 +13,7 @@ using NToastNotify;
 
 namespace ProyectoWeb.Controllers
 {
-    [Authorize(Roles = "Member,SuperAdmin,AdminObserver")]
+    [Authorize(Roles = "Member,SuperAdmin")]
     public class PagosController : Controller
     {
         public IActionResult Index()
@@ -35,6 +35,7 @@ namespace ProyectoWeb.Controllers
             _cuentaCorrienteService = cuentaCorrienteService;
         }
 
+        [Authorize(Policy = "CanViewPagosPolicy")]
         public async Task<IActionResult> GetPagoList()
         {
             var pago = await _pagoService.GetAllListAsync();
@@ -152,8 +153,8 @@ namespace ProyectoWeb.Controllers
             return Json(new { success = true, data = miembro });
         }
 
-
         [HttpGet]
+        [Authorize(Policy = "CanCreatePagosPolicy")]
         public async Task<IActionResult> AddPago(int? id)
         {
             ViewBag.Modalidades = new SelectList(new List<SelectListItem>

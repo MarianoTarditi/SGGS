@@ -18,8 +18,6 @@ namespace Entity.WebAplication.ViewModels
         public List<VMDetallePago> ListaDetalles { get; set; } = new List<VMDetallePago>();
         public VMPagoAutorizacion Autorizacion { get; set; } = null!;
         public int PagoAutorizacionId { get; set; }
-        public VMRecibo? Recibo { get; set; } = null!;
-        public int ReciboId { get; set; }
 
         public VMResumen Resumen { get; set; } = null!;
         public int ResumenId { get; set; }
@@ -38,7 +36,6 @@ namespace Entity.WebAplication.ViewModels
         public int? TransferenciaId { get; set; }
 
         public VMPagoModalidad Modalidad { get; set; }
-
 
         public DateTime FechaDePago { get; set; }
 

@@ -21,6 +21,7 @@ namespace ProyectoWeb.Controllers
             _pagoService = pagoService;
         }
 
+        [Authorize(Policy = "CanViewCuentaCorrientePolicy")]
         public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate)
         {
             var categoriasCount = await _cuentaCorrienteService.GetCategoriaMiembroAsync();

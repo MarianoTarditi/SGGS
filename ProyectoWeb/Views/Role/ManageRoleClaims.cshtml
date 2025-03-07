@@ -1,0 +1,38 @@
+﻿@model RoleClaimsViewModel
+
+<div class="container my-5">
+    <form method="post" asp-controller="Role" asp-action="ManageRoleClaims">
+        <div class="card shadow-sm">
+
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Manejar Reclamaciones de Rol</h2>
+                <h3 class="mt-2">Nombre Rol: @ViewBag.RoleName</h3>
+            </div>
+
+            <div class="card-body">
+                <input type="hidden" asp-for="@Model.RoleId" />
+
+                @for (int i = 0; i < Model.Claims.Count; i++)
+                {
+                    <div class="form-check mb-2">
+                        <input type="hidden" asp-for="@Model.Claims[i].ClaimType" />
+                        <input asp-for="@Model.Claims[i].IsSelected" class="form-check-input" id="claim_@Model.Claims[i].ClaimType" />
+                        <label class="form-check-label" for="claim_@Model.Claims[i].ClaimType">
+                            @Model.Claims[i].ClaimValue
+                        </label>
+                    </div>
+                }
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+            </div>
+
+            <div class="card-footer text-start">
+                <button type="submit" class="btn btn-primary" style="width:auto">Modificar</button>
+                <a asp-controller="Role" asp-action="EditRole" asp-route-roleId="@Model.RoleId" class="btn btn-secondary" style="width:auto">
+                    Cancelar
+                </a>
+            </div>
+
+        </div>
+    </form>
+</div>

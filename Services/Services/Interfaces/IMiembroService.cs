@@ -22,8 +22,5 @@ namespace ServiceLayer.Services.Interfaces
         public Task<Miembro?> GetMiembroConDeudaPorDNI(string dni);
         public Task<Dictionary<string, int>> GetMiembrosPorRama();
         public Task<List<VMLocalidad>> GetLocalidadesByProvinciaAsync(int provinciaId);
-
-
-
     }
 }

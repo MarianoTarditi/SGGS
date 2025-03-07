@@ -23,7 +23,6 @@ namespace Entity.WebAplication.Entities
         public AutorizacionPago Autorizacion { get; set; } = null!;
         public int AutorizacionPagoId { get; set; } // Clave foránea
 
-        public Recibo? Recibo { get; set; }
         public Miembro Miembro { get; set; } = null!;
         public int MiembroId { get; set; }
         public Resumen Resumen { get; set; } = null!;

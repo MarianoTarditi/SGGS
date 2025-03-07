@@ -17,7 +17,6 @@ namespace ProyectoWeb.Areas.Admin.Controllers
             _pagoService = pagoService;
         }
 
-
         public async Task<IActionResult> Index()
         {
             ViewBag.Miembros = await _dashboardService.GetAllMiembrosCountAsync();
@@ -26,7 +25,6 @@ namespace ProyectoWeb.Areas.Admin.Controllers
 
             var pagos = await _pagoService.GetAllListAsync(); // Asegúrate de que esto devuelve una lista válida
             return View(pagos); // Aquí pasamos la lista de pagos a la vista
-
         }
     }
 }

@@ -9,6 +9,7 @@ using NToastNotify;
 using ServiceLayer.Messages.Identity;
 using ServiceLayer.Services.Identity.Abstract;
 using System.Data;
+using System.Security.Claims;
 
 namespace ProyectoWeb.Controllers
 {
@@ -17,15 +18,20 @@ namespace ProyectoWeb.Controllers
     {
         private readonly IAuthenticationAdminService _admin;
         private readonly IToastNotification _toasty;
+
+        private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
 
-        public AdminController(IToastNotification toasty, IAuthenticationAdminService admin, RoleManager<AppRole> roleManager)
+
+        public AdminController(IToastNotification toasty, IAuthenticationAdminService admin, RoleManager<AppRole> roleManager, UserManager<AppUser> userManager)
         {
             _toasty = toasty;
             _admin = admin;
             _roleManager = roleManager;
+            _userManager = userManager;
         }
 
+        [Authorize(Policy = "CanViewUsuariosPolicy")]
         public async Task<IActionResult> GetUserList()
         {
             var userListVM = await _admin.GetUserListAsync();
@@ -48,6 +54,7 @@ namespace ProyectoWeb.Controllers
         }
 
         [HttpPost]
+        //[Authorize(Policy = "CanUpdateUsuariosPolicy")]
         public async Task<IActionResult> UpdateUserRole([FromBody] UserRoleUpdateRequestVM request)
         {
             if (string.IsNullOrEmpty(request.UserName))
@@ -65,6 +72,7 @@ namespace ProyectoWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "CanDeleteUserPolicy")]
         public async Task<IActionResult> DeleteUser([FromBody] DeleteUserRequestVM request)
         {
             if (string.IsNullOrEmpty(request.UserName))

@@ -55,7 +55,6 @@ namespace ServiceLayer.Services.Implementation
                 .Include(p => p.Autorizacion)
                 .ThenInclude(p => p.EstadoAutorizacion)
                 .Include(p => p.Miembro)
-                .Include(p => p.Recibo)
                 .Include(p => p.ListaDetalles)
                 .ThenInclude(dp => dp.CategoriaPago) 
                 .ToListAsync();
@@ -181,6 +180,7 @@ namespace ServiceLayer.Services.Implementation
                 pago.Activo = true;
                 pago.ResumenId = resumen.Id;
                 pago.MiembroId = miembro.Id;
+               
 
 
                 // Asignar el Código y Monto del Pago
@@ -209,8 +209,6 @@ namespace ServiceLayer.Services.Implementation
                     EstadoAutorizacionId = 2
                 };
 
- 
-
                 // Guardar la nueva Autorización de pago primero
                 await _unitOfWork.GetGenericRepository<AutorizacionPago>().CreateEntityAsync(nuevaAutorizacion);
                 await _unitOfWork.CommitAsync();
@@ -227,37 +225,32 @@ namespace ServiceLayer.Services.Implementation
                 {
                     var dbContext = _unitOfWork.GetDbContext();
 
+                    // 🔹 Buscar la deuda asociada al miembro
                     var deuda = await _unitOfWork.GetGenericRepository<Deuda>()
                         .GetAllList()
                         .FirstOrDefaultAsync(d => d.MiembroId == pago.MiembroId);
 
                     if (deuda != null)
                     {
+                        // Solo actualizar la propiedad DeudaPendiente
                         deuda.DeudaPendiente = false;
 
-                        // Marcar el objeto como modificado manualmente
-                        dbContext.Entry(deuda).State = EntityState.Modified;
+                        var entry = dbContext.Entry(deuda);
 
-                        // Guardar los cambios en la base de datos
+                        // Marcar la propiedad como modificada
+                        entry.Property(d => d.DeudaPendiente).IsModified = true;
+
+                        // Confirma la transacción
                         await _unitOfWork.CommitAsync();
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("No se encontró la deuda asociada al miembro.");
                     }
                 }
 
-                // Generar el recibo
-                var ultimoCodigoRecibo = await _unitOfWork.GetGenericRepository<Recibo>().GetAllList()
-                    .OrderByDescending(o => o.Codigo).FirstOrDefaultAsync();
-                int nuevoCodigoRecibo = (ultimoCodigoRecibo != null) ? ultimoCodigoRecibo.Codigo + 1 : 1;
 
-                var recibo = new Recibo
-                {
-                    Fecha = DateTime.Now,
-                    Codigo = nuevoCodigoRecibo,
-                    Total = listaDetalles.Sum(detalle => detalle.Monto),
-                    PagoId = pago.Id
-                };
 
-                await _unitOfWork.GetGenericRepository<Recibo>().CreateEntityAsync(recibo);
-                await _unitOfWork.CommitAsync();
 
                 // Crear detalles de pago
 
@@ -315,7 +308,6 @@ namespace ServiceLayer.Services.Implementation
                 .Include(p => p.ModalidadPago)
                 .Include(p => p.Autorizacion)
                 .ThenInclude(p => p.EstadoAutorizacion)
-                .Include(p => p.Recibo)
                 .Include(p => p.Miembro)
                 .ThenInclude(p => p.Categoria)
                 .Include(p => p.ListaDetalles)
@@ -327,7 +319,7 @@ namespace ServiceLayer.Services.Implementation
                     Total = p.Total,
                     TipoModalidad = p.TipoModalidad,
                     Monto = p.Total,
-                    FechaDePago = p.ModalidadPago.FechaDePago,
+                    FechaDePago = p.ModalidadPago != null ? p.ModalidadPago.FechaDePago : DateTime.MinValue,  // Usar DateTime.MinValue si es null
                     Observacion = p.ModalidadPago.Observacion,
 
                     Miembro = new VMMiembro
@@ -342,14 +334,7 @@ namespace ServiceLayer.Services.Implementation
                             Nombre = p.Miembro.Categoria.Nombre
                         }
                     },
-                    Recibo = new VMRecibo
-                    {
-                        Id = p.Miembro.Id,
-                        Codigo = p.Recibo.Codigo,
-                        Fecha = p.Recibo.Fecha,
-                        Total = p.Total
-                    },
-
+ 
                     Autorizacion = new VMPagoAutorizacion
                     {
                         Id = p.Autorizacion.Id,
@@ -390,12 +375,12 @@ namespace ServiceLayer.Services.Implementation
         public async Task<bool> CambiarEstadoAsync(int idPago, int nuevoEstadoId)
         {
             var pago = await _unitOfWork.GetGenericRepository<Pago>().GetAllList()
-        .Include(x => x.ListaDetalles)
-        .Include(x => x.Autorizacion)
-        .ThenInclude(x => x.EstadoAutorizacion)
-        .Include(x => x.Miembro) // Incluir la relación con Miembro
-        .ThenInclude(m => m.Deuda) // Incluir la relación con Deuda
-        .FirstOrDefaultAsync(p => p.Id == idPago);
+            .Include(x => x.ListaDetalles)
+            .Include(x => x.Autorizacion)
+            .ThenInclude(x => x.EstadoAutorizacion)
+            .Include(x => x.Miembro) // Incluir la relación con Miembro
+            .ThenInclude(m => m.Deuda) // Incluir la relación con Deuda
+            .FirstOrDefaultAsync(p => p.Id == idPago);
 
             if (pago == null)
             {
@@ -434,7 +419,7 @@ namespace ServiceLayer.Services.Implementation
                             deuda.FechaVencimiento = DateTime.Now.AddMonths(1);
                             deuda.SaldoDebitado = false;
 
-                            dbContext.Entry(deuda).State = EntityState.Modified;
+                            _unitOfWork.GetGenericRepository<Deuda>().Update(deuda);
                             await _unitOfWork.CommitAsync();
                         }
                     }

@@ -1,0 +1,93 @@
+﻿@using Entity.Identity.Entities
+@model List<AppRole>
+
+@{
+    ViewBag.Title = "All Roles";
+}
+
+<div class="pagetitle">
+    <h1>Roles</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item">Roles</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+@if (Model.Any())
+{
+    <a class="btn btn-primary mb-3" style="width:auto" asp-action="CreateRole"
+       asp-controller="Role">Crear Rol</a>
+
+    foreach (var role in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <strong>Role Id:</strong> @role.Id
+            </div>
+
+            <div class="card-body">
+                <h5 class="card-title">@role.Name</h5>
+                <h7 class="card-text">@role.Description</h7>
+            </div>
+
+            <div class="card-footer">
+
+                <form asp-controller="Role" asp-action="DeleteRole" asp-route-roleId="@role.Id" method="post">
+
+                    <a asp-controller="Role" asp-action="EditRole"
+                       asp-route-roleId="@role.Id" class="btn btn-warning">
+                        Editar
+                    </a>
+
+                    <span id="confirmDeleteSpan_@role.Id" style="display:none">
+                        <span>¿Está seguro que quiere eliminar este Rol?</span>
+                        <button type="submit" class="btn btn-danger">Si</button>
+                        <a href="#" class="btn btn-primary"
+                           onclick="confirmDelete('@role.Id', false)">No</a>
+                    </span>
+
+                    <span id="deleteSpan_@role.Id">
+                        <a href="#" class="btn btn-danger"
+                           onclick="confirmDelete('@role.Id', true)">Eliminar</a>
+                    </span>
+                </form>
+
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            No existen roles creados.
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">
+                Use el botón de abajo para crear un Rol.
+            </h5>
+            <a class="btn btn-primary" style="width:auto"
+               asp-controller="Role" asp-action="CreateRole">
+                Crear Rol
+            </a>
+        </div>
+    </div>
+}
+
+<script>
+    function confirmDelete(uniqueId, isTrue) {
+
+        var deleteSpan = 'deleteSpan_' + uniqueId;
+        var confirmDeleteSpan = 'confirmDeleteSpan_' + uniqueId;
+
+        if (isTrue) {
+            $('#' + deleteSpan).hide();
+            $('#' + confirmDeleteSpan).show();
+        } else {
+            $('#' + deleteSpan).show();
+            $('#' + confirmDeleteSpan).hide();
+        }
+    }
+</script>

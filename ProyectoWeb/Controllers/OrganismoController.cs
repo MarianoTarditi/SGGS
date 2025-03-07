@@ -38,13 +38,26 @@ namespace ProyectoWeb.Areas.Admin.Controllers
             return View(organismo);
         }
 
-        public async Task<IActionResult> GetOrganismo(int id)
+        [Authorize(Policy = "CanViewOrganismoPolicy")]
+        public async Task<IActionResult> GetOrganismo(int id, DateTime? startDate, DateTime? endDate)
         {
             var organismo = await _organismoService.GetOrganmismoById(id);
 
             ViewBag.Provincias = new SelectList(await _organismoService.GetProvinciasAsync(), "Id", "Nombre", organismo.ProvinciaId);
             ViewBag.Localidades = new SelectList(await _organismoService.GetLocalidadesByProvinciaAsync(organismo.ProvinciaId), "Id", "Nombre", organismo.LocalidadId);
 
+            if (startDate == null) startDate = DateTime.Today.AddDays(-14);
+            if (endDate == null) endDate = DateTime.Today;
+
+            ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
+            ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
+
+            var altasPorDiaTuple = await _organismoService.GetAltasPorDia(startDate.Value, endDate.Value);
+            Dictionary<string, int> altasPorDia = altasPorDiaTuple.Item1;
+            int maxAltas = altasPorDiaTuple.Item2;
+
+            ViewBag.AltasCount = altasPorDia;
+            ViewBag.MaxAltas = maxAltas;
 
 
             return View(organismo);
@@ -79,6 +92,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "CanUpdateOrganismosPolicy")]
         public async Task<IActionResult> UpdateOrganismo(int id)
         {
             var organismo = await _organismoService.GetOrganmismoById(id);
@@ -90,6 +104,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "CanUpdateOrganismosPolicy")]
         public async Task<IActionResult> UpdateOrganismo(VMOrganismo request)
         {
             var validation = await _organismoValidator.ValidateAsync(request);

@@ -13,6 +13,11 @@
             <input type="hidden" asp-for="Id" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <div class="col-7">
+                <label asp-for="Codigo" class="form-label">Código</label>
+                <span asp-validation-for="Codigo" class="text-danger"></span>
+                <input asp-for="Codigo" type="text" class="form-control" readonly />
+            </div>
 
             <div class="col-7">
                 <label asp-for="Nombre" class="form-label">Nombre</label>

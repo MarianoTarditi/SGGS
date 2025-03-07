@@ -5,13 +5,17 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
     @Html.AntiForgeryToken() <!-- Esto genera el token -->
+<!-- Agregar en la parte superior de tu vista -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
 
 <div class="pagetitle">
     <h1>Usuarios</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-            <li class="breadcrumb-item active">Usuarios</li>
+            <li class="breadcrumb-item">Usuarios</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -43,6 +47,8 @@
                                 Cambiar Rol
                             </button>
 
+                           
+
                             <!-- Botón Eliminar Usuario -->
                             <button type="button" class="btn btn-danger eliminar-usuario"
                                     data-username="@item.UserName">
@@ -53,102 +59,125 @@
                 }
             </tbody>
         </table>
+
+        <!-- Modal para cambiar el rol -->
+        <div class="modal fade" id="roleModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cambiar Rol</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Usuario:</strong> <span id="modalUserName"></span></p>
+                        <div style="margin-bottom: 20px;">
+                            <label for="modalRoleSelect">Selecciona un nuevo rol:</label>
+                            <select id="modalRoleSelect" class="form-control">
+                                @foreach (var role in ViewBag.Roles)
+                                {
+                                    <option value="@role">@role</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" id="guardarRol">Guardar Cambios</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
     </div>
 </div>
 
-<!-- Modal para cambiar el rol -->
-<div class="modal fade" id="roleModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Cambiar Rol</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Usuario:</strong> <span id="modalUserName"></span></p>
-                <div style="margin-bottom: 20px;">
-                    <label for="modalRoleSelect">Selecciona un nuevo rol:</label>
-                    <select id="modalRoleSelect" class="form-control">
-                        @foreach (var role in ViewBag.Roles)
-                        {
-                            <option value="@role">@role</option>
-                        }
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="guardarRol">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Botón para abrir el modal -->
+<a class="btn btn-primary" asp-controller="Role" asp-action="ListRoles">
+    Gestionar Roles
+</a>
+
+
+
 
 
 <script>
     $(document).ready(function () {
+        // Abrir modal y cargar datos del usuario
         $(".abrir-modal").click(function () {
-            var userName = $(this).data("username"); // Obtener el nombre de usuario
-            var currentRole = $(this).data("currentrole"); // Obtener el rol actual
+            var userName = $(this).data("username");
+            var currentRole = $(this).data("currentrole");
 
             console.log("Abrir Modal - Usuario:", userName, "Rol Actual:", currentRole);
 
-            $("#modalUserName").text(userName); // Mostrar el nombre en el modal
-            $("#guardarRol").attr("data-username", userName); // Guardar el usuario en el botón
-
-            // Seleccionar el rol actual en el combo box
+            $("#modalUserName").text(userName);
+            $("#guardarRol").attr("data-username", userName);
             $("#modalRoleSelect").val(currentRole);
         });
 
+        // Guardar nuevo rol
         $("#guardarRol").click(function () {
-            var userName = $(this).attr("data-username"); // Obtener el usuario seleccionado
-            var newRole = $("#modalRoleSelect").val(); // Obtener el nuevo rol seleccionado
+            var userName = $(this).attr("data-username");
+            var newRole = $("#modalRoleSelect").val();
 
             console.log("Guardar Cambios - Usuario:", userName, "Nuevo Rol:", newRole);
 
+            // Verificar si el nombre de usuario está disponible
             if (!userName) {
                 toastr.error("Error: No se pudo obtener el nombre de usuario.");
                 return;
             }
 
-            // Enviar datos al servidor mediante AJAX
+            // Realizar la llamada AJAX para actualizar el rol
             $.ajax({
-                url: '/Admin/UpdateUserRole', // Ruta al método en el controlador
+                url: '/Admin/UpdateUserRole',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ UserName: userName, NewRole: newRole }),
                 success: function (response) {
+                    console.log("Respuesta del servidor:", response);
+
                     if (response.success) {
                         toastr.success(response.message);
                         setTimeout(function () {
-                            $('#roleModal').modal('hide'); // Cerrar modal
-                            location.reload(); // Recargar la tabla
+                            // Verificar si el modal existe antes de intentar ocultarlo
+                            var modalElement = $('#roleModal');
+                            if (modalElement.length) {
+                                modalElement.modal('hide');
+                            } else {
+                                console.error("Modal no encontrado.");
+                            }
+
+                            // Recargar la página después de un breve retraso
+                            location.reload();
                         }, 700);
                     } else {
                         toastr.error(response.message);
                     }
                 },
-                error: function () {
+                error: function (error) {
+                    console.error("Error al realizar la llamada AJAX:", error);
                     toastr.error("Ocurrió un error al actualizar el rol.");
                 }
             });
         });
-    });
 
-
-    $(document).ready(function () {
+        // Eliminar usuario
         $(".eliminar-usuario").click(function () {
             var userName = $(this).data("username");
 
+            // Confirmación antes de eliminar
             if (!confirm("¿Estás seguro de que deseas eliminar a " + userName + "?")) {
                 return;
             }
 
+            var requestData = { UserName: userName };  // Asegúrate de que sea un objeto válido
+
+            // Realizar la llamada AJAX para eliminar el usuario
             $.ajax({
                 url: '/Admin/DeleteUser',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ UserName: userName }),
+                data: JSON.stringify(requestData),  // Convertir el objeto a JSON
                 success: function (response) {
                     if (response.success) {
                         toastr.success(response.message);
@@ -157,11 +186,12 @@
                         toastr.error(response.message);
                     }
                 },
-                error: function () {
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.responseText);  // Verifica si hay más detalles del error en la consola
                     toastr.error("Ocurrió un error al eliminar el usuario.");
                 }
             });
         });
     });
-
 </script>
+

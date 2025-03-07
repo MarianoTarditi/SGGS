@@ -1,4 +1,5 @@
-﻿using Entity.Identity.Entities;
+﻿using DAL.UnitOfWork.Interfaces;
+using Entity.Identity.Entities;
 using Entity.Identity.ViewModels;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -22,13 +23,16 @@ namespace ProyectoWeb.Controllers
         private readonly IAuthenticationUserService _authenticationUserService;
         private readonly IToastNotification _toasty;
 
-        public AuthenticationUserController(UserManager<AppUser> userManager, IValidator<UserEditVM> userEditValidator, IAuthenticationUserService authenticationUserService, IToastNotification toasty, SignInManager<AppUser> signinManager)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public AuthenticationUserController(UserManager<AppUser> userManager, IValidator<UserEditVM> userEditValidator, IAuthenticationUserService authenticationUserService, IToastNotification toasty, SignInManager<AppUser> signinManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _userEditValidator = userEditValidator;
             _authenticationUserService = authenticationUserService;
             _toasty = toasty;
             _signinManager = signinManager;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -64,12 +68,47 @@ namespace ProyectoWeb.Controllers
             return RedirectToAction("Index", "Dashboard", new { Area = "User" });
         }
 
-       
+
 
         public async Task<IActionResult> Logout()
         {
-            await _signinManager.SignOutAsync();
-            return Redirect("/Authentication/LogIn");
+            var user = await _userManager.GetUserAsync(User); // Obtiene el usuario actual
+            if (user != null)
+            {
+                // Recupera la hora de inicio de sesión desde la sesión
+                var sessionStartString = HttpContext.Session.GetString("SessionStartTime");
+                DateTime? sessionStartTime = sessionStartString != null ? DateTime.Parse(sessionStartString) : (DateTime?)null;
+
+                TimeSpan? sessionDuration = null;
+                if (sessionStartTime.HasValue)
+                {
+                    sessionDuration = DateTime.Now - sessionStartTime.Value;
+                }
+
+                // Registra el evento en la tabla de auditoría
+                var auditLog = new AuditLogAuthentication
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    UserEmail = user.Email,
+                    UserRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault(),
+                    Action = "Cierre de sesión",
+                    Timestamp = DateTime.Now,
+                    SessionDuration = sessionDuration // Guarda la duración de la sesión
+                };
+
+                // Guarda el registro en la base de datos
+                await _unitOfWork.GetDbContext().AddAsync(auditLog);
+                await _unitOfWork.CommitAsync();
+
+                // Limpiar la sesión
+                HttpContext.Session.Remove("SessionStartTime");
+            }
+
+            await _signinManager.SignOutAsync(); // Cierra la sesión del usuario
+            return Redirect("/Authentication/LogIn"); // Redirige al login
         }
+
+
     }
 }

@@ -1,0 +1,258 @@
+﻿@using Entity.Identity.Entities
+@model List<AuditLogAuthentication>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Reporte de Auditoría de Inicio/Cierre de Sesión</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Vendor CSS Files -->
+    <link href="~/Admin/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Admin/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/Admin/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="~/Admin/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+    <link href="~/Admin/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+    <link href="~/Admin/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="~/Admin/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="~/css/style.css" asp-append-version="true" rel="stylesheet">
+    <link href="~/Admin/assets/scss/_card.scss" asp-append-version="true" rel="stylesheet">
+
+
+    <style>
+        #main {
+            margin-top: 15px;
+            padding: 30px 30px;
+            transition: all 0.3s;
+        }
+
+        .dashboard .recent-sales {
+            font-size: 16px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>Auditoría</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active">Reporte de Auditoría (LogIn/LogOut)</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div style="margin-bottom: 15px; margin-left: 10px;">
+            <button id="btnExportPdf" class="btn btn-primary">Exportar PDF</button>
+        </div>
+
+        <section class="section dashboard">
+            <div class="row justify-content-center">
+
+                <!-- Left side columns -->
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card recent-sales overflow-auto">
+                                <div class="card-body">
+                                    <h5 class="card-title">Reporte de Auditoría de Inicio/Cierre de Sesión</h5>
+
+                                    <table id="table" class="table table-borderless datatable">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Usuario</th>
+                                                <th>Email</th>
+                                                <th>Rol</th>
+                                                <th>Acción</th>
+                                                <th>Fecha</th>
+                                                <th>Duración de Sesión</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var log in Model)
+                                            {
+                                                <tr>
+                                                    <td>#@log.Id</td>
+                                                    <td><span class="badge border-primary border-2 text-dark" style="font-size: 15px">@log.UserName</span></td>
+                                                    <th scope="row"><a href="#">@log.UserEmail</a></th>
+
+                                                    <td><span class="badge border-primary border-2 text-dark" style="font-size: 15px">@log.UserRole</span></td>
+
+                                                    @if (log.Action == "Inicio de sesión")
+                                                    {
+                                                        <td><span class="badge bg-success">@log.Action</span></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><span class="badge bg-danger">@log.Action</span></td>
+                                                    }
+                                                    <td><span class="badge border-primary border-2 text-dark" style="font-size: 15px">@log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")</span></td>
+                                                    <td>
+                                                        @if (log.SessionDuration.HasValue)
+                                                        {
+                                                            var duracion = log.SessionDuration.Value;
+                                                            var horas = duracion.Hours; // Obtiene las horas
+                                                            var minutos = duracion.Minutes; // Obtiene los minutos
+                                                            var segundos = duracion.Seconds; // Obtiene los segundos
+
+                                                            <text>@string.Format("{0:D2}:{1:D2}:{2:D2}", horas, minutos, segundos)</text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <text>-</text>
+                                                        }
+                                                    </td>
+
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div><!-- End Recent Sales -->
+                        <!-- Top Selling -->
+
+                    </div>
+                </div><!-- End Left side columns -->
+            </div>
+        </section>
+
+    </main>
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+</body>
+</html>
+
+
+<script>
+    $(document).ready(function () {
+        $('.datatable').DataTable({
+            "order": [[3, "asc"]], // Primera ordenación ascendente en la columna "Acción"
+            "columnDefs": [
+                { "orderable": true, "targets": 3 } // Asegurar que la columna sea ordenable
+            ]
+        });
+    });
+
+    document.getElementById("btnExportPdf").addEventListener("click", function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF("p", "mm", "a4");
+
+        // Fecha y hora actual
+        const fechaActual = new Date().toLocaleDateString();
+        const horaActual = new Date().toLocaleTimeString();
+
+        // **Título**
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.setTextColor(40, 40, 40);
+        doc.text("Reporte de Auditoria (LogIn/LogOut)", 105, 15, { align: "center" });
+
+        // **Línea decorativa**
+        doc.setDrawColor(0, 0, 0);
+        doc.line(14, 20, 196, 20);
+
+        // **Fecha de exportación**
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Fecha de exportación: ${fechaActual} - ${horaActual}`, 14, 26);
+
+        let startY = 35; // Posición inicial
+
+        // **Tabla: Listado de Auditoria**
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.text("Reporte de Auditoria (LogIn/LogOut)", 14, startY);
+
+        // **Obtener datos de la tabla HTML**
+        const table = document.getElementById("table");
+        if (!table) {
+            console.error("No se encontró la tabla con ID 'table'.");
+            return;
+        }
+
+        // Obtener encabezados
+        const headers = [];
+        const headerCells = table.querySelectorAll("thead tr th");
+        headerCells.forEach(th => {
+            if (th.innerText.trim() !== "Acciones") {  // Excluir la columna "Acciones"
+                headers.push(th.innerText.trim());
+            }
+        });
+
+        // Obtener datos de las filas
+        const data = [];
+        const rows = table.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+            const rowData = [];
+            row.querySelectorAll("td").forEach((td, index) => {
+                // Excluir la columna "Acciones"
+                if (headerCells[index] && headerCells[index].innerText.trim() !== "Acciones") {
+                    rowData.push(td.innerText.trim());
+                }
+            });
+            data.push(rowData);
+        });
+
+        // Verificar si hay datos
+        if (data.length === 0) {
+            console.error("No hay datos en la tabla para exportar.");
+            return;
+        }
+
+        // **Generar tabla en el PDF**
+        doc.autoTable({
+            startY: startY + 5,
+            head: [headers],
+            body: data,
+            theme: 'grid',
+            styles: { fontSize: 9, cellPadding: 2, valign: 'middle' },
+            headStyles: { fillColor: [52, 73, 94], textColor: [255, 255, 255] },
+            alternateRowStyles: { fillColor: [240, 240, 240] },
+            margin: { top: 25, left: 10, right: 10 }
+        });
+
+        // **Pie de página con número de páginas**
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Página ${i} de ${pageCount}`, 105, 287, { align: "center" });
+        }
+
+        // **Descargar el PDF**
+        doc.save(`ListaAuditoriaAuthentication_${fechaActual}.pdf`);
+    });
+</script>
