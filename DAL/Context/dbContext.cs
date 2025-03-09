@@ -582,9 +582,16 @@ namespace DAL.Context
                      || e.State == EntityState.Deleted)
             .ToList();  // Esto también es List<EntityEntry<Pago>>
 
+            var modifiedEntitiesAutorizacion = ChangeTracker.Entries<AutorizacionPago>()
+            .Where(e => e.State == EntityState.Added
+                     || e.State == EntityState.Modified
+                     || e.State == EntityState.Deleted)
+            .ToList();  // Esto también es List<EntityEntry<Pago>>
+
             // Convierte ambos a IEnumerable<EntityEntry> y luego concatena
             var allModifiedEntities = modifiedEntitiesMiembro.Cast<EntityEntry>()
             .Concat(modifiedEntitiesPago.Cast<EntityEntry>())
+            .Concat(modifiedEntitiesAutorizacion.Cast<EntityEntry>())
             .ToList();
 
             foreach (var modifiedEntity in allModifiedEntities)
@@ -680,6 +687,31 @@ namespace DAL.Context
 
                 // Procesar Pagos (sin baja lógica)
                 if (modifiedEntity.Entity is Pago pagoEntity)
+                {
+                    // Auditoría de los pagos
+                    if (modifiedEntity.State == EntityState.Added)
+                    {
+                        action = "Created"; // Acción para creación de Pago
+                        auditLog.Changes = GetChanges(modifiedEntity);
+                    }
+                    else if (modifiedEntity.State == EntityState.Modified)
+                    {
+                        action = "Modified"; // Acción para modificación de Pago
+                        auditLog.Changes = GetChanges(modifiedEntity); // Detalles genéricos del cambio
+                        auditLog.EntityId = entityId;
+                    }
+                    else
+                    {
+                        action = "Deleted";
+                        auditLog.Changes = GetChanges(modifiedEntity);
+                    }
+
+                    auditLog.Action = action;
+                    AuditsLogs.Add(auditLog);
+                }
+
+                // Procesar Pagos (sin baja lógica)
+                if (modifiedEntity.Entity is AutorizacionPago autorizationEntity)
                 {
                     // Auditoría de los pagos
                     if (modifiedEntity.State == EntityState.Added)
