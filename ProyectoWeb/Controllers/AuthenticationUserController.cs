@@ -1,4 +1,5 @@
-﻿using DAL.UnitOfWork.Interfaces;
+﻿using DAL.UnitOfWork.Implementation;
+using DAL.UnitOfWork.Interfaces;
 using Entity.Identity.Entities;
 using Entity.Identity.ViewModels;
 using FluentValidation;
@@ -10,6 +11,8 @@ using NToastNotify;
 using ServiceLayer.Helpers.Identity.ModelStateHelper;
 using ServiceLayer.Messages.Identity;
 using ServiceLayer.Services.Identity.Abstract;
+using System.Collections.Generic;
+using System.Data;
 
 namespace ProyectoWeb.Controllers
 {
@@ -65,6 +68,11 @@ namespace ProyectoWeb.Controllers
             ViewBag.Id = user!.Id;
             _toasty.AddInfoToastMessage(NotificationMessagesIdentity.UserEdit(user.UserName!), new ToastrOptions { Title = NotificationMessagesIdentity.SuccessedTitle });
 
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Contains("External Member"))
+            {
+                return RedirectToAction("Index", "EsperarAprobacion");
+            }
             return RedirectToAction("Index", "Dashboard", new { Area = "User" });
         }
 

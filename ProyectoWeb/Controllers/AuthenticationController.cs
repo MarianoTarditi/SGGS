@@ -174,6 +174,23 @@ namespace ProyectoWeb.Controllers
 
                     if (roles.Contains("External Member"))
                     {
+                        HttpContext.Session.SetString("SessionStartTime", DateTime.Now.ToString("o")); // Formato ISO 8601
+
+                        // **Registro en la tabla de auditoría**
+                        var auditLogExternalMember = new AuditLogAuthentication
+                        {
+                            UserId = hasUser.Id,
+                            UserName = hasUser.UserName,
+                            UserRole = userRole,
+                            UserEmail = request.Email,
+                            Action = "Inicio de sesión",
+                            Timestamp = DateTime.Now,
+                            SessionDuration = null // No se conoce aún
+                        };
+
+                        _UnitOfWork.GetDbContext().Add(auditLogExternalMember);
+                        await _UnitOfWork.CommitAsync();
+
                         return RedirectToAction("Index", "EsperarAprobacion");
                     }
 

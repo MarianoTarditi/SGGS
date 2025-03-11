@@ -99,7 +99,8 @@ namespace ServiceLayer.Extensions.Identity
                 options.AddPolicy("CanUpdateUsuariosPolicy", policy => policy.RequireClaim("Modificar Usuarios"));
                 options.AddPolicy("CanUpdateRolesPolicy", policy => policy.RequireClaim("Modificar Roles"));
                 options.AddPolicy("CanUpdateReclamacionesPolicy", policy => policy.RequireClaim("Modificar Reclamaciones"));
-               
+                options.AddPolicy("CanUpdateRolUsuario", policy => policy.RequireClaim("Modificar Rol Usuarios"));
+
                 options.AddPolicy("CanAutorizePagosPolicy", policy => policy.RequireClaim("Autorizar Pagos"));
 
                 options.AddPolicy("RestoreExMiembrosPolicy", policy => policy.RequireClaim("Restaurar Ex-Miembros"));

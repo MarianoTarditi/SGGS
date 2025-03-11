@@ -32,15 +32,17 @@ namespace Entity.Identity.Entities
 
         // Eliminar
         public const string CanDeleteMiembros = "Eliminar Miembros";
-        public const string CanDeleteUser = "Eliminar Usuario";
+        public const string CanDeleteUser = "Eliminar Usuarios";
         public const string CanDeleteRol = "Eliminar Rol";
 
         // Modificar 
         public const string CanUpdateMiembros = "Modificar Miembros";
         public const string CanUpdateOrganismos = "Modificar Organismo";
         public const string CanUpdateUsuarios = "Modificar Usuario";
-        public const string CanUpdateRoles = "Modificar Rol";
+        public const string CanUpdateRolesPolicy = "Modificar Roles";
         public const string CanUpdateReclamaciones = "Modificar Reclamaciones";
+        public const string CanUpdateRolUsuario = "Modificar Rol Usuarios";
+
 
         // Autorizar
         public const string CanAutorizePagos = "Autorizar Pagos";
@@ -81,8 +83,10 @@ namespace Entity.Identity.Entities
                 new Claim(CanUpdateMiembros, "Modificar Miembros"),
                 new Claim(CanUpdateOrganismos, "Modificar Organismo"),
                 new Claim(CanUpdateUsuarios, "Modificar Usuarios"),
-                new Claim(CanUpdateRoles, "Modificar Roles"),
+                new Claim(CanUpdateRolesPolicy, "Modificar Roles"),
                 new Claim(CanUpdateReclamaciones, "Modificar Reclamaciones"),
+                new Claim(CanUpdateRolUsuario, "Modificar Rol Usuarios"),
+
 
                 // Autorizar
                 new Claim(CanAutorizePagos, "Autorizar Pagos"),

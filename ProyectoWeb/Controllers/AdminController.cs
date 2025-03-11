@@ -54,7 +54,7 @@ namespace ProyectoWeb.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Policy = "CanUpdateUsuariosPolicy")]
+        [Authorize(Policy = "CanUpdateRolUsuario")]
         public async Task<IActionResult> UpdateUserRole([FromBody] UserRoleUpdateRequestVM request)
         {
             if (string.IsNullOrEmpty(request.UserName))

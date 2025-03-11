@@ -198,7 +198,7 @@ namespace ProyectoWeb.Areas.Admin.Controllers
             return Json(localidades);
         }
 
-        [Authorize(Policy = "CanViewOrganismoPolicy")]
+        [Authorize(Policy = "CanDeleteMiembrosPolicy")]
         public async Task<IActionResult> DeleteMiembro(int id)
         {
             // Si el usuario no tiene el rol necesario, muestra un mensaje y redirige
@@ -214,6 +214,25 @@ namespace ProyectoWeb.Areas.Admin.Controllers
                 return RedirectToAction("GetMiembroList", "Miembros", new { Area = "Admin" });
             }
         }
+
+        [Authorize(Policy = "RestoreExMiembrosPolicy")]
+        public async Task<IActionResult> RestoreMiembro(int id)
+        {
+            // Si el usuario no tiene el rol necesario, muestra un mensaje y redirige
+            if (!User.IsInRole("SuperAdmin"))
+            {
+                _toastNotification.AddWarningToastMessage("No tienes permiso para realizar esta acción", new ToastrOptions { Title = NotificationMessagesWebApplication.FailedTitle });
+
+                return RedirectToAction("GetMiembroList", "Miembros", new { Area = "Admin" });
+            }
+            else
+            {
+                await _miembroService.DeleteEntityAsync(id);
+                return RedirectToAction("GetMiembroList", "Miembros", new { Area = "Admin" });
+            }
+        }
+
+
 
     }
 }

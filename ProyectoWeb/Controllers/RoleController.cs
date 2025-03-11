@@ -57,7 +57,7 @@ namespace ProyectoWeb.Controllers
                 bool roleExists = await _roleManager.RoleExistsAsync(roleModel?.RoleName);
                 if (roleExists)
                 {
-                    ModelState.AddModelError("", "Role Already Exists");
+                    ModelState.AddModelError("", "El rol ya existe!");
                 }
                 else
                 {
@@ -89,7 +89,7 @@ namespace ProyectoWeb.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "CanUpdateRolesPolicy")]
+        //[Authorize(Policy = "CanUpdateRolesPolicy")]
         public async Task<IActionResult> EditRole(string roleId)
         {
             //First Get the role information from the database
@@ -133,7 +133,7 @@ namespace ProyectoWeb.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "CanUpdateRolesPolicy")]
+        //[Authorize(Policy = "CanUpdateRolesPolicy")]
         public async Task<IActionResult> EditRole(EditRoleVM model)
         {
             if (ModelState.IsValid)
@@ -159,8 +159,8 @@ namespace ProyectoWeb.Controllers
                         foreach (var user in usersInRole)
                         {
                             await _userManager.UpdateSecurityStampAsync(user);
-                            await _signInManager.SignOutAsync();
-                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            //await _signInManager.SignOutAsync();
+                            //await _signInManager.SignInAsync(user, false);
                         }
 
                         return RedirectToAction("ListRoles"); // Redirect to the roles list
@@ -264,7 +264,7 @@ namespace ProyectoWeb.Controllers
         [Authorize(Policy = "CanAñadirRemoverRolesPolicy")]
         public async Task<IActionResult> EditUsersInRole(List<UserRoleViewModel> model, string roleId)
         {
-            //First check whether the Role Exists or not
+            // Primero, verifica si el rol existe
             var role = await _roleManager.FindByIdAsync(roleId);
 
             if (role == null)
@@ -277,29 +277,50 @@ namespace ProyectoWeb.Controllers
             {
                 var user = await _userManager.FindByIdAsync(model[i].UserId);
 
+                if (user == null)
+                {
+                    continue; // Si el usuario no existe, omite este caso
+                }
+
                 IdentityResult? result;
 
-                if (model[i].IsSelected && !(await _userManager.IsInRoleAsync(user, role.Name)))
+                // Si el usuario está seleccionado para este rol y aún no tiene este rol
+                if (model[i].IsSelected)
                 {
-                    //If IsSelected is true and User is not already in this role, then add the user
+                    // Primero eliminamos todos los roles existentes del usuario
+                    var userRoles = await _userManager.GetRolesAsync(user);
+
+                    foreach (var userRole in userRoles)
+                    {
+                        // Remover el rol actual del usuario
+                        await _userManager.RemoveFromRoleAsync(user, userRole);
+                    }
+
+                    // Ahora agregamos el nuevo rol
                     result = await _userManager.AddToRoleAsync(user, role.Name);
                 }
-                else if (!model[i].IsSelected && await _userManager.IsInRoleAsync(user, role.Name))
-                {
-                    //If IsSelected is false and User is already in this role, then remove the user
-                    result = await _userManager.RemoveFromRoleAsync(user, role.Name);
-                }
+                // Si el usuario no está seleccionado, lo eliminamos del rol si lo tiene
                 else
                 {
-                    //Don't do anything simply continue the loop
-                    continue;
+                    // Verifica si el usuario tiene este rol y lo elimina si lo tiene
+                    if (await _userManager.IsInRoleAsync(user, role.Name))
+                    {
+                        result = await _userManager.RemoveFromRoleAsync(user, role.Name);
+                    }
+                    else
+                    {
+                        // Si el usuario no tiene este rol, simplemente no hace nada
+                        continue;
+                    }
                 }
-                          
-                //If you add or remove any user, please check the Succeeded of the IdentityResult
+
+                // Verifica el resultado de la operación
                 if (result.Succeeded)
                 {
+                    // Actualiza el sello de seguridad del usuario para asegurarse de que la sesión esté actualizada
                     await _userManager.UpdateSecurityStampAsync(user);
 
+                    // Si estamos en el último ciclo, redirige, si no, continúa
                     if (i < (model.Count - 1))
                         continue;
                     else
@@ -307,8 +328,10 @@ namespace ProyectoWeb.Controllers
                 }
             }
 
+            // En caso de error o no hacer nada, redirige a EditRole
             return RedirectToAction("EditRole", new { roleId = roleId });
         }
+
 
         [HttpGet]
         [Authorize(Policy = "CanUpdateReclamacionesPolicy")]
