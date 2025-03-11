@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ProyectoWeb.Controllers
 {
+    [Authorize]
     public class RoleController : Controller
     {
         private readonly IAuthenticationAdminService _admin;

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ProyectoWeb.Controllers
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize]
     public class AuditoriaController : Controller
     {
         private readonly IAuditLogService _auditLogService;

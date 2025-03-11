@@ -5,7 +5,7 @@ using ServiceLayer.Services.Interfaces;
 
 namespace ProyectoWeb.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Member,SuperAdmin")]
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;

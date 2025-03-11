@@ -14,7 +14,7 @@ using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace ProyectoWeb.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize]
     public class OrganismoController : Controller
     {
         public IActionResult Index()

@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace ProyectoWeb.Controllers
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize]
     public class AdminController : Controller
     {
         private readonly IAuthenticationAdminService _admin;

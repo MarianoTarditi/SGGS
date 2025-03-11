@@ -717,12 +717,12 @@ namespace DAL.Context
                     if (modifiedEntity.State == EntityState.Added)
                     {
                         action = "Created"; // Acción para creación de Pago
-                        auditLog.Changes = GetChanges(modifiedEntity);
+                        auditLog.Changes = "Se ha autorizado un pago ";
                     }
                     else if (modifiedEntity.State == EntityState.Modified)
                     {
                         action = "Modified"; // Acción para modificación de Pago
-                        auditLog.Changes = GetChanges(modifiedEntity); // Detalles genéricos del cambio
+                        auditLog.Changes = "Se ha autorizado un Pago. " + GetChanges(modifiedEntity);
                         auditLog.EntityId = entityId;
                     }
                     else

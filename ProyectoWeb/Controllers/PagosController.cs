@@ -13,7 +13,7 @@ using NToastNotify;
 
 namespace ProyectoWeb.Controllers
 {
-    [Authorize(Roles = "Member,SuperAdmin")]
+    [Authorize]
     public class PagosController : Controller
     {
         public IActionResult Index()

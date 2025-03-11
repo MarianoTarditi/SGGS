@@ -20,7 +20,7 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace ProyectoWeb.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Member,SuperAdmin")]
+    [Authorize]
     public class MiembrosController : Controller
     {
         public IActionResult Index()
